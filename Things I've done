@@ -1,0 +1,3 @@
+-Tried FBA using Cobra (painless)
+-Tried to do FBA using sybil (had configuration issues with glpk)
+-had a look at optimizing NSGA-II (specifically repeated comparisons of known dominations)
