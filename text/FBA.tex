@@ -1,0 +1,10 @@
+% some equations might make this look a bit more pro
+Flux Balance Analysis~\cite{Orth2010} is a technique used to predict the average rates of reactions in an organism's metabalome, given its stochiometric matrix.
+It relies on two assumptions:
+\begin{enumerate}
+\item \label{ass:steadystate} The metabolome of the organism under study is in a steady state.
+\item \label{ass:maxgrowth} The organism produces maximum possible growth for any given combination of resources available and physical constraints.
+\end{enumerate}
+Assumption \ref{ass:steadystate} allows the system of simultaneous differential equations describing the metaboloism to be reduced to a set of simultaneous algebraic equations, since in steady state we do not expect any net accumulation of metabolites. 
+This limits possible rates to the interior of a convex polytope. 
+To predict the actual position within this polytope, assumption \ref{ass:maxgrowth} is used, and an optimization technique, such as linear programming, is used to find the point, or space, representing highest growth.
