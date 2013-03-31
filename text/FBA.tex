@@ -5,6 +5,9 @@ It relies on two assumptions:
 \item \label{ass:steadystate} The metabolome of the organism under study is in a steady state.
 \item \label{ass:maxgrowth} The organism produces maximum possible growth for any given combination of resources available and physical constraints.
 \end{enumerate}
-Assumption \ref{ass:steadystate} allows the system of simultaneous differential equations describing the metaboloism to be reduced to a set of simultaneous algebraic equations, since in steady state we do not expect any net accumulation of metabolites. 
+Assumption \ref{ass:steadystate} allows the system of simultaneous differential equations describing the metaboloism to be reduced to a set of simultaneous algebraic equations, since in steady state \(\text{uptake} + \text{production} = \text{consumption} + \text{excretion}\). 
 This limits possible rates to the interior of a convex polytope. 
 To predict the actual position within this polytope, assumption \ref{ass:maxgrowth} is used, and an optimization technique, such as linear programming, is used to find the point, or space, representing highest growth.
+
+Of course, many adaptations and extensions to this basic approach are possible. 
+In the case of genetic design for overproduction of industrially useful metabolites, Flux Balance Analysis is used to find the region of flex space representing maximal growth. A range of excretion values for the overproduced metabolite may be possible while maintaining maximal growth. Gene knockouts can then be tried, with the goal of moving this possible production range upwards, without reducing biomass accumulation too much.
