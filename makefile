@@ -7,6 +7,7 @@ dissertation.pdf : dissertation.tex bibliography.bib
 clean :
 	rm -f dissertation.aux
 	rm -f dissertation.log
+	rm -f dissertation.pdf
 	rm -f *~
 
 bibliography.bib : cp ../../Documents/bibtex/Part\ III\ project.bib
