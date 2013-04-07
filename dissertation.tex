@@ -1,11 +1,22 @@
-\documentclass[a4paper,twoside,12pt]{report}
+\documentclass[a4paper,twoside,draft]{report}
 
-\usepackage{graphicx}
-\usepackage{algorithm}
-\usepackage{algorithmic}
-\usepackage{algorithmicx}
+\usepackage{mystyle}
+
 
 \begin{document}
-\input{./text/GDLS.tex}
+\author{Maxwell Conway \thanks{Supervisor: Pietro Lio'}}
+\date{}
+\begin{abstract}
+\include{./tex/abstract.tex}
+\end{abstract}
+
+\include{./tex/introduction}
+\include{./tex/methods}
+\include{./tex/results}
+\include{./tex/conclusion}
+
+\bibliographystyle{plain}
+\bibliography{bibliography}
+\appendix
 
 \end{document}
