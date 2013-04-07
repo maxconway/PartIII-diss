@@ -10,5 +10,5 @@ clean :
 	rm -f dissertation.pdf
 	rm -f *~
 
-bibliography.bib : cp ../../Documents/bibtex/Part\ III\ project.bib
+bibliography.bib : ../../Documents/bibtex/Part\ III\ project.bib
 	cp ../../Documents/bibtex/Part\ III\ project.bib bibliography.bib
