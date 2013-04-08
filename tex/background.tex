@@ -1,0 +1,41 @@
+\chapter{Background}
+\section{Optimization}
+
+Optimization problems generally consist of a multidimensional decision space, a scalar objective and an objective function which maps each position in decision space to a position in objective space. 
+Optimization algorithms then search decision space for a position that maximizes or minimizes the objective. 
+
+\section{Multi-objective optimization}
+
+Many objective functions naturally map to a multidimensional objective space, rather than to a scalar value, as is used in classic optimization. 
+One method to deal with this is to use, for instance, a linear sum to map to a scalar objective, but this requires coefficients that are often difficult to find. 
+Utilizing multi-objective optimization~\cite{Gen2008} instead allows us to maximize directly in objective space, and thus avoid making value judgements between different objective dimensions. 
+This requires a different notion of superiority, called Pareto dominance. 
+A solution A Pareto dominates B if A is better than B in all ways. 
+A is Pareto optimal if no solution Pareto dominates it. 
+
+However, it should be noted that Pareto dominance does not provide a total order: it cannot necessarily provide a single best solution, only a non-dominated set; this makes evolutionary algorithms particularly appropriate, since they inherently involve keeping a population of solutions.
+
+Multi-objective optimization is particularly relevant to investigating evolvability, since solutions will need to quickly move in the Pareto front to follow the perfect trade-off, but will need to minimize the time spent behind the front. 
+This highlights that mutation is more beneficial in some directions than others.
+
+\section{Evolutionary algorithms}
+
+Evolutionary algorithms are one class of optimization algorithm. Characteristics which they share include:
+\begin{itemize}
+\item Evolutionary algorithms work on a population of solutions. 
+\item Selection phases are used, where bad solutions are discarded.
+\item Mutation/reproduction phases are used, where new solutions are generated based on previous solutions. 
+\end{itemize}
+
+One advantage of these algorithms is that they do not require their decision space to be differentiable, and hence can work in noisy decision spaces or those that contain discontinuities. 
+It is important to note that while evolutionary optimization algorithms are biologically inspired, they are not generally intended as models of real biology, but rather to be used as black-box optimization algorithms in exactly the same way as the metallurgically inspired simulated annealing.
+
+\section{Metabolic networks and Flux Balance Analysis (FBA)}
+The metabolic network of an organism is comprised of the metabolites (small molecules processed in large quantities) of the organism and the enzymes that control the reactions consuming and producing the metabolites. 
+The production of these enzymes is not considered part of the metabolome, though their activation or inhibition by metabolites is. 
+The metabolome can be characterized at a steady state by the stoichiometric matrix, which is the known ratio of reactants and products, and a flux vector, which is the unknown flux through each reaction. 
+While some fluxes in the flux vector can be determined simply by the organism's inability to produce the relevant enzyme, the abundance and activity of those enzymes that the organism can produce are difficult to determine. 
+
+FBA seeks to determine the flux vector at a given time by using the stoichiometric matrix to define a network, with the fluxes forming the edges which must be determined. 
+This creates a cone of feasible solutions in flux space, which must be selected from. 
+To do this, the organism is assumed to have evolved to maximize some property (traditionally maximizing biomass production), and an optimization algorithm is used to find the flux vector that maximizes that property.
