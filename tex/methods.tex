@@ -11,10 +11,17 @@ GDLS is a local search algorithm, which means that it starts with a solution and
 This is a sensible decision in metabolic engineering, due to the natural starting point of no knockouts. 
 The detailed procedure is as follows:
 
-\STATE{\(X_{0} \gets \text{natural}\)}
-\WHILE{\(X_{i} \text{is better than} X_{i-1}\)}\STATE{
-	\(X_{i+1} \gets \text{neighbourhood_search}(X_{i})\)
+\begin{algorithm}
+\caption{Pseudocode of Genetic Design by Local Search}
+\label{alg:GDLS}
+\begin{algorithmic}
+\State{\(X_{0} \gets \text{natural}\)}
+\While{\(X_{i} \text{is better than} X_{i-1}\)}\State{
+	\(X_{i+1} \gets \text{neighbourhood\_search} X_{i} \)
 }
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
 %need to expand this
 
 This means that at each iteration, the algorithm starts with a candidate genome, or genomes. For each of these, it evaluates every genome that differs by at most neighbourhoodsize knockouts or knockins, and selects the best from these. The search then starts again from these best solutions, and this is repeated until no better solutions are found. 
