@@ -1,6 +1,6 @@
 \chapter{Methods}
 
-\section{Techniques Studied}
+\section{Overview of Genetic Design Techniques Studied}
 
 \subsection{Genetic Design by Local Search (GDLS)}
 %this all needs some nicer presentation
@@ -28,3 +28,20 @@ This means that at each iteration, the algorithm starts with a candidate genome,
 
 \subsection{Genetic Design by Multi-objective Optimization(GDMO)} 
 
+\section{Computational Complexity analysis}
+The core problem of this kind of genetic design (which does not use network structure information) is 0-1 integer linear programming~\cite{Karp1972}---indeed GDLS works by repeatedly solving small cases of this problem.
+This means that this problem is NP-complete, and assuming \(\P \neq \NP\), these algorithms have running times that are not bounded by any polynomial.
+This suggests extremely long running times for some combinations of input parameters.
+This makes it important to be able to form an \emph{a priori} estimate of the running time, so that computation time is not wasted with infeasibly long runs.
+These very long running times mean that forming a model purely by regression analysis over the whole parameter space would be impractical, and so a partly analytic approach must be taken, by examining the algorithm's procedures.
+
+\subsection{Flux Balance Analysis}
+
+\subsection{GDMO}
+Since GDMO is an evolutionary algorithm, the number of objective function evaluations performed is proportional to the population size multiplied by the number of generations evaluated.
+Each objective evaluation requires that Flux Balance Analysis is conducted a constant number of times, via the Simplex linear programming algorithm, which has which takes \(O(n^3)\) steps for practical problems~\cite{
+Dantzig1963}.
+%actually do stats
+
+\subsection{GDLS}
+Since GDLS does not run to a hard limit, but instead stops when it finds the local optimum, it is most useful to first characterize the time complexity of a single iteration.
