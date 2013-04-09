@@ -27,20 +27,38 @@ The detailed procedure is as follows:
 This means that at each iteration, the algorithm starts with a candidate genome, or genomes. For each of these, it evaluates every genome that differs by at most neighbourhoodsize knockouts or knockins, and selects the best from these. The search then starts again from these best solutions, and this is repeated until no better solutions are found. 
 
 \subsection{Genetic Design by Multi-objective Optimization(GDMO)} 
+Genetic Design by Multi-objective Optimization \todo{who it's written by} is a genetic design algorithm based on the multi-objective evolutionary optimization algorithm NSGA-II.
+Using a multi-objective optimization algorithm in this context has a number of advantages.
+\begin{itemize}
+\item A trade-off between different objectives does not need to be selected before use. This avoids the issue of having to guess the properties of a system that has not yet been designed.
+\item The Pareto front can be used to visualize the space of possibilities. This can provide insight into the different structures created by different pathways, and help to design an organism that will not suffer from reduced production due to evolution once in use.
+\item Crucially, this approach \todo{slower or faster?} does not have to sacrifice performance for these advantages, since maintaining a population of solutions that occupies a wide range of good phenotypes in fact helps the evolutionary process.
+\end{itemize}
 
 \section{Computational Complexity analysis}
 The core problem of this kind of genetic design (which does not use network structure information) is 0-1 integer linear programming~\cite{Karp1972}---indeed GDLS works by repeatedly solving small cases of this problem.
-This means that this problem is NP-complete, and assuming \(\P \neq \NP\), these algorithms have running times that are not bounded by any polynomial.
+This means that this problem is NP-complete, and assuming \(\mathcal{P} \neq \mathcal{NP}\), these algorithms have running times that are not bounded by any polynomial.
 This suggests extremely long running times for some combinations of input parameters.
 This makes it important to be able to form an \emph{a priori} estimate of the running time, so that computation time is not wasted with infeasibly long runs.
 These very long running times mean that forming a model purely by regression analysis over the whole parameter space would be impractical, and so a partly analytic approach must be taken, by examining the algorithm's procedures.
 
 \subsection{Flux Balance Analysis}
+Since FBA is at the core of the algorithms studied, it makes sense to consider this separately. 
+Here, FBA is done via the Simplex linear programming algorithm, which has which takes \(O(n^3)\) steps for practical problems~\cite{Dantzig1963}. 
+%A number of different solvers exist, with GLPK being used here, as the lowest common denominator.
+%solvers vary in code speed by around 100-fold
+In order to characterize the differences between running times for different models, FBA was performed 100 times with each or a number of models. The results, shown in figure~\ref{fig:FBAtimings}, show that times can vary by \todo{find out fold change} X-fold. This can be attributed to the variance in sizes of the different models used.
+
+\begin{figure}
+\label{fig:FBAtimings}
+\includegraphics[width=\textwidth]{./data/FBAtimings.png}
+%image may need title adjustment
+\caption{running times for FBA of metabolic models}
+\end{figure}
 
 \subsection{GDMO}
-Since GDMO is an evolutionary algorithm, the number of objective function evaluations performed is proportional to the population size multiplied by the number of generations evaluated.
-Each objective evaluation requires that Flux Balance Analysis is conducted a constant number of times, via the Simplex linear programming algorithm, which has which takes \(O(n^3)\) steps for practical problems~\cite{
-Dantzig1963}.
+Since GDMO is an evolutionary algorithm, the number of objective function evaluations performed is proportional to the population size multiplied by the number of generations evaluated. Each objective evaluation requires that Flux Balance Analysis is conducted a constant number of times.
+
 %actually do stats
 
 \subsection{GDLS}
