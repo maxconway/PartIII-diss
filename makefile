@@ -1,8 +1,8 @@
 dissertation.pdf : dissertation.tex bibliography.bib
 	cd ./data && make
-	latex dissertation
-	latex dissertation
-	latex dissertation
+	pdflatex dissertation
+	bibtex dissertation
+	pdflatex dissertation
 	pdflatex dissertation
 
 clean :
