@@ -1,4 +1,4 @@
-FBAtimings <- read.csv("./FBAtimings.csv")
+FBAtimings <- read.csv("./experiments/FBAtimings.csv")
 png('FBAtimings.png')
 boxplot(time ~ strain, data=FBAtimings,
         range=0,
