@@ -11,9 +11,9 @@ iaf1260.ac.GDMO.500.500..AspireDesktop$pop=500
 geo_s_react.GDMO.100.100..AspireDesktop$strain='sulfurreducens'
 geo_s_react.GDMO.20.20..AspireDesktop$strain='sulfurreducens'
 geo_s_react.GDMO.500.500..AspireDesktop$strain='sulfurreducens'
-iaf1260.ac.GDMO.100.100..AspireDesktop$strain='metallireducens'
-iaf1260.ac.GDMO.20.20..AspireDesktop$strain='metallireducens'
-iaf1260.ac.GDMO.500.500..AspireDesktop$strain='metallireducens'
+iaf1260.ac.GDMO.100.100..AspireDesktop$strain='iaf1260'
+iaf1260.ac.GDMO.20.20..AspireDesktop$strain='iaf1260'
+iaf1260.ac.GDMO.500.500..AspireDesktop$strain='iaf1260'
 GDMOs=list(geo_s_react.GDMO.100.100..AspireDesktop,
        geo_s_react.GDMO.20.20..AspireDesktop,
        geo_s_react.GDMO.500.500..AspireDesktop,
