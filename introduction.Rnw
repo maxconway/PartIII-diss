@@ -1,1 +1,2 @@
+% !TeX root = dissertation.Rnw   
 \chapter{Introduction}

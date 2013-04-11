@@ -1,3 +1,4 @@
+% !TeX root = dissertation.Rnw   
 \chapter{Methods}
 
 \section{Overview of Genetic Design Techniques Studied}

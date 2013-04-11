@@ -1,1 +1,2 @@
+% !TeX root = dissertations.Rnw   
 \chapter{Conclusion}

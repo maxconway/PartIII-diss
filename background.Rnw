@@ -1,3 +1,4 @@
+% !TeX root = dissertation.Rnw   
 \chapter{Background}
 This chapter provides some background information on the biology and computational techniques discussed later. 
 Detailed discussion of the specific approaches of the genetic design algorithms under study can be found in the methods chapter.

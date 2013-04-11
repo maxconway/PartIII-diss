@@ -1,3 +1,4 @@
+% !TeX root = dissertation.Rnw   
 \chapter{Results}
 This chapter details the results of the investigation, in terms of the properties of the design strategies used, and the biological properties of the strains designed.
 \todo{section references}
