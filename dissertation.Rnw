@@ -1,4 +1,4 @@
-\documentclass[a4paper,twoside,draft]{report}
+\documentclass[a4paper,twoside]{report}
 
 \usepackage{mystyle}
 

@@ -1,4 +1,5 @@
 #load files
+require(gdata)
 source('./import-GDMO.R')
 source('./import-GDLS.R')
 

@@ -4,3 +4,9 @@
 *~
 *.dvi
 .Rproj.user
+*.tex
+*.RData
+*.bll
+*.blg
+.Rhistory
+PartIII-diss.Rproj

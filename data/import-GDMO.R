@@ -9,3 +9,8 @@ for(file in list.files(path = './experiments/', pattern = '.*GDMO.*.log',full.na
   data$soltime=data$gentime/data$pop
   GDMO=rbind(GDMO,data)
 }
+FBAtimings <- read.csv("./FBAtimings.csv")
+FBAtimings$FBAtime=FBAtimings$time
+FBAtime=aggregate(FBAtime~strain,FBAtimings[,c('strain','FBAtime')],mean)
+GDMO=merge(GDMO,FBAtime)
+save(GDMO,file='GDMO.RData')
