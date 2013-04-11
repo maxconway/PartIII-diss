@@ -4,6 +4,7 @@
 
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 \author{Maxwell Conway \thanks{Supervisor: Pietro Lio'}}
 \date{}
 \begin{abstract}
