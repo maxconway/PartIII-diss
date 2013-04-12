@@ -4,6 +4,27 @@ This chapter details the results of the investigation, in terms of the propertie
 \todo{section references}
 
 \section{technical evaluation}
+This section discusses each strategy individually, before comparing their relative merits.
+
+\subsection{GDMO}
+<<echo=FALSE>>=
+data(GDMO)
+@
+A number of different evolution runs were completed for each strain, summarised in table~\ref{tab:GDMOevals}.
+\begin{table}
+\label{tab:GDMOevals}
+<<echo=TRUE>>=
+require(xtable)
+table=aggregate(GDMO[,c('strain','pop','generation','id')],by=list(GDMO$id),max)[,c('strain','pop','generation')]
+xtable(sort(table)
+@
+\caption{GDMO evaluations completed}
+\end{table}
+
+\subsubsection{Geobacter Sulfurreducens}
+On Geobacter Sulfurreducens
+
+\subsection{Comparison}
 
 \section{biological evaluation}
 \todo{divide each optimization into discrete chunks}
