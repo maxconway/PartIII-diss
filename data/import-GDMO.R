@@ -1,3 +1,4 @@
+require(gdata)
 GDMO=NULL
 for(file in list.files(path = './experiments/', pattern = '.*GDMO.*.log',full.names=FALSE)){
   data = read.delim(paste('./experiments/',file,sep=''),header=FALSE)
