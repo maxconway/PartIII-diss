@@ -3,7 +3,11 @@
 \usepackage{mystyle}
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
+
+<<include=FALSE>>=
+opts_chunk$set(concordance=TRUE)
+@
+
 \author{Maxwell Conway \thanks{Supervisor: Pietro Lio'}}
 \date{}
 \begin{abstract}

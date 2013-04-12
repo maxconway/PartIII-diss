@@ -1,4 +1,4 @@
-dissertation.pdf : dissertation.tex bibliography.bib abstract.tex introduction.tex methods.tex results.tex conclusion.tex mystyle.sty
+dissertation.pdf : dissertation.tex bibliography.bib abstract.tex introduction.tex background.tex methods.tex results.tex conclusion.tex mystyle.sty
 	pdflatex dissertation
 	bibtex dissertation
 	pdflatex dissertation
@@ -8,8 +8,8 @@ dissertation.pdf : dissertation.tex bibliography.bib abstract.tex introduction.t
 #	R CMD Sweave dissertation.Rnw
 
 %.tex : %.Rnw
-	R CMD Sweave $<
-#	Rscript -e "library(knitr); knit('$<')"
+#	R CMD Sweave $<
+	Rscript -e "library(knitr); knit('$<')"
 
 clean :
 	rm -f dissertation.aux

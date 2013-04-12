@@ -12,42 +12,40 @@ data(GDMO)
 @
 A number of different evolution runs were completed for each strain, summarised in table~\ref{tab:GDMOevals}. As can be seen, more evaluations were done for smaller population and generation sizes, in order to find the importance of these two factors on running time and performance.
 
-\begin{table}
-\label{tab:GDMOevals}
-<<echo=TRUE>>=
-require(xtable)
-runtable=aggregate(GDMO[,c('strain','pop','generation','id')],by=list(GDMO$id),max)[,c('strain','pop','generation')]
-xtable(sort(runtable)
+<<GDMOevals,echo=FALSE,results='asis'>>=
+require(xtable,quietly=TRUE)
+runs=aggregate(GDMO[,c('strain','pop','generation','id')],by=list(GDMO$id),max)[,c('strain','pop','generation')]
+runs$population=runs$pop
+print(xtable(runs[,c('strain','population','generation')],caption='GDMO evaluations completed',label='tab:GDMOevals'))
 @
-\caption{GDMO evaluations completed}
-\end{table}
 
 \subsection{Convergence time}
 The first property investigated was how quickly convergence to a stable solution was achieved. 
 This is difficult for multi-objective optimization, since pareto fronts are not generally comparable.
 \todo{check if hypervolume already defined}
 
-Figure~\ref{fig:convergence} shows hypervolume against generation for a number of runs of GDMO. This shows that convergence occured quickly---within 100 generations. This works out at \SI{\Sexpr{mean(GDMO[GDMO$generation==100&GDMO$strain=='sulfurreducens','walltime]}}{\second} for G. sulfurreducens.
+Figure~\ref{fig:convergence} shows hypervolume against generation for a number of runs of GDMO. This shows that convergence occured quickly---within 100 generations. This works out at \SI{\Sexpr{mean(GDMO[GDMO$generation==100&GDMO$strain=='sulfurreducens','walltime'])}}{\second} for G. sulfurreducens.
 
 \todo{maybe this should go in the timing section}
 
 \todo{not necessarily here, but do write about 3d pareto fronts}
 \begin{figure}
 \label{fig:convergence}
-<<fig=TRUE,echo=FALSE>>=
+<<echo=FALSE>>=
 maxpop=500
 maxgen=500
-acc=aggregate(GDMO[,c('id','strain','pop','generation')],by=list(GDMO$id),max)
+runs=aggregate(GDMO[,c('id','strain','pop','generation')],by=list(GDMO$id),max)
 source('./data/nondominated.R')
+source('./data/hypervolumeMonteCarlo.R')
 plot(NULL,NULL,xlab='generation',ylab='hypervolume','l',ylim=c(0,1.1),xlim=c(0,500))
-legend('bottomright',paste(acc$strain,' pop=',acc$pop,' gen=',acc$gen),col=rainbow(nrow(acc)),pch='l',cex=0.5)
-for(j in 1:nrow(acc)){
-  w=GDMO[GDMO$id==acc[j,'id'],]
+legend('bottomright',paste(runs$strain,' pop=',runs$pop,' gen=',runs$gen),col=rainbow(nrow(runs)),pch='l',cex=0.5)
+for(j in 1:nrow(runs)){
+  w=GDMO[GDMO$id==runs[j,'id'],]
   measureat = seq(1,max(w$generation),max(w$generation)%/%20)
   volume=sapply(measureat,function(i){
     hypervolumeMonteCarlo(w[w$generation==i,c('biomass','maxsyn','minsyn')],200)
   })
-  lines(measureat,volume/max(volume),col=rainbow(nrow(acc))[j])
+  lines(measureat,volume/max(volume),col=rainbow(nrow(runs))[j])
 }
 @
 \caption{GDMO of G. Sulfurreducens, with population 500}
@@ -83,7 +81,7 @@ Figure~\ref{fit:sulfurreducensmin} shows a pronounced jump at around 0.935 in th
 
 \begin{figure}
 \label{fig:sulfurreducensmax}
-<<fig=TRUE,echo=FALSE>>=
+<<echo=FALSE>>=
        plot(nmaxsyn~nbiomass,h,xlab='biomass',ylab='reduction potential')
 @
 \caption{Pareto front of maximum reduction potential for Geobacter Sulfurreducens, normalized against wild type}
@@ -91,7 +89,7 @@ Figure~\ref{fit:sulfurreducensmin} shows a pronounced jump at around 0.935 in th
 
 \begin{figure}
 \label{fig:sulfurreducensmin}
-<<fig=TRUE,echo=FALSE>>=
+<<echo=FALSE>>=
        plot(nminsyn~nbiomass,l,xlab='biomass',ylab='reduction potential')
 @
 \caption{Pareto front of minimum reduction potential for Geobacter Sulfurreducens, normalized against wild type}

@@ -53,7 +53,7 @@ In order to characterize the differences between running times for different mod
 \begin{figure}
 \label{fig:FBAtimings}
 \centering
-<<fig=TRUE,echo=FALSE>>=
+<<echo=FALSE>>=
 FBAtimings <- read.csv("./experiments/FBAtimings.csv")
 plot(time ~ strain, data=FBAtimings,
         range=0,
@@ -73,7 +73,7 @@ This means that the total runtime can be modelled can be modelled via in R as th
 %actually do stats
 \begin{figure}
 \centering
-<<fig=TRUE,echo=FALSE>>=
+<<echo=FALSE>>=
 data('GDMO')
 GDMO = GDMO[,c('strain','cputime','generation','pop','id','FBAtime','walltime')]
 GDMO = unique(GDMO)
@@ -94,10 +94,9 @@ Techniques to compare the output of multi-objective optimization algorithms is a
 Ultimately, one cannot definitively say that pareto front A is better than pareto front B unless every point in B is dominated by a point in A. 
 %equation
 One relatively common metric for comparison of pareto fronts is the hypervolume enclosed by the front.
-This enclosed hypervolume is smaller than the volume behind a hypersurface fitted to the front, which meant that the typical technique of fitting a curve to the pareto front and integrating this curve was inappropriate. Instead, I wrote a custom Monte Carlo integration function, which would work out the actual dominated area, while exploiting the performance advantages of Monte-Carlo techniques to allow for efficient use even on extremely large fronts. Code listing~\ref{lst:dominance} shows r code used to calculate dominance relations.
+This enclosed hypervolume is smaller than the volume behind a hypersurface fitted to the front, which meant that the typical technique of fitting a curve to the pareto front and integrating this curve was inappropriate. Instead, I wrote a custom Monte Carlo integration function, which would work out the actual dominated area, while exploiting the performance advantages of Monte-Carlo techniques to allow for efficient use even on extremely large fronts. The following R code is used to calculated dominance relations.
 \todo{might need listings package}
 
-\begin{listing}[caption={R code for dominance computation},label=lst:dominance]
 <<echo=TRUE>>=
 dominates <- function(a,b){
   # does a dominate b?
@@ -127,7 +126,6 @@ fnondominated <- function(df){
   df[nondominated(df),]
 }
 @
-\end{listing}
 
 \subsection{GDLS}
 GDLS does not run to a hard limit, but instead stops when it finds the local optimum, so we cannot work out a useful upper bound on running time. 
