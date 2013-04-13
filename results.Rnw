@@ -76,6 +76,7 @@ Solution quality can only really be evaluated in comparison with other technique
 The most interesting  biological data was produced by GDMO, since this was able to show how the pathways altered varied with the solution properties. \todo{actually note this after}However, it is first interesting to note which known engineered strains were replicated.
 
 \subsection{Geobacter Sulfurreducens}
+\subsubsection{Fronts}
 <<echo=FALSE>>=
        source('./data/dominated.R',local=TRUE)
        s<-GDMO[GDMO$strain=='sulfurreducens'&GDMO$generation==500&GDMO$pop==500,]
@@ -114,6 +115,19 @@ Figure~\ref{fit:sulfurreducensmin} shows a pronounced jump at around 0.935 in th
 @
 \caption{Pareto front of minimum reduction potential for Geobacter Sulfurreducens, normalized against wild type}
 \end{figure}
+
+\subsubsection{Knockouts}
+<<echo=FALSE>>=
+id=with(runs,unique(runs[strain=='sulfurreducens'&pop==500&generation==500,'id']))
+source('./data/getNames.R',local=TRUE)
+source('./data/getChromosomes.R',local=TRUE)
+names=getNames('geo_s_react.reduced')
+chromosomes=getChromosomes(id)
+colnames(chromosomes)<-c((names),c('?','?','?','?','?','?'),c('maxsyn','minsyn','biomass','front','crowding'))#assignments don't hit
+chromosomes$totalknockouts=GDMO[GDMO$id==id&GDMO$generation==500,'knockouts']
+image(1:500,y=1:212,as.matrix(chromosomes[order(chromosomes$biomass,chromosomes$maxsyn),1:212]),col=c('ghostwhite','red'))
+@
+One major advantage of GDMO is the information it can give not only on the 
 
 \todo{divide each optimization into discrete chunks}
 \todo{discuss pathways involved in each chunk}
