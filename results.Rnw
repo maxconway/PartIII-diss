@@ -1,4 +1,4 @@
-% !TeX root = dissertation.Rnw   
+% !TeX root = dissertation.Rnw 
 \chapter{Results}
 This chapter details the results of the investigation, in terms of the properties of the design strategies used, and the biological properties of the strains designed.
 \todo{section references}
@@ -24,28 +24,43 @@ The first property investigated was how quickly convergence to a stable solution
 This is difficult for multi-objective optimization, since pareto fronts are not generally comparable.
 \todo{check if hypervolume already defined}
 
-Figure~\ref{fig:convergence} shows hypervolume against generation for a number of runs of GDMO. This shows that convergence occured quickly---within 100 generations. This works out at \SI{\Sexpr{mean(GDMO[GDMO$generation==100&GDMO$strain=='sulfurreducens','walltime'])}}{\second} for G. sulfurreducens.
+Figure~\ref{fig:convergence} shows hypervolume against generation for a number of runs of GDMO. This shows that most convergence occured quickly---within \num{200} generations. 
+This works out at around \SI{\Sexpr{mean(GDMO[GDMO$generation==200&GDMO$strain=='sulfurreducens','walltime'])}}{\second}.
 
-\todo{maybe this should go in the timing section}
+The investigation of G. Sulfurreducens with \num{1000} generations in particular shows one of the disadvantages of an evolutionary algorithm, and many other global optimization algorithms: since the algorithm is constantly searching for a better solution, if we stop it at an arbitrary point then there is no guarantee that the solution at this point is the best available. 
+
+To ensure that the final front is the best possible, three approaches are possible:
+\begin{enumerate}
+\item Simply take the maximum value. This is not ideal since the best pareto front overall may miss helpful solutions.
+\item find the non-dominated front of the union of a number of good solutions. This approach was used in the end, since it is relatively simple but effective and can be performed retrospectively.
+\item A simulated annealing style approach where mutation rate decreases over time. I obtained an open-source version of the NSGA-II algorithm, the core of GDMO, and implemented this approach on this with an exponentially dropping mutation rate. Ultimately, I decided to take approach 2 to avoid the introduction of an unnecessary extra parameter.
+\end{enumerate}
 
 \todo{not necessarily here, but do write about 3d pareto fronts}
 \begin{figure}
 \label{fig:convergence}
 <<echo=FALSE>>=
-maxpop=500
-maxgen=500
 runs=aggregate(GDMO[,c('id','strain','pop','generation')],by=list(GDMO$id),max)
-source('./data/nondominated.R')
-source('./data/hypervolumeMonteCarlo.R')
-plot(NULL,NULL,xlab='generation',ylab='hypervolume','l',ylim=c(0,1.1),xlim=c(0,500))
-legend('bottomright',paste(runs$strain,' pop=',runs$pop,' gen=',runs$gen),col=rainbow(nrow(runs)),pch='l',cex=0.5)
+runs=runs[order(runs$strain,runs$generation,runs$pop),]
+source('./data/hypervolumeMonteCarlo.R',local=TRUE)
+plot(NULL,NULL,
+     xlab='generation',
+     ylab='% hypervolume vs wt',
+     ylim=c(100,105),
+     xlim=c(0,max(GDMO$generation))
+)
+require('RColorBrewer')
+colours=c(brewer.pal(n=nrow(runs[runs$strain=='metallireducens',]),name='Blues'),
+          brewer.pal(n=nrow(runs[runs$strain=='sulfurreducens',]),name='Reds')
+)
+legend('bottomright',paste(runs$strain,' pop=',runs$pop,' gen=',runs$gen),col=colours,pch='l',cex=0.5)
 for(j in 1:nrow(runs)){
   w=GDMO[GDMO$id==runs[j,'id'],]
-  measureat = seq(1,max(w$generation),max(w$generation)%/%20)
+  measureat = seq(1,max(w$generation),2)
   volume=sapply(measureat,function(i){
-    hypervolumeMonteCarlo(w[w$generation==i,c('biomass','maxsyn','minsyn')],200)
+    hypervolumeMonteCarlo(w[w$generation==i,c('biomass','maxsyn','minsyn')],100)
   })
-  lines(measureat,volume/max(volume),col=rainbow(nrow(runs))[j])
+  lines(measureat,volume/min(volume)*100,col=colours[j])
 }
 @
 \caption{GDMO of G. Sulfurreducens, with population 500}
@@ -62,13 +77,16 @@ The most interesting  biological data was produced by GDMO, since this was able 
 
 \subsection{Geobacter Sulfurreducens}
 <<echo=FALSE>>=
-       s<-GDMO[GDMO$strain=='sulfurreducens'&GDMO$generation==500,]
+       source('./data/dominated.R',local=TRUE)
+       s<-GDMO[GDMO$strain=='sulfurreducens'&GDMO$generation==500&GDMO$pop==500,]
        natural<-unique(GDMO[GDMO$strain=='sulfurreducens'&GDMO$knockouts==0,c('biomass','maxsyn','minsyn')])
        s$nbiomass <- s$biomass/natural$biomass
        s$nmaxsyn <- s$maxsyn/natural$maxsyn
-       h<-fnondominated(s[,c('nbiomass','nmaxsyn')])
+       h<-s[,c('nbiomass','nmaxsyn')]
+       h<-h[!dominated(h,h),]
        s$nminsyn <- s$minsyn/natural$minsyn
-       l<-fnondominated(s[,c('nbiomass','nminsyn')])
+       l<-s[,c('nbiomass','nminsyn')]
+       l<-l[!dominated(l,l),]
 @
 Figure~\ref{fig:sulfurreducensmax} shows a roughly linear tradeoff between maximum reduction potential and biomass generation is possible, up to a maximum of a \SI{\Sexpr{(max(h$nmaxsyn))*100}}{\percent} of wild type yield, at the expense of \SI{\Sexpr{min(h$nbiomass)}}{\percent} biomass production.
 This is as expected, as the organism has a constant amount of energy available for either growth or electron exchange.
@@ -86,6 +104,8 @@ Figure~\ref{fit:sulfurreducensmin} shows a pronounced jump at around 0.935 in th
 @
 \caption{Pareto front of maximum reduction potential for Geobacter Sulfurreducens, normalized against wild type}
 \end{figure}
+
+\todo{these don't actually look how I've said they do}
 
 \begin{figure}
 \label{fig:sulfurreducensmin}
