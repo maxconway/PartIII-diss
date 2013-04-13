@@ -7,6 +7,7 @@
 *.tex
 *.RData
 *.bll
+*.bbl
 *.blg
 .Rhistory
 PartIII-diss.Rproj
