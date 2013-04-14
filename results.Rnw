@@ -66,9 +66,9 @@ colours=c(brewer.pal(n=nrow(runs[runs$strain=='metallireducens',]),name='Blues')
 legend('bottomright',paste(runs$strain,' pop=',runs$pop,' gen=',runs$gen),col=colours,pch='l',cex=0.5)
 for(j in 1:nrow(runs)){
   w=GDMO[GDMO$id==runs[j,'id'],]
-  measureat = seq(1,max(w$generation),2)
+  measureat = seq(1,max(w$generation),max(w$generation)%/%10)
   volume=sapply(measureat,function(i){
-    hypervolumeMonteCarlo(w[w$generation==i,c('biomass','maxsyn','minsyn')],100)
+    hypervolumeMonteCarlo(w[w$generation==i,c('biomass','maxsyn','minsyn')],10)
   })
   lines(measureat,volume/min(volume)*100,col=colours[j])
 }
