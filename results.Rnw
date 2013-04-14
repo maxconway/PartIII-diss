@@ -132,9 +132,21 @@ names=getNames('geo_s_react.reduced')
 chromosomes=getChromosomes(id)
 colnames(chromosomes)<-c((names),c('maxsyn','minsyn','biomass','front','crowding','?'))#assignments don't hit
 chromosomes$totalknockouts=GDMO[GDMO$id==id&GDMO$generation==500,'knockouts']
-image(1:500,y=1:212,as.matrix(chromosomes[order(chromosomes$biomass,chromosomes$maxsyn),1:212]),col=c('ghostwhite','red'))
+#principle components
+require(stats,quietly=TRUE)
+pc<-princomp(chromosomes[,c('maxsyn','minsyn','biomass')])
+chromosomes$pos<-pc$scores[,1]
 @
-One major advantage of GDMO is the information it can give not only on the 
+One major advantage of GDMO is that the shape of the pareto front can yield information about the properties of pathways. 
+Figure~\ref{fig:geoSknockouts} shows the knockouts in each member of the final population. 
+Knockout vectors are ordered by the first principle component of their objectives, which lies roughly along the Pareto front, while genes are ordered according to a manual subsystem clustering.
+
+
+
+<<fig.label='fig:geoSknockouts', fig.cap='knockouts in G. Sulfurreducens>>=
+image(1:500,y=1:212,as.matrix(chromosomes[sort.list(chromosomes$pos),1:212]),col=c('ghostwhite','red'))
+@
+
 
 \todo{divide each optimization into discrete chunks}
 \todo{discuss pathways involved in each chunk}
