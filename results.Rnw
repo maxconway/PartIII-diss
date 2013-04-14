@@ -142,12 +142,35 @@ One major advantage of GDMO is that the shape of the pareto front can yield info
 Figure~\ref{fig:geoSknockouts} shows the knockouts in each member of the final population. 
 Knockout vectors are ordered by the first principle component of their objectives, which lies roughly along the Pareto front, while genes are ordered according to a manual subsystem clustering.
 
-
-
 <<fig.label='fig:geoSknockouts', fig.cap='knockouts in G. Sulfurreducens>>=
-image(1:500,y=1:212,as.matrix(chromosomes[sort.list(chromosomes$pos),1:212]),col=c('ghostwhite','red'))
+image(x=1:500,
+      y=1:212,
+      data=as.matrix(chromosomes[sort.list(-chromosomes$pos),1:212]),
+      col=c('ghostwhite','red'),
+      ylab='genes',
+      xlab='strain'
+      )
 @
 
+Figure~\ref{fig:geoSknockouts} does show an obvious banding pattern in the gene axis, showing the essentiality of certain gene groups, and a slight trend in the strains as they move away from wild type.
+
+In order to get deeper insight, we need to look at more focussed groups of strains;
+Figure~\ref{fig:sulfurreducensmin} \label{sec:gskink} shows a pronounced kink in the biomass vs minimum synthesis Pareto front of G. Sulfurreducens. \todo{find these in chart}
+To look at this in more detail, we can extract the relevant sets of strains and compare the their knockouts.
+<<>>=
+A <- merge(chromosomes,l) # A is all strains in the minsyn vs biomass pareto front
+A <- A[0.92<A$nbiomass & A$nbiomass<0.94, ] #with 0.92 < biomass < 0.94
+low <- A[A$nminsyn<1.003,grepl('GSU.*',colnames(A))]  # select knockout vectors with synthesis < 1.003
+high <- A[A$nminsyn>1.003,grepl('GSU.*',colnames(A))] # select knockout vectors with synthesis > 1.003
+diff <- colSums(high)-colSums(low)        # knockout difference between knockout vector sets
+head(diff[order(-abs(diff))])             # most relevant knockouts
+@
+Of course, just seeing the genes that are knocked out is not as helpful as seeing the actual reactions affected. To find these, we can refer back to the original gene annotations of the metabolic network.
+<<>>=
+geo_s_react=read.delim('./data/geo_s_react.txt',)
+geo_s_react[geo_s_react$GeneAssociation %in% names(head(diff[order(-abs(diff))],20)),c('OfficialName','Equation')]
+@
+\todo{find out if these should by synthetic lethal}
 
 \todo{divide each optimization into discrete chunks}
 \todo{discuss pathways involved in each chunk}
