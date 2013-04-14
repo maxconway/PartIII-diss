@@ -126,6 +126,7 @@ fnondominated <- function(df){
   df[nondominated(df),]
 }
 @
+\todo{correct this}
 
 \subsection{GDLS}
 GDLS does not run to a hard limit, but instead stops when it finds the local optimum, so we cannot work out a useful upper bound on running time. 
@@ -138,7 +139,15 @@ Four variables are used here to parametrize GDLS:
 \item \texttt{knockouts}, the maximum total number of knockouts (fixed at 40 for fair comparison with GDMO).
 \end{enumerate}
 Here we can see that the metabolic model used will have a very large effect, since not only does this effect the time to complete one FBA evaluation, but the space that much be searched around a given solution is \(\texttt{modelsize}^\texttt{neighbourhoodsize}\). This means that, total search time for one solution is roughly \(\texttt{modelsize}^(3+\texttt{neighbourhoodsize}\), once the time to conduct FBA is included. Overall, this gives a lower bound on running time of \(\texttt{M} * \texttt{modelsize} ^ ( 3 + \texttt{neighbourhoodsize}\).
-\todo{is branching factor number of search paths, or is it at each stage}
+\todo{is branching factor number of search paths, or is it at each stage?}
+
+To find the relative effects of these parameters on execution time, the trials listed in table~\ref{tab:GDLS} were performed.
+<<GDLSevals,results='asis'>>=
+data(GDLS)
+require(xtable,quietly=TRUE)
+GDLS.runs=aggregate(GDLS[,c('strain','cputime','walltime','iterations','id','nbhdsz','M','FBAtime')],by=list(GDLS$id),max)
+print(xtable(GDLS.runs[,c('strain','cputime','nbhdsz','M')],caption='GDLS evaluations completed',label='tab:GDLS'))
+@
 
 \section{Instrumentation}
 To facilitate comparison, the genetic design strategies were instrumented in order to record every candidate solution that they produced. This allows the improvement of the candidates over time to be seen. 
