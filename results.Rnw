@@ -17,6 +17,7 @@ GDMO<-merge(GDMO,natural)
 # normalize biomass
 GDMO$biomass <- GDMO$biomass/GDMO$natbiomass
 GDMO$maxsyn <- GDMO$maxsyn/GDMO$natmaxsyn
+GDMO$minsyn <- GDMO$minsyn/GDMO$natminsyn
 @
 A number of different evolution runs were completed for each strain, summarised in table~\ref{tab:GDMOevals}. As can be seen, more evaluations were done for smaller population and generation sizes, in order to find the importance of these two factors on running time and performance.
 
@@ -89,6 +90,7 @@ The most interesting  biological data was produced by GDMO, since this was able 
 <<echo=FALSE>>=
        source('./data/dominated.R',local=TRUE)
        s<-GDMO[GDMO$strain=='sulfurreducens'&GDMO$generation==500&GDMO$pop==500,]
+
        h<-s[,c('biomass','maxsyn')]
        h<-h[!dominated(h,h),]
        l<-s[,c('biomass','minsyn')]
