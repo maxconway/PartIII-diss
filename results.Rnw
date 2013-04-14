@@ -8,7 +8,15 @@ This section discusses each strategy individually, before comparing their relati
 
 \subsection{GDMO}
 <<echo=FALSE>>=
+#load
 data(GDMO)
+# find natural production
+natural<-unique(GDMO[GDMO$knockouts==0,c('strain','biomass','maxsyn','minsyn')])
+colnames(natural)<-c('strain','natbiomass','natmaxsyn','natminsyn')
+GDMO<-merge(GDMO,natural)
+# normalize biomass
+GDMO$biomass <- GDMO$biomass/GDMO$natbiomass
+GDMO$maxsyn <- GDMO$maxsyn/GDMO$natmaxsyn
 @
 A number of different evolution runs were completed for each strain, summarised in table~\ref{tab:GDMOevals}. As can be seen, more evaluations were done for smaller population and generation sizes, in order to find the importance of these two factors on running time and performance.
 
@@ -42,6 +50,7 @@ To ensure that the final front is the best possible, three approaches are possib
 <<echo=FALSE>>=
 runs=aggregate(GDMO[,c('id','strain','pop','generation')],by=list(GDMO$id),max)
 runs=runs[order(runs$strain,runs$generation,runs$pop),]
+source('./data/dominated.R',local=TRUE)
 source('./data/hypervolumeMonteCarlo.R',local=TRUE)
 plot(NULL,NULL,
      xlab='generation',
@@ -49,7 +58,7 @@ plot(NULL,NULL,
      ylim=c(100,105),
      xlim=c(0,max(GDMO$generation))
 )
-require('RColorBrewer')
+require('RColorBrewer',quietly=TRUE)
 colours=c(brewer.pal(n=nrow(runs[runs$strain=='metallireducens',]),name='Blues'),
           brewer.pal(n=nrow(runs[runs$strain=='sulfurreducens',]),name='Reds')
 )
@@ -80,13 +89,9 @@ The most interesting  biological data was produced by GDMO, since this was able 
 <<echo=FALSE>>=
        source('./data/dominated.R',local=TRUE)
        s<-GDMO[GDMO$strain=='sulfurreducens'&GDMO$generation==500&GDMO$pop==500,]
-       natural<-unique(GDMO[GDMO$strain=='sulfurreducens'&GDMO$knockouts==0,c('biomass','maxsyn','minsyn')])
-       s$nbiomass <- s$biomass/natural$biomass
-       s$nmaxsyn <- s$maxsyn/natural$maxsyn
-       h<-s[,c('nbiomass','nmaxsyn')]
+       h<-s[,c('biomass','maxsyn')]
        h<-h[!dominated(h,h),]
-       s$nminsyn <- s$minsyn/natural$minsyn
-       l<-s[,c('nbiomass','nminsyn')]
+       l<-s[,c('biomass','minsyn')]
        l<-l[!dominated(l,l),]
 @
 Figure~\ref{fig:sulfurreducensmax} shows a roughly linear tradeoff between maximum reduction potential and biomass generation is possible, up to a maximum of a \SI{\Sexpr{(max(h$nmaxsyn))*100}}{\percent} of wild type yield, at the expense of \SI{\Sexpr{min(h$nbiomass)}}{\percent} biomass production.
@@ -101,7 +106,7 @@ Figure~\ref{fit:sulfurreducensmin} shows a pronounced jump at around 0.935 in th
 \begin{figure}
 \label{fig:sulfurreducensmax}
 <<echo=FALSE>>=
-       plot(nmaxsyn~nbiomass,h,xlab='biomass',ylab='reduction potential')
+       plot(maxsyn~biomass,h,xlab='biomass',ylab='reduction potential')
 @
 \caption{Pareto front of maximum reduction potential for Geobacter Sulfurreducens, normalized against wild type}
 \end{figure}
@@ -111,7 +116,7 @@ Figure~\ref{fit:sulfurreducensmin} shows a pronounced jump at around 0.935 in th
 \begin{figure}
 \label{fig:sulfurreducensmin}
 <<echo=FALSE>>=
-       plot(nminsyn~nbiomass,l,xlab='biomass',ylab='reduction potential')
+       plot(minsyn~biomass,l,xlab='biomass',ylab='reduction potential')
 @
 \caption{Pareto front of minimum reduction potential for Geobacter Sulfurreducens, normalized against wild type}
 \end{figure}
