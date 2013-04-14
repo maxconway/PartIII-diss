@@ -3,11 +3,11 @@ hypervolumeMonteCarlo <- function(x,num){
     return(max(x)-min(x))
   }
   # deterministic portion
-  included=myrange(x$biomass)*myrange(x$maxsyn)*myrange(x$minsyn)
-  excluded=max(x$biomass)*max(x$maxsyn)*max(x$minsyn)-included
+  included=myrange(x$nbiomass)*myrange(x$nmaxsyn)*myrange(x$nminsyn)
+  excluded=max(x$nbiomass)*max(x$nmaxsyn)*max(x$nminsyn)-included
   
   #stochastic portion
-  points=data.frame(biomass=runif(num,min(x$biomass),max(x$biomass)),maxsyn=runif(num,min(x$maxsyn),max(x$maxsyn)),minsyn=runif(num,min(x$minsyn),max(x$minsyn)))
+  points=data.frame(nbiomass=runif(num,min(x$nbiomass),max(x$nbiomass)),nmaxsyn=runif(num,min(x$nmaxsyn),max(x$nmaxsyn)),nminsyn=runif(num,min(x$nminsyn),max(x$nminsyn)))
   a=dominated(points,x)
   
   return(sum(a)/num*included + excluded)

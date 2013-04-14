@@ -15,9 +15,9 @@ natural<-unique(GDMO[GDMO$knockouts==0,c('strain','biomass','maxsyn','minsyn')])
 colnames(natural)<-c('strain','natbiomass','natmaxsyn','natminsyn')
 GDMO<-merge(GDMO,natural)
 # normalize biomass
-GDMO$biomass <- GDMO$biomass/GDMO$natbiomass
-GDMO$maxsyn <- GDMO$maxsyn/GDMO$natmaxsyn
-GDMO$minsyn <- GDMO$minsyn/GDMO$natminsyn
+GDMO$nbiomass <- GDMO$biomass/GDMO$natbiomass
+GDMO$nmaxsyn <- GDMO$maxsyn/GDMO$natmaxsyn
+GDMO$nminsyn <- GDMO$minsyn/GDMO$natminsyn
 @
 A number of different evolution runs were completed for each strain, summarised in table~\ref{tab:GDMOevals}. As can be seen, more evaluations were done for smaller population and generation sizes, in order to find the importance of these two factors on running time and performance.
 
@@ -68,7 +68,7 @@ for(j in 1:nrow(runs)){
   w=GDMO[GDMO$id==runs[j,'id'],]
   measureat = seq(1,max(w$generation),max(w$generation)%/%10)
   volume=sapply(measureat,function(i){
-    hypervolumeMonteCarlo(w[w$generation==i,c('biomass','maxsyn','minsyn')],10)
+    hypervolumeMonteCarlo(w[w$generation==i,c('nbiomass','nmaxsyn','nminsyn')],10)
   })
   lines(measureat,volume/min(volume)*100,col=colours[j])
 }
@@ -91,9 +91,9 @@ The most interesting  biological data was produced by GDMO, since this was able 
        source('./data/dominated.R',local=TRUE)
        s<-GDMO[GDMO$strain=='sulfurreducens'&GDMO$generation==500&GDMO$pop==500,]
 
-       h<-s[,c('biomass','maxsyn')]
+       h<-s[,c('nbiomass','nmaxsyn')]
        h<-h[!dominated(h,h),]
-       l<-s[,c('biomass','minsyn')]
+       l<-s[,c('nbiomass','nminsyn')]
        l<-l[!dominated(l,l),]
 @
 Figure~\ref{fig:sulfurreducensmax} shows a roughly linear tradeoff between maximum reduction potential and biomass generation is possible, up to a maximum of a \SI{\Sexpr{(max(h$nmaxsyn))*100}}{\percent} of wild type yield, at the expense of \SI{\Sexpr{min(h$nbiomass)}}{\percent} biomass production.
@@ -102,13 +102,13 @@ This is as expected, as the organism has a constant amount of energy available f
 In figure~\ref{fig:sulfurreducensmin}, we again see an expected general negative gradient. 
 However, only a small increase over wild type of \SI{\Sexpr{(max(l$nminsyn))*100}}{\percent} was possible while maintaining viability.
 This is likely to be because, while there are likely to be many knockouts that limit the energy that can be used in biomass generation, and so leave a surplus reduction potential, knockout strategies that actually force higher reduction require much more extensive modifications.
-Figure~\ref{fit:sulfurreducensmin} shows a pronounced jump at around 0.935 in the biomass axis. \todo{discuss kink}
+Figure~\ref{fit:sulfurreducensmin} shows a pronounced jump at around 0.935 in the biomass axis. This is discussed further in Section~\ref{sec:gskink}. \label{sec:gskinkfind}
 
 
 \begin{figure}
 \label{fig:sulfurreducensmax}
 <<echo=FALSE>>=
-       plot(maxsyn~biomass,h,xlab='biomass',ylab='reduction potential')
+       plot(nmaxsyn~nbiomass,h,xlab='biomass',ylab='reduction potential')
 @
 \caption{Pareto front of maximum reduction potential for Geobacter Sulfurreducens, normalized against wild type}
 \end{figure}
@@ -118,7 +118,7 @@ Figure~\ref{fit:sulfurreducensmin} shows a pronounced jump at around 0.935 in th
 \begin{figure}
 \label{fig:sulfurreducensmin}
 <<echo=FALSE>>=
-       plot(minsyn~biomass,l,xlab='biomass',ylab='reduction potential')
+       plot(nminsyn~nbiomass,l,xlab='biomass',ylab='reduction potential')
 @
 \caption{Pareto front of minimum reduction potential for Geobacter Sulfurreducens, normalized against wild type}
 \end{figure}
@@ -130,11 +130,12 @@ source('./data/getNames.R',local=TRUE)
 source('./data/getChromosomes.R',local=TRUE)
 names=getNames('geo_s_react.reduced')
 chromosomes=getChromosomes(id)
-colnames(chromosomes)<-c((names),c('maxsyn','minsyn','biomass','front','crowding','?'))#assignments don't hit
-chromosomes$totalknockouts=GDMO[GDMO$id==id&GDMO$generation==500,'knockouts']
+colnames(chromosomes)<-c((names),c('maxsyn','minsyn','biomass','front','crowding','?'))
+chromosomes[,grepl('GSU.*',colnames(chromosomes))]<-chromosomes[,grepl('GSU.*',colnames(chromosomes))]==1
+chromosomes<-cbind(chromosomes,GDMO[GDMO$id==id&GDMO$generation==500,c('knockouts','nmaxsyn','nminsyn','nbiomass')])
 #principle components
 require(stats,quietly=TRUE)
-pc<-princomp(chromosomes[,c('maxsyn','minsyn','biomass')])
+pc<-princomp(chromosomes[,c('nmaxsyn','nminsyn','nbiomass')])
 chromosomes$pos<-pc$scores[,1]
 @
 One major advantage of GDMO is that the shape of the pareto front can yield information about the properties of pathways. 
