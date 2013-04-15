@@ -19,7 +19,7 @@ data(GDMO)
 natural<-unique(GDMO[GDMO$knockouts==0,c('strain','biomass','maxsyn','minsyn')])
 colnames(natural)<-c('strain','natbiomass','natmaxsyn','natminsyn')
 GDMO<-merge(GDMO,natural)
-# normalize biomass
+# normalize objectives
 GDMO$nbiomass <- GDMO$biomass/GDMO$natbiomass
 GDMO$nmaxsyn <- GDMO$maxsyn/GDMO$natmaxsyn
 GDMO$nminsyn <- GDMO$minsyn/GDMO$natminsyn
@@ -28,7 +28,7 @@ A number of different evolution runs were completed for each strain, summarised 
 
 <<GDMOevals,echo=FALSE,results='asis'>>=
 require(xtable,quietly=TRUE)
-runs=aggregate(GDMO[,c('strain','pop','generation','id')],by=list(GDMO$id),max)[,c('strain','pop','generation')]
+runs=aggregate(GDMO[,c('strain','pop','generation','id')],by=list(GDMO$id),max)
 runs$population=runs$pop
 print(xtable(runs[,c('strain','population','generation')],caption='GDMO evaluations completed',label='tab:GDMOevals'))
 @
@@ -43,19 +43,13 @@ This works out at around \SI{\Sexpr{mean(GDMO[GDMO$generation==200&GDMO$strain==
 
 The investigation of G. Sulfurreducens with \num{1000} generations in particular shows one of the disadvantages of an evolutionary algorithm, and many other global optimization algorithms: since the algorithm is constantly searching for a better solution, if we stop it at an arbitrary point then there is no guarantee that the solution at this point is the best available. 
 
-To ensure that the final front is the best possible, three approaches are possible:
-\begin{enumerate}
-\item Simply take the maximum value. This is not ideal since the best pareto front overall may miss helpful solutions.
-\item find the non-dominated front of the union of a number of good solutions. This approach was used in the end, since it is relatively simple but effective and can be performed retrospectively.
-\item A simulated annealing style approach where mutation rate decreases over time. I obtained an open-source version of the NSGA-II algorithm, the core of GDMO, and implemented this approach on this with an exponentially dropping mutation rate. Ultimately, I decided to take approach 2 to avoid the introduction of an unnecessary extra parameter.
-\end{enumerate}
-
-\todo{not necessarily here, but do write about 3d pareto fronts}
-<<echo=FALSE>>=
-runs=aggregate(GDMO[,c('id','strain','pop','generation')],by=list(GDMO$id),max)
+<<echo=FALSE,dependson=GDMOevals>>=
 runs=runs[order(runs$strain,runs$generation,runs$pop),]
 source('./data/dominated.R',local=TRUE)
 source('./data/hypervolumeMonteCarlo.R',local=TRUE)
+@
+
+<<convergence,fig.cap='Convergence of evolution runs',cache=TRUE>>=
 plot(NULL,NULL,
      xlab='generation',
      ylab='% hypervolume vs wt',
@@ -67,18 +61,41 @@ colours=c(brewer.pal(n=nrow(runs[runs$strain=='metallireducens',]),name='Blues')
           brewer.pal(n=nrow(runs[runs$strain=='sulfurreducens',]),name='Reds')
 )
 legend('bottomright',paste(runs$strain,' pop=',runs$pop,' gen=',runs$gen),col=colours,pch='l',cex=0.5)
-@
-
-<<convergence,fig.cap='GDMO of G. Sulfurreducens, with population 500',cache=TRUE>>=
+natvol<-1  #due to normalization
 for(j in 1:nrow(runs)){
   w=GDMO[GDMO$id==runs[j,'id'],]
   measureat = seq(1,max(w$generation),max(w$generation)%/%10)
   volume=sapply(measureat,function(i){
-    hypervolumeMonteCarlo(w[w$generation==i,c('nbiomass','nmaxsyn','nminsyn')],1)
+    hypervolumeMonteCarlo(w[w$generation==i,c('nbiomass','nmaxsyn','nminsyn')],2) # must be > 1
   })
-  lines(measureat,volume/min(volume)*100,col=colours[j])
+  lines(measureat,volume*100,col=colours[j])
 }
 @
+
+To ensure that the final front is the best possible, three approaches are possible:
+\begin{enumerate}
+\item Simply take the maximum value. This is not ideal since the best pareto front overall may miss helpful solutions.
+\item find the non-dominated front of the union of a number of good solutions. This approach was is relatively simple but effective and can be performed retrospectively. \label{enum:approachtaken}
+\item A simulated annealing style approach where mutation rate decreases over time. I obtained an open-source version of the NSGA-II algorithm, the core of GDMO, and implemented this approach on this with an exponentially dropping mutation rate. Ultimately, I decided to take approach 2 to avoid the introduction of an unnecessary extra parameter.
+\end{enumerate}
+
+
+Approach~\ref{enum:approachtaken} was taken, since this is effective without requiring modification to the core algoritm. At this stage this was used to select fronts for further analysis---for each strain the pareto front was found for the union of:
+\begin{enumerate}
+\todo{didn't actually do this}
+\item The front at generation 250 for a population of 1000 and
+\item the front at generations \numlist{400;450;500} for a population of 500.
+\end{enumerate}
+<<fronts,echo=FALSE>>=
+#unused
+sulfurreducens<-with(GDMO,GDMO[strain=='sulfurreducens'&((pop==500&generation%in%c(400,450,500))
+                                                         |
+                                                           (pop==1000&generation==250)])
+sulfurreducens<-sulfurreducens[!dominated(sulfurreducens[,c('nmaxsyn','nbiomass','nminsyn')])]
+@
+
+
+\todo{not necessarily here, but do write about 3d pareto fronts}
 
 \subsubsection{Quality}
 Solution quality can only really be evaluated in comparison with other techniques and with the literature.\todo{not done}
@@ -91,20 +108,20 @@ The most interesting  biological data was produced by GDMO, since this was able 
 
 \subsection{Geobacter Sulfurreducens}
 \subsubsection{Fronts}
-<<echo=FALSE>>=
+<<s_fronts,echo=FALSE>>=
        source('./data/dominated.R',local=TRUE)
        s<-GDMO[GDMO$strain=='sulfurreducens'&GDMO$generation==500&GDMO$pop==500,]
 
-       h<-s[,c('nbiomass','nmaxsyn')]
-       h<-h[!dominated(h,h),]
+       hs<-s[,c('nbiomass','nmaxsyn')]
+       hs<-hs[!dominated(hs,]
        l<-s[,c('nbiomass','nminsyn')]
-       l<-l[!dominated(l,l),]
+       ls<-ls[!dominated(ls),]
 @
-Figure~\ref{fig:sulfurreducensmax} shows a roughly linear tradeoff between maximum reduction potential and biomass generation is possible, up to a maximum of a \SI{\Sexpr{(max(h$nmaxsyn))*100}}{\percent} of wild type yield, at the expense of \SI{\Sexpr{min(h$nbiomass)}}{\percent} biomass production.
+Figure~\ref{fig:sulfurreducensmax} shows a roughly linear tradeoff between maximum reduction potential and biomass generation is possible, up to a maximum of a \SI{\Sexpr{(max(hs$nmaxsyn))*100}}{\percent} of wild type yield, at the expense of \SI{\Sexpr{min(hs$nbiomass)}}{\percent} biomass production.
 This is as expected, as the organism has a constant amount of energy available for either growth or electron exchange.
 
 In figure~\ref{fig:sulfurreducensmin}, we again see an expected general negative gradient. 
-However, only a small increase over wild type of \SI{\Sexpr{(max(l$nminsyn))*100}}{\percent} was possible while maintaining viability.
+However, only a small increase over wild type of \SI{\Sexpr{(max(ls$nminsyn))*100}}{\percent} was possible while maintaining viability.
 This is likely to be because, while there are likely to be many knockouts that limit the energy that can be used in biomass generation, and so leave a surplus reduction potential, knockout strategies that actually force higher reduction require much more extensive modifications.
 Figure~\ref{fit:sulfurreducensmin} shows a pronounced jump at around 0.935 in the biomass axis. This is discussed further in Section~\ref{sec:gskink}. \label{sec:gskinkfind}
 
@@ -112,7 +129,7 @@ Figure~\ref{fit:sulfurreducensmin} shows a pronounced jump at around 0.935 in th
 \begin{figure}
 \label{fig:sulfurreducensmax}
 <<echo=FALSE>>=
-       plot(nmaxsyn~nbiomass,h,xlab='biomass',ylab='reduction potential')
+       plot(nmaxsyn~nbiomass,hs,xlab='biomass',ylab='reduction potential')
 @
 \caption{Pareto front of maximum reduction potential for Geobacter Sulfurreducens, normalized against wild type}
 \end{figure}
@@ -122,7 +139,7 @@ Figure~\ref{fit:sulfurreducensmin} shows a pronounced jump at around 0.935 in th
 \begin{figure}
 \label{fig:sulfurreducensmin}
 <<echo=FALSE>>=
-       plot(nminsyn~nbiomass,l,xlab='biomass',ylab='reduction potential')
+       plot(nminsyn~nbiomass,ls,xlab='biomass',ylab='reduction potential')
 @
 \caption{Pareto front of minimum reduction potential for Geobacter Sulfurreducens, normalized against wild type}
 \end{figure}
@@ -162,8 +179,8 @@ Figure~\ref{fig:geoSknockouts} does show an obvious banding pattern in the gene 
 In order to get deeper insight, we need to look at more focussed groups of strains;
 Figure~\ref{fig:sulfurreducensmin} \label{sec:gskink} shows a pronounced kink in the biomass vs minimum synthesis Pareto front of G. Sulfurreducens. \todo{find these in chart}
 To look at this in more detail, we can extract the relevant sets of strains and compare the their knockouts.
-<<>>=
-A <- merge(chromosomes,l) # A is all strains in the minsyn vs biomass pareto front
+<<kinkanalysis>>=
+A <- merge(chromosomes,ls) # A is all strains in the minsyn vs biomass pareto front
 A <- A[0.92<A$nbiomass & A$nbiomass<0.94, ] # strains with 0.92 < biomass < 0.94
 low <- A[A$nminsyn<1.003,grepl('GSU.*',colnames(A))]  # strains with synthesis < 1.003
 high <- A[A$nminsyn>1.003,grepl('GSU.*',colnames(A))] # strains with synthesis > 1.003
@@ -194,5 +211,17 @@ This shows that 10 knockouts (to the left of the line) are highly common. These 
 <<>>= 
 geo_s_react[geo_s_react$GeneAssociation %in% names(head(k2,10)),c('OfficialName','Equation')]
 @
+
+\subsection{Geobacter Metallireducens}
+\todo{some intro text to Geobacter Metallireducens}
+\subsubsection{Fronts}
+The general shape of the Pareto front in G. Metallireducens is shown in figure~\ref{m_fronts}.
+<<m_fronts,echo=FALSE>>=
+require('lattice',quietly=TRUE)
+m<-GDMO[GDMO$strain=='metallireducens'&GDMO$generation==500&GDMO$pop==500,]
+cloud(m$nbiomass~m$nmaxsyn*m$nminsyn)
+@
+
+
 
 \todo{show that in E-coli, known strategies have been replicated}

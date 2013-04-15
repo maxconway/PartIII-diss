@@ -30,3 +30,7 @@ dominated <- function(p,front){
     }))
   }
 }
+
+dominated <- function(df){
+  dominated(df,df)
+}
