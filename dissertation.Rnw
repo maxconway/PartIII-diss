@@ -17,11 +17,16 @@ opts_chunk$set(concordance=TRUE)
 \input{abstract.tex}
 \end{abstract}
 
-\include{introduction}
-\include{background}
-\include{methods}
-\include{results}
-\include{conclusion}
+<<introduction,child='introduction.Rnw'>>= 
+@
+<<background,child='background.Rnw'>>= 
+@
+<<methods,child='methods.Rnw'>>= 
+@
+<<results,child='results.Rnw'>>= 
+@
+<<conclusion,child='conclusion.Rnw'>>= 
+@
 
 \bibliographystyle{plain}
 \bibliography{bibliography}
