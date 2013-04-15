@@ -18,6 +18,9 @@ singledom <- function(p,front){
 dominated <- function(p,front){
   # if p is a point, points in front that dominate p
   # if p is a set of points, is each point dominated?
+  if(nargs()==1){
+    return(dominated(p,p))
+  }
   
   if(!nrow(p)>1){
     return(apply(front,1,function(f){
@@ -29,8 +32,4 @@ dominated <- function(p,front){
       singledom(a,front)
     }))
   }
-}
-
-dominated <- function(df){
-  dominated(df,df)
 }
