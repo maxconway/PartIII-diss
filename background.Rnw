@@ -4,10 +4,12 @@ This chapter provides some background information on the biology and computation
 Detailed discussion of the specific approaches of the genetic design algorithms under study can be found in the methods chapter.
 %ref
 
+\todo{add more biology}
+
 \section{Geobacter}
 Geobacter is a genus of anaerobic proteobacteria with a number of possible industrial applications, stemming from their ability to utilize soluble and insoluble metal oxides as electron acceptors. 
 The ability to perform these unusual redox reactions could be relevant to bioremediation, both by allowing clean up of hydrocarbon spills in anaerobic conditions, and by fixing oxides of toxic and radioactive metals, such as uranium. 
-Furthermore, the ability to utilize insoluble materials as electron acceptors make Geobacter interesting as a candidate for use in bacterial fuel cells with, and without, memebranes, and the pilli used to connect to transport electrons have applications in themselves, as nanowires.
+Furthermore, the ability to utilize insoluble materials as electron acceptors make Geobacter interesting as a candidate for use in bacterial fuel cells with, and without, branes, and the pilli used to connect to transport electrons have applications in themselves, as nanowires.
 
 The first Geobacter species to be isolated was Geobacter Metallireducens, from sandy sediment in the Pontomac River, Washington D.C. in 1987, by Derek Lovley. 
 The most studied species is Geobacter Sulfurreducens.
