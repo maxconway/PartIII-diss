@@ -1,8 +1,44 @@
 % !TeX root = dissertation.Rnw 
 
-<<ResultsSetup,autodep=TRUE,>>=
+<<ResultsSetup,autodep=TRUE,echo=FALSE>>=
+#sources
+source('./data/dominated.R',local=TRUE)
+source('./data/dominated.R',local=TRUE)
+source('./data/hypervolumeMonteCarlo.R',local=TRUE)
 
+#load
+data(GDMO)
+# find natural production
+natural<-unique(GDMO[GDMO$knockouts==0,c('strain','biomass','maxsyn','minsyn')])
+colnames(natural)<-c('strain','natbiomass','natmaxsyn','natminsyn')
+# normalize objectives
+GDMO<-merge(GDMO,natural)
+GDMO$nbiomass <- GDMO$biomass/GDMO$natbiomass
+GDMO$nmaxsyn <- GDMO$maxsyn/GDMO$natmaxsyn
+GDMO$nminsyn <- GDMO$minsyn/GDMO$natminsyn
+
+runs=aggregate(GDMO[,c('strain','pop','generation','id')],by=list(GDMO$id),max)
+runs$population=runs$pop
+
+#GDLS
+data(GDLS)
+GDLS.runs=unique(GDLS[,c('strain','id','nbhdsz','M')])
+GDLS<-merge(GDLS,natural)
+# normalize objectives
+GDLS$nbiomass <- GDLS$biomass/GDLS$natbiomass
+GDLS$nmaxsyn <- GDLS$maxsyn/GDLS$natmaxsyn
+GDLS$nminsyn <- GDLS$minsyn/GDLS$natminsyn
 @
+
+<<s_fronts,echo=FALSE>>=
+       s<-GDMO[GDMO$strain=='sulfurreducens'&GDMO$generation==500&GDMO$pop==500,]
+
+       hs<-s[,c('nbiomass','nmaxsyn')]
+       hs<-hs[!dominated(hs),]
+       ls<-s[,c('nbiomass','nminsyn')]
+       ls<-ls[!dominated(ls),]
+@
+
 
 \chapter{Results}
 This chapter details the results of the investigation, in terms of the properties of the design strategies used, and the biological properties of the strains designed.
@@ -12,24 +48,10 @@ This chapter details the results of the investigation, in terms of the propertie
 This section discusses each strategy individually, before comparing their relative merits.
 
 \subsection{GDMO}
-<<results.GDMO.load,echo=FALSE>>=
-#load
-data(GDMO)
-# find natural production
-natural<-unique(GDMO[GDMO$knockouts==0,c('strain','biomass','maxsyn','minsyn')])
-colnames(natural)<-c('strain','natbiomass','natmaxsyn','natminsyn')
-GDMO<-merge(GDMO,natural)
-# normalize objectives
-GDMO$nbiomass <- GDMO$biomass/GDMO$natbiomass
-GDMO$nmaxsyn <- GDMO$maxsyn/GDMO$natmaxsyn
-GDMO$nminsyn <- GDMO$minsyn/GDMO$natminsyn
-@
 A number of different evolution runs were completed for each strain, summarised in table~\ref{tab:GDMOevals}. As can be seen, more evaluations were done for smaller population and generation sizes, in order to find the importance of these two factors on running time and performance.
 
 <<GDMOevals,echo=FALSE,results='asis'>>=
 require(xtable,quietly=TRUE)
-runs=aggregate(GDMO[,c('strain','pop','generation','id')],by=list(GDMO$id),max)
-runs$population=runs$pop
 print(xtable(runs[,c('strain','population','generation')],caption='GDMO evaluations completed',label='tab:GDMOevals'))
 @
 
@@ -43,13 +65,8 @@ This works out at around \SI{\Sexpr{mean(GDMO[GDMO$generation==200&GDMO$strain==
 
 The investigation of G. Sulfurreducens with \num{1000} generations in particular shows one of the disadvantages of an evolutionary algorithm, and many other global optimization algorithms: since the algorithm is constantly searching for a better solution, if we stop it at an arbitrary point then there is no guarantee that the solution at this point is the best available. 
 
-<<echo=FALSE,dependson=GDMOevals>>=
-runs=runs[order(runs$strain,runs$generation,runs$pop),]
-source('./data/dominated.R',local=TRUE)
-source('./data/hypervolumeMonteCarlo.R',local=TRUE)
-@
-
 <<convergence,fig.cap='Convergence of evolution runs',cache=TRUE>>=
+runs=runs[order(runs$strain,runs$generation,runs$pop),]
 plot(NULL,NULL,
      xlab='generation',
      ylab='% hypervolume vs wt',
@@ -81,16 +98,16 @@ To ensure that the final front is the best possible, three approaches are possib
 
 
 Approach~\ref{enum:approachtaken} was taken, since this is effective without requiring modification to the core algoritm. At this stage this was used to select fronts for further analysis---for each strain the pareto front was found for the union of:
-\begin{enumerate}
 \todo{didn't actually do this}
+\begin{enumerate}
 \item The front at generation 250 for a population of 1000 and
 \item the front at generations \numlist{400;450;500} for a population of 500.
 \end{enumerate}
-<<fronts,echo=FALSE>>=
+<<fronts,echo=FALSE,eval=FALSE>>=
 #unused
 sulfurreducens<-with(GDMO,GDMO[strain=='sulfurreducens'&((pop==500&generation%in%c(400,450,500))
                                                          |
-                                                           (pop==1000&generation==250)])
+                                                           (pop==1000&generation==250)]))
 sulfurreducens<-sulfurreducens[!dominated(sulfurreducens[,c('nmaxsyn','nbiomass','nminsyn')])]
 @
 
@@ -100,23 +117,28 @@ sulfurreducens<-sulfurreducens[!dominated(sulfurreducens[,c('nmaxsyn','nbiomass'
 \subsubsection{Quality}
 Solution quality can only really be evaluated in comparison with other techniques and with the literature.\todo{not done}
 
+\subsection{GDLS}
+The first stage of technical evaluation of GDLS is to find the effect of neighbourhood size and branching factor on the quality of solutions.
+<<GDLS:solutionquality>>=
+
+@
+
 
 \subsection{Comparison}
+Figure~\ref{fig:comparison} shows the results of the algorithms on one plot. 
+The axes chosen are just maximum synthesis and biomass production, since these are what GDLs optimizes.
+<<comparison>>=
+plot(nbiomass~nmaxsyn,hs,col='pink')
+points(nbiomass~nmaxsyn,GDLS[GDLS$strain=='sulfurreducens',],col='red')
+@
+We can see that the solutions produced by GDLS are in the Pareto front, but that they do not achieve as high synthesis rates as GDMO. This is likely to be due to the inability of GDLs to make jumps over more than a certain number of knockouts.
+\todo{find out knockout difference}
 
 \section{biological evaluation}
 The most interesting  biological data was produced by GDMO, since this was able to show how the pathways altered varied with the solution properties. \todo{actually note this after}However, it is first interesting to note which known engineered strains were replicated.
 
 \subsection{Geobacter Sulfurreducens}
 \subsubsection{Fronts}
-<<s_fronts,echo=FALSE>>=
-       source('./data/dominated.R',local=TRUE)
-       s<-GDMO[GDMO$strain=='sulfurreducens'&GDMO$generation==500&GDMO$pop==500,]
-
-       hs<-s[,c('nbiomass','nmaxsyn')]
-       hs<-hs[!dominated(hs,]
-       l<-s[,c('nbiomass','nminsyn')]
-       ls<-ls[!dominated(ls),]
-@
 Figure~\ref{fig:sulfurreducensmax} shows a roughly linear tradeoff between maximum reduction potential and biomass generation is possible, up to a maximum of a \SI{\Sexpr{(max(hs$nmaxsyn))*100}}{\percent} of wild type yield, at the expense of \SI{\Sexpr{min(hs$nbiomass)}}{\percent} biomass production.
 This is as expected, as the organism has a constant amount of energy available for either growth or electron exchange.
 
@@ -211,6 +233,7 @@ This shows that 10 knockouts (to the left of the line) are highly common. These 
 <<>>= 
 geo_s_react[geo_s_react$GeneAssociation %in% names(head(k2,10)),c('OfficialName','Equation')]
 @
+\todo{plot knockouts onto genome indicies}
 
 \subsection{Geobacter Metallireducens}
 \todo{some intro text to Geobacter Metallireducens}
