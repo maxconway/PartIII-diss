@@ -1,2 +1,4 @@
 % !TeX root = dissertations.Rnw   
-\chapter{Conclusion}
+\chapter{Conclusions and further work}
+-summarise each section
+-read Kathryn's
