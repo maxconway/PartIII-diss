@@ -1,7 +1,7 @@
 %TC:macro \todo [0]
 %TC:group algorithm 0 0
-%TC:group knitrout 0 0
-\documentclass[a4paper,twoside]{report}
+%TC:group knitrout 0 -2
+\documentclass[a4paper,twoside,12pt]{report}
 
 \usepackage{mystyle}
 
@@ -9,13 +9,19 @@
 
 <<include=FALSE>>=
 opts_chunk$set(concordance=TRUE)
+opts_knit$set(self.contained=FALSE)
 @
 
-\author{Maxwell Conway \thanks{Supervisor: Pietro Lio'}}
+\author{Maxwell Conway \thanks{Supervisor: Pietro Lio' \\Collaboration: Muktak Aklujkar and Derek Lovley (University of Massachusetts, Amherst)}}
 \date{}
+
+\maketitle
+
 \begin{abstract}
 \input{abstract.tex}
 \end{abstract}
+
+\cleardoublepage
 
 <<introduction,child='introduction.Rnw'>>= 
 @
@@ -30,6 +36,17 @@ opts_chunk$set(concordance=TRUE)
 
 \bibliographystyle{plain}
 \bibliography{bibliography}
+
 \appendix
+
+\chapter{Expenses}
+\begin{tabular}{l | r}
+Matlab Licence & university licence\\
+\end{tabular}
+
+\chapter{Materials}
+-computers used
+-datasets used + citations
+-languages
 
 \end{document}
