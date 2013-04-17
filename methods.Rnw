@@ -15,7 +15,9 @@ The metabolic models used are listed in table~\ref{tab:models}. The columns used
 \item[Synthetic Objective] The material that we seek to overproduce.
 \end{description}
 
-\todo{needs citations}
+\todo{discuss model reduction}
+
+\todo{table needs citations}
 \begin{table}
     \begin{tabular}{|l|l|l|l|}
     \hline
@@ -38,12 +40,12 @@ Its primary energy source is chosen as Acetate, with traces of a number of other
 This model~\ref{Sun2009} is based on a model of G. Sulfurreducens, but with the addition of a number of reactions that are not present in the base model. 
 
 \subsubsection{iaf-1260}
-iAF-1260~\ref{Feist2007} is a widely used reconstruction of the E. Coli metabolism.
+iAF1260~\ref{Feist2007} is a widely used reconstruction of the E. Coli metabolism.
 Due to the extensive use of E. coli as a model organism, it is far better characterized than the Geobacteraceae, and hence 3-4 times as many reactions are known. As discussed in section~\ref{sex:complexity}, this results in much slower analysis of these networks.
 \todo{couple E-coli and geobacter?}
 
 \subsubsection{iJO-1366}
-iJO1366~\ref{Orth2011} is newer and somewhat more comprehensive than iAF-1260.
+iJO1366~\ref{Orth2011} is newer and somewhat more comprehensive than iAF1260.
 
 \subsection{Optimization Libraries}
 Flux Balance Analysis is a linear optimization problem, and can therefore be solved by the techniques of Mathematical Programming; in addtion, exhaustive enumeration of knockout strategies when coupled with Flux Balance Analysis is a Mixed Integer Programming problem. 
@@ -60,6 +62,8 @@ The timing section~\ref{sec:complexity} is entirely based on GLPK. This is becau
 \subsection{Computing resources}
 
 \subsection{Languages and programs}
+The genetic design algorithms used were written in Matlab, while analysis was conducted in R due to its superior text handling abilities.
+Git was used for version control, while the parsing and reduction of metabolic models was automated using the Make build system.
 
 \section{Overview of Genetic Design Techniques Studied}
 
