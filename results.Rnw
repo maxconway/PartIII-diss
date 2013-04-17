@@ -3,19 +3,10 @@
 <<ResultsSetup,autodep=TRUE,echo=FALSE>>=
 #sources
 source('./data/dominated.R',local=TRUE)
-source('./data/dominated.R',local=TRUE)
 source('./data/hypervolumeMonteCarlo.R',local=TRUE)
 
 #load
 data(GDMO)
-# find natural production
-natural<-unique(GDMO[GDMO$knockouts==0,c('strain','biomass','maxsyn','minsyn')])
-colnames(natural)<-c('strain','natbiomass','natmaxsyn','natminsyn')
-# normalize objectives
-GDMO<-merge(GDMO,natural)
-GDMO$nbiomass <- GDMO$biomass/GDMO$natbiomass
-GDMO$nmaxsyn <- GDMO$maxsyn/GDMO$natmaxsyn
-GDMO$nminsyn <- GDMO$minsyn/GDMO$natminsyn
 
 runs=aggregate(GDMO[,c('strain','pop','generation','id')],by=list(GDMO$id),max)
 runs$population=runs$pop
@@ -135,7 +126,7 @@ We can see that the solutions produced by GDLS are in the Pareto front, but that
 \todo{find out knockout difference}
 
 \section{biological evaluation}
-The most interesting  biological data was produced by GDMO, since this was able to show how the pathways altered varied with the solution properties. \todo{actually note this after}However, it is first interesting to note which known engineered strains were replicated.
+The most interesting biological data was produced by GDMO, since this was able to show how the pathways altered varied with the solution properties. \todo{actually note this after}However, it is first interesting to note which known engineered strains were replicated.
 
 \subsection{Geobacter Sulfurreducens}
 \subsubsection{Fronts}
@@ -176,11 +167,16 @@ chromosomes=getChromosomes(id)
 colnames(chromosomes)<-c((names),c('maxsyn','minsyn','biomass','front','crowding','?'))
 chromosomes[,grepl('GSU.*',colnames(chromosomes))]<-chromosomes[,grepl('GSU.*',colnames(chromosomes))]==1
 chromosomes<-cbind(chromosomes,GDMO[GDMO$id==id&GDMO$generation==500,c('knockouts','nmaxsyn','nminsyn','nbiomass')])
+#deduplicate
+chromosomes<-unique(chromosomes)
 #principle components
 require(stats,quietly=TRUE)
 pc<-princomp(chromosomes[,c('nmaxsyn','nminsyn','nbiomass')])
 chromosomes$pos<-pc$scores[,1]
+#prepare reaction list
+sulfurreducens.reactions=read.delim('./data/geo_s_react.txt',)
 @
+
 One major advantage of GDMO is that the shape of the pareto front can yield information about the properties of pathways. 
 Figure~\ref{fig:geoSknockouts} shows the knockouts in each member of the final population. 
 Knockout vectors are ordered by the first principle component of their objectives, which lies roughly along the Pareto front, while genes are ordered according to a manual subsystem clustering.
@@ -193,6 +189,10 @@ image(x=1:500,
       ylab='genes',
       xlab='strain'
       )
+heatmap(x=as.matrix(chromosomes[,1:212]*1),
+        Rowv=chromosomes$pos,
+        Colv=cor(chromosomes[1,1:212])
+        )
 @
 
 Figure~\ref{fig:geoSknockouts} does show an obvious banding pattern in the gene axis, showing the essentiality of certain gene groups, and a slight trend in the strains as they move away from wild type.
@@ -208,11 +208,18 @@ low <- A[A$nminsyn<1.003,grepl('GSU.*',colnames(A))]  # strains with synthesis <
 high <- A[A$nminsyn>1.003,grepl('GSU.*',colnames(A))] # strains with synthesis > 1.003
 diff <- colSums(high)-colSums(low)        #  knockout vector sets
 k1 = head(diff[order(-abs(diff))],20)     # most relevant knockouts
+
+heatmap(x=as.matrix(A[,1:212]*1),
+        Rowv=NA,
+        Colv=NULL,
+        labRow=A$nminsyn,
+        labCol=colnames(A[,1:212]),
+        distfun=function(x){dist(x,'manhattan')}
+)
 @
 Of course, just seeing the genes that are knocked out is not as helpful as seeing the actual reactions affected. To find these, we can refer back to the original gene annotations of the metabolic network.
 <<>>=
-geo_s_react=read.delim('./data/geo_s_react.txt',)
-geo_s_react[geo_s_react$GeneAssociation %in% names(k1),c('OfficialName','Equation')]
+sulfurreducens.reactions[sulfurreducens.reactions$GeneAssociation %in% names(k1),c('OfficialName','Equation')]
 @
 \todo{find out if these should by synthetic lethal}
 
@@ -231,9 +238,14 @@ abline(v=10)
 @
 This shows that 10 knockouts (to the left of the line) are highly common. These may be of particular intrest.
 <<>>= 
-geo_s_react[geo_s_react$GeneAssociation %in% names(head(k2,10)),c('OfficialName','Equation')]
+sulfurreducens.reactions[sulfurreducens.reactions$GeneAssociation %in% names(head(k2,10)),c('OfficialName','Equation')]
 @
 \todo{plot knockouts onto genome indicies}
+
+One downside of simply counting knockouts is that it does not account for epistasis, which might be caused by multiple knockouts being needed to force the use of a particular pathway.
+<<s.epistasis>>=
+
+@
 
 \subsection{Geobacter Metallireducens}
 \todo{some intro text to Geobacter Metallireducens}
@@ -245,6 +257,15 @@ m<-GDMO[GDMO$strain=='metallireducens'&GDMO$generation==500&GDMO$pop==500,]
 cloud(m$nbiomass~m$nmaxsyn*m$nminsyn)
 @
 
+\subsection{Escherichia coli}
+Since iJO1366 is the superset of iAF1260, and more faithful to the real metabolic network of E. Coli, this will be discussed here unless otherwise stated.
+
+<<ecoli.data>>=
+iJO1366.anaerobic<-GDMO[GDMO$strain=='iJO1366-anaerobic',]
+@
+
+\subsubsection{Front shape}
+\todo{something going seriously wrong}
 
 
 \todo{show that in E-coli, known strategies have been replicated}
