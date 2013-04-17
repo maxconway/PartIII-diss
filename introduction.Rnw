@@ -1,2 +1,7 @@
 % !TeX root = dissertation.Rnw   
 \chapter{Introduction}
+\section{Embedded code}
+The Knitr~\ref{Xie2011} dynamic report generation packages has been used to embed chunks of R code into this document, which shows the analysis conducted, and generates the graphs and tables that are included.
+This means that everything is consistently up to date, and enables the reader to follow the reasoning used, and to understand in more detail any areas that interest them.
+Obviously data files cannot be contained here, and some of the more mundane data handling scripts are also omitted. These can be found at \todo{put stuff online}.
+The code chunks inserted are by no means necessary to understanding this document, they can be ignored or alternatively, a version with them removed is available at \todo{insert url}.
