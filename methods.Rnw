@@ -2,7 +2,7 @@
 \chapter{Methods}
 \section{Data and Materials}
 \subsection{Metabolic Models}
-To conduct flux balance analysis, one needs a model of the metabolism of the organism in question. A number of exchange formats exist for these models and there are many more formats internal to tools, however after some investigation it was clear that the \em{de-facto} standard format is the use of tab-separated value tables, with the reactions specified in a space-separated format. 
+To conduct flux balance analysis, one needs a model of the metabolism of the organism in question. A number of exchange formats exist for these models and there are many more formats internal to tools, however after some investigation it was clear that the de-facto standard format is the use of tab-separated value tables, with the reactions specified in a space-separated format. 
 \todo{describe column layout}
 Unfortunately, the order and names of columns in these tables is not standardized, and the two Geobacter models that I used were supplied in an ad-hoc format, which was a problem given the inflexible import facilities of Matlab, and the fact that these tables could have cells with >250 characters. 
 To fix this, I rewrote the import facilities in GDMO and GDLS in order to give them greater flexibility in the file formats that they could read.
@@ -105,7 +105,7 @@ Using a multi-objective optimization algorithm in this context has a number of a
 The core problem of this kind of genetic design (which does not use network structure information) is 0-1 integer linear programming~\cite{Karp1972}---indeed GDLS works by repeatedly solving small cases of this problem.
 This means that this problem is NP-complete, and assuming \(\mathcal{P} \neq \mathcal{NP}\), these algorithms have running times that are not bounded by any polynomial.
 This suggests extremely long running times for some combinations of input parameters.
-This makes it important to be able to form an \emph{a priori} estimate of the running time, so that computation time is not wasted with infeasibly long runs.
+This makes it important to be able to form an a priori estimate of the running time, so that computation time is not wasted with infeasibly long runs.
 These very long running times mean that forming a model purely by regression analysis over the whole parameter space would be impractical, and so a partly analytic approach must be taken, by examining the algorithm's procedures.
 
 \subsection{Flux Balance Analysis}
@@ -119,7 +119,7 @@ In order to characterize the differences between running times for different mod
 \label{fig:FBAtimings}
 \centering
 <<echo=FALSE>>=
-FBAtimings <- read.csv("./experiments/FBAtimings.csv")
+data('FBAtimings')
 plot(time ~ strain, data=FBAtimings,
         range=0,
         xlab='Metabolic Model',
@@ -132,66 +132,132 @@ plot(time ~ strain, data=FBAtimings,
 \subsection{GDMO}
 Since GDMO is an evolutionary algorithm, the number of objective function evaluations performed is proportional to the population size multiplied by the number of generations evaluated. 
 Each objective evaluation requires that Flux Balance Analysis is conducted a constant number of times. 
-This means that the total runtime can be modelled can be modelled via in R as the interaction of the three quantities of iterations, population and time to conduct one round of FBA.
+This means that the total runtime can be modelled  as the interaction of the three quantities of iterations, population and time to conduct one round of FBA.
 
-%This is a time for a bit of sweave
-%actually do stats
-\begin{figure}
-\centering
-<<echo=FALSE>>=
+<<methods_GDMO_timings1>>=
 data('GDMO')
-GDMO = GDMO[,c('strain','cputime','generation','pop','id','FBAtime','walltime')]
-GDMO = unique(GDMO)
-GDMO$strain=as.factor(GDMO$strain)
-GDMO = GDMO[sample(nrow(GDMO)),]
-GDMO.train = head(GDMO,nrow(GDMO)*0.9)
-GDMO.test = tail(GDMO,nrow(GDMO)*0.1)
-GDMO.fit = lm(cputime~pop*generation*strain,GDMO.train)
-GDMO.test$prediction=predict(GDMO.fit,newdata=GDMO.test)
-plot(I(prediction/cputime)~strain,GDMO.test)
+GDMO.timing = GDMO[,c('strain','generation','pop','id','FBAtime','walltime','cputime')]
+GDMO.timing = unique(GDMO.timing)
+GDMO.timing = GDMO.timing[sample(nrow(GDMO.timing)),]
+GDMO.train = head(GDMO.timing,nrow(GDMO.timing)*0.9)
+GDMO.test = tail(GDMO.timing,nrow(GDMO.timing)*0.1)
 @
-\end{figure}
-\todo{label}
-\todo{reference}
+
+<<methods_GDMO_timings2,fig.cap='predicted time taken using time for 1 FBA round'>>=
+GDMO.fit = lm(cputime~pop:generation:FBAtime,GDMO.train)
+GDMO.test$prediction=predict(GDMO.fit,newdata=GDMO.test)
+plot(prediction~cputime,
+     GDMO.test,
+     col=GDMO.test$strain,
+     xlab='actual cputime (s)',
+     ylab='predicted cputime (s)')
+legend('topleft',
+       legend=unique(GDMO.test$strain),
+       col=unique(GDMO.test$strain),pch='O')
+@
+Figure~\ref{fig:methods_GDMO_timings2} shows the predictions produced by this linear model, which uses the time taken to conduct one round of FBA.
+Clearly, the prediction holds well within each strain, but there are big differences between strains.
+This indicates that time to conduct Flux Balance Analysis is not, in fact, a good predictor between strains, despite its consistency wihtin strains. Luckily, this in-silico data is available in abundance, so it was possible to get round this problem by simply fitting four separate models, as shown in figure~\ref{fig:methods_GDMO_timings3}.
+
+<<methods_GDMO_timings3,fig.cap='predicted time taken conditional on strain'>>=
+GDMO.fit = lm(cputime~pop:generation:strain,GDMO.train)
+GDMO.test$prediction=predict(GDMO.fit,newdata=GDMO.test)
+plot(prediction~cputime,
+     GDMO.test,
+     col=GDMO.test$strain,
+     xlab='actual cputime (s)',
+     ylab='predicted cputime (s)')
+legend('topleft',
+       legend=unique(GDMO.test$strain),
+       col=unique(GDMO.test$strain),pch='O')
+@
 
 \subsubsection{Hypervolume computation}
 Techniques to compare the output of multi-objective optimization algorithms is an area of active research. 
 Ultimately, one cannot definitively say that pareto front A is better than pareto front B unless every point in B is dominated by a point in A. 
 %equation
-One relatively common metric for comparison of pareto fronts is the hypervolume enclosed by the front.
-This enclosed hypervolume is smaller than the volume behind a hypersurface fitted to the front, which meant that the typical technique of fitting a curve to the pareto front and integrating this curve was inappropriate. Instead, I wrote a custom Monte Carlo integration function, which would work out the actual dominated area, while exploiting the performance advantages of Monte-Carlo techniques to allow for efficient use even on extremely large fronts. The following R code is used to calculated dominance relations.
-\todo{might need listings package}
+One relatively common metric for comparison of pareto fronts is the hypervolume enclosed by the front. 
+This provides some measure of both spread and optimality of solutions, and reduces to the product of the objectives with only one solution. 
+Since hypervolume increases with spread of solutions, it only makes sense to use when we aim to maximize all objectives; this is already the case with this research, but nevertheless all objectives will still be normalized against the wild-type phenotype, to avoid undue influence from their relative absolute magnitudes.
 
-<<echo=TRUE>>=
+Off the shelf techniques for finding volumes of point clouds tend to find the volume of the convex hull, which is larger than the dominated volume, and in general the efficient calculation of volumes of point clouds is an area of active research in Computer Graphics.\todo{cite}
+
+To avoid some of these problems, I wrote a custom Monte Carlo integration function, which could calculate the hypervolume to any desired degree of accuracy. This was further optimized by a deterministic bounding box---this quickly partitions the objective space into sections:
+\begin{enumerate}
+\item the volume dominated by all solutions\label{enum:alldom},
+\item the volume dominated by some of the solutions and\label{enum:somedom}
+\item the volume that dominates all the solutions.\label{enum:nodom}
+\end{enumerate}
+We know that volume~\ref{enum:alldom} should be included in the hypervolume and that volume~\ref{enum:nodom} should not, so the search space can be narrowed down to just volume~\ref{enum:somedom}.
+The domination calculation itself was optimized by a short circuit evaluation: the majority of samples taken in the Monte Carlo simulation either dominate many solutions or very few, so many can be found to be inside the dominated volume by comparison to only a small number of pareto-optimal points.
+
+<<dominated,echo=F,cache=TRUE>>=
 dominates <- function(a,b){
   # does a dominate b?
   any(a>b)&!any(a<b)
 }
 
-dominators <- function(sol,frame){
-  # how many rows in frame dominate sol?
-  apply(frame,1,function(t){
-    dominates(t,sol)
-  })
+#helper function
+singledom <- function(p,front){
+  stopifnot(is.data.frame(p) 
+            & nrow(p)==1
+            )  # this also covers NULL
+  for(i in 1:nrow(front)){
+    a=front[i,]
+    if(dominates(a,p)){
+      return(TRUE)
+    }
+  } 
+  return(FALSE)
 }
 
-nondominated <- function(x){
-  # which rows of x are nondominated?
-  # Returns:
-  #  boolean vector
-  apply(x,1,function(a){
-    !any(dominators(a,x))
-  })
-}
-
-fnondominated <- function(df){
-  # which rows of x are nondominated?
-  # Returns:
-  #  data.frame
-  df[nondominated(df),]
+dominated <- function(p,front){
+  # if on arg, return self dominance
+  if(nargs()==1){
+    return(dominated(p,p))
+  }
+  
+  # if p is a point, points in front that dominate p
+  if(!nrow(p)>1){
+    return(apply(front,1,function(f){
+      dominates(f,p)
+    }))
+  }
+  
+  # if p is a set of points, is each point dominated?
+  if(is.data.frame(p) & nrow(p)>1){
+    return(apply(p,1,function(a){
+      singledom(a,front)
+    }))
+  }
 }
 @
-\todo{correct this}
+
+<<hypervolumeMonteCarlo,echo=T,dependson=c('dominated'),cache=TRUE>>=
+hypervolumeMonteCarlo <- function(x,num){
+  range<-function(x){
+    return(max(x)-min(x))
+  }
+  # deterministic portion
+  excluded=range(x$nbiomass)*range(x$nmaxsyn)*range(x$nminsyn)
+  included=max(x$nbiomass)*max(x$nmaxsyn)*max(x$nminsyn) - excluded
+  
+  #stochastic portion
+  points=data.frame(nbiomass=runif(num,
+                                   min(x$nbiomass),
+                                   max(x$nbiomass)),
+                    nmaxsyn =runif(num,
+                                   min(x$nmaxsyn),
+                                   max(x$nmaxsyn)),
+                    nminsyn =runif(num,
+                                   min(x$nminsyn),
+                                   max(x$nminsyn)))
+  a=dominated(points,x)
+  
+  return(excluded*sum(a)/num + included)
+}
+@
+
 
 \subsection{GDLS}
 GDLS does not run to a hard limit, but instead stops when it finds the local optimum, so we cannot work out a useful upper bound on running time. 
@@ -203,17 +269,23 @@ Four variables are used here to parametrize GDLS:
 \item \texttt{M}, the number of search paths to maintain at each stage; and
 \item \texttt{knockouts}, the maximum total number of knockouts (fixed at 40 for fair comparison with GDMO).
 \end{enumerate}
-Here we can see that the metabolic model used will have a very large effect, since not only does this effect the time to complete one FBA evaluation, but the space that much be searched around a given solution is \(\texttt{modelsize}^\texttt{neighbourhoodsize}\). This means that, total search time for one solution is roughly \(\texttt{modelsize}^(3+\texttt{neighbourhoodsize}\), once the time to conduct FBA is included. Overall, this gives a lower bound on running time of \(\texttt{M} * \texttt{modelsize} ^ ( 3 + \texttt{neighbourhoodsize}\).
+Here we can see that the metabolic model used will have a very large effect, since not only does this effect the time to complete one FBA evaluation, but the space that much be searched around a given solution is \(\texttt{modelsize} ^ \texttt{neighbourhoodsize}\). This means that, total search time for one solution is roughly \(\texttt{modelsize}^{(3+\texttt{neighbourhoodsize})}\), once the time to conduct FBA is included. Overall, this gives a lower bound on running time of \(\texttt{M} * \texttt{modelsize} ^{ ( 3 + \texttt{neighbourhoodsize})}\).
 \todo{is branching factor number of search paths, or is it at each stage?}
 
-To find the relative effects of these parameters on execution time, the trials listed in table~\ref{tab:GDLS} were performed.
+To find the relative effects of these parameters on execution time, the trials listed in table~\ref{tab:GDLSevals} were performed.
 <<GDLSevals,results='asis'>>=
 data(GDLS)
-require(xtable,quietly=TRUE)
-GDLS.runs=aggregate(GDLS[,c('strain','cputime','walltime','iterations','id','nbhdsz','M','FBAtime')],by=list(GDLS$id),max)
-print(xtable(GDLS.runs[,c('strain','cputime','nbhdsz','M')],caption='GDLS evaluations completed',label='tab:GDLS'))
+library(xtable,quietly=TRUE)
+GDLS.runs=unique(GDLS[,c('strain','nbhdsz','M')])
+print(xtable(
+  GDLS.runs[,c('strain','nbhdsz','M')],
+  caption='GDLS evaluations completed',
+  label='tab:GDLSevals',
+  display=c('d','s','d','d')
+  ),include.rownames=FALSE)
 @
+\todo{need to actually make a prediction}
 
 \section{Instrumentation}
 To facilitate comparison, the genetic design strategies were instrumented in order to record every candidate solution that they produced. This allows the improvement of the candidates over time to be seen. 
-Tests were conducted to ensure that this instrumentation code did not influence the results by its own execution time; it was found to run fast enough that the slowdown was undetectable.
+Tests were conducted to ensure that this instrumentation code did not influence the results by its own execution time; it was found to run fast enough that the slowdown was not detectable above noise.

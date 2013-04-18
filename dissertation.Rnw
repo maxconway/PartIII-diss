@@ -9,30 +9,37 @@
 
 <<include=FALSE>>=
 opts_chunk$set(concordance=TRUE)
+opts_chunk$set(split=TRUE)
 opts_knit$set(self.contained=FALSE)
 @
-
-\author{Maxwell Conway \thanks{Supervisor: Pietro Lio' \\Collaboration: Muktak Aklujkar and Derek Lovley (University of Massachusetts, Amherst)}}
+\title{TBD}
+\author{Maxwell Conway\\ Supervisor: Pietro Lio'\\ Collaboration: Muktak Aklujkar and Derek Lovley (University of Massachusetts, Amherst)}
 \date{}
-
-\maketitle
 
 \begin{abstract}
 \input{abstract.tex}
 \end{abstract}
 
 \cleardoublepage
+\tableofcontents
+\listoffigures
+\listoftables
 
 <<introduction,child='introduction.Rnw'>>= 
 @
+\clearpage
 <<background,child='background.Rnw'>>= 
 @
+\clearpage
 <<methods,child='methods.Rnw'>>= 
 @
+\clearpage
 <<results,child='results.Rnw'>>= 
 @
+\clearpage
 <<conclusion,child='conclusion.Rnw'>>= 
 @
+\clearpage
 
 \bibliographystyle{plain}
 \bibliography{bibliography}
@@ -45,8 +52,8 @@ Matlab Licence & university licence\\
 \end{tabular}
 
 \chapter{Materials}
--computers used
--datasets used + citations
--languages
+\todo{computers used}
+\todo{datasets used and citations}
+\todo{languages}
 
 \end{document}

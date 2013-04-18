@@ -1,3 +1,5 @@
+stop('this function should be obtained via purl')
+
 dominates <- function(a,b){
   # does a dominate b?
   any(a>b)&!any(a<b)

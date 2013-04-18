@@ -1,7 +1,9 @@
+
 require(gdata)
 GDMO=NULL
 for(file in list.files(path = './experiments/', pattern = '.*GDMO.*.log',full.names=FALSE)){
-  data = read.delim(paste('./experiments/',file,sep=''),header=FALSE)
+  data = read.delim(paste('./experiments/',file,sep=''),
+                    header=FALSE)
   colnames(data) = c('cputime','walltime','iterations','knockouts','maxsyn','minsyn','biomass','front','crowding','generation','pop','id','unknown')
   #strains
   if(startsWith(file,'iaf1260-ac')) data$strain<-'iaf1260-ac'
@@ -22,7 +24,8 @@ for(file in list.files(path = './experiments/', pattern = '.*GDMO.*.log',full.na
   #join
   GDMO=rbind(GDMO,data)
 }
-data('FBAtimings')
+GDMO$strain=as.factor(GDMO$strain)
+FBAtimings<-read.csv('FBAtimings.csv')
 FBAtimings$FBAtime=FBAtimings$time
 FBAtime=aggregate(FBAtime~strain,FBAtimings[,c('strain','FBAtime')],mean)
 GDMO=merge(GDMO,FBAtime)

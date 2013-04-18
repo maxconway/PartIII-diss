@@ -1,3 +1,4 @@
+stop('this function should be optained via purl')
 hypervolumeMonteCarlo <- function(x,num){
   myrange<-function(x){
     return(max(x)-min(x))

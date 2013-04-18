@@ -1,4 +1,4 @@
-dissertation.pdf : dissertation.tex bibliography.bib abstract.tex introduction.tex background.tex methods.tex results.tex conclusion.tex mystyle.sty
+dissertation.pdf : dissertation.tex bibliography.bib abstract.tex mystyle.sty
 	pdflatex dissertation
 	bibtex dissertation
 	pdflatex dissertation
@@ -6,6 +6,10 @@ dissertation.pdf : dissertation.tex bibliography.bib abstract.tex introduction.t
 
 #dissertation.tex : dissertation.Rnw abstract.tex introduction.tex methods.tex results.tex conclusion.tex
 #	R CMD Sweave dissertation.Rnw
+
+dissertation.tex : dissertation.Rnw introduction.Rnw methods.Rnw results.Rnw conclusion.Rnw
+#	R CMD Sweave $<
+	Rscript -e "library(knitr); knit('dissertation.Rnw')"
 
 %.tex : %.Rnw
 #	R CMD Sweave $<
@@ -30,3 +34,18 @@ clean :
 
 bibliography.bib : ../../Documents/bibtex/Part\ III\ project.bib
 	cp ../../Documents/bibtex/Part\ III\ project.bib bibliography.bib
+
+data : ./data/FBAtimings.csv ./data/geo_m_react.txt ./data/geo_s_react.txt ./data/iaf1260-ac.txt
+	rm ./data/*.RData
+  
+./data/FBAtimings.csv : ./experiments/FBAtimings.csv
+	rsync ./experiments/FBAtimings.csv ./data/
+
+./data/geo_m_react.txt : ./experiments/geo_m_react.txt
+	rsync ./experiments/geo_m_react.txt ./data/
+
+./data/geo_s_react.txt : ./experiments/geo_s_react.txt
+	rsync ./experiments/geo_s_react.txt ./data/
+
+./data/iaf1260-ac.txt : ./experiments/iaf1260-ac.txt
+	rsync ./experiments/geo_s_react.txt ./data/
