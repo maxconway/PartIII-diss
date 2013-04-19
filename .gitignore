@@ -11,3 +11,11 @@
 *.blg
 .Rhistory
 PartIII-diss.Rproj
+*.lof
+*.lot
+*.tdo
+*.toc
+knitr.sty
+texcount.pl
+*.png
+cache/*

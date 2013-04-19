@@ -134,7 +134,7 @@ Since GDMO is an evolutionary algorithm, the number of objective function evalua
 Each objective evaluation requires that Flux Balance Analysis is conducted a constant number of times. 
 This means that the total runtime can be modelled  as the interaction of the three quantities of iterations, population and time to conduct one round of FBA.
 
-<<methods_GDMO_timings1>>=
+<<methods_GDMO_timings1,cache=TRUE>>=
 data('GDMO')
 GDMO.timing = GDMO[,c('strain','generation','pop','id','FBAtime','walltime','cputime')]
 GDMO.timing = unique(GDMO.timing)
@@ -143,7 +143,7 @@ GDMO.train = head(GDMO.timing,nrow(GDMO.timing)*0.9)
 GDMO.test = tail(GDMO.timing,nrow(GDMO.timing)*0.1)
 @
 
-<<methods_GDMO_timings2,fig.cap='predicted time taken using time for 1 FBA round'>>=
+<<methods_GDMO_timings2,fig.cap='predicted time taken using time for 1 FBA round',dependson='methods_GDMO_timings1'>>=
 GDMO.fit = lm(cputime~pop:generation:FBAtime,GDMO.train)
 GDMO.test$prediction=predict(GDMO.fit,newdata=GDMO.test)
 plot(prediction~cputime,
@@ -151,7 +151,7 @@ plot(prediction~cputime,
      col=GDMO.test$strain,
      xlab='actual cputime (s)',
      ylab='predicted cputime (s)')
-legend('topleft',
+legend('topright',
        legend=unique(GDMO.test$strain),
        col=unique(GDMO.test$strain),pch='O')
 @
@@ -159,7 +159,7 @@ Figure~\ref{fig:methods_GDMO_timings2} shows the predictions produced by this li
 Clearly, the prediction holds well within each strain, but there are big differences between strains.
 This indicates that time to conduct Flux Balance Analysis is not, in fact, a good predictor between strains, despite its consistency wihtin strains. Luckily, this in-silico data is available in abundance, so it was possible to get round this problem by simply fitting four separate models, as shown in figure~\ref{fig:methods_GDMO_timings3}.
 
-<<methods_GDMO_timings3,fig.cap='predicted time taken conditional on strain'>>=
+<<methods_GDMO_timings3,fig.cap='predicted time taken conditional on strain',dependson='methods_GDMO_timings1'>>=
 GDMO.fit = lm(cputime~pop:generation:strain,GDMO.train)
 GDMO.test$prediction=predict(GDMO.fit,newdata=GDMO.test)
 plot(prediction~cputime,

@@ -7,7 +7,7 @@ dissertation.pdf : dissertation.tex bibliography.bib abstract.tex mystyle.sty
 #dissertation.tex : dissertation.Rnw abstract.tex introduction.tex methods.tex results.tex conclusion.tex
 #	R CMD Sweave dissertation.Rnw
 
-dissertation.tex : dissertation.Rnw introduction.Rnw methods.Rnw results.Rnw conclusion.Rnw
+dissertation.tex introduction.tex methods.tex results.tex conclusion.tex backgorund.tex: dissertation.Rnw introduction.Rnw methods.Rnw results.Rnw conclusion.Rnw background.Rnw
 #	R CMD Sweave $<
 	Rscript -e "library(knitr); knit('dissertation.Rnw')"
 
@@ -34,6 +34,9 @@ clean :
 
 bibliography.bib : ../../Documents/bibtex/Part\ III\ project.bib
 	cp ../../Documents/bibtex/Part\ III\ project.bib bibliography.bib
+
+wordcount :
+	texcount -total *.tex
 
 data : ./data/FBAtimings.csv ./data/geo_m_react.txt ./data/geo_s_react.txt ./data/iaf1260-ac.txt
 	rm ./data/*.RData

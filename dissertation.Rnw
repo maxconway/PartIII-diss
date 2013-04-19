@@ -8,9 +8,16 @@
 \begin{document}
 
 <<include=FALSE>>=
-opts_chunk$set(concordance=TRUE)
-opts_chunk$set(split=TRUE)
-opts_knit$set(self.contained=FALSE)
+opts_chunk$set(
+  concordance=TRUE,
+  split=TRUE,
+  size='scriptsize',
+  tidy=FALSE,
+  autodep=TRUE
+  )
+opts_knit$set(
+  self.contained=FALSE
+  )
 @
 \title{TBD}
 \author{Maxwell Conway\\ Supervisor: Pietro Lio'\\ Collaboration: Muktak Aklujkar and Derek Lovley (University of Massachusetts, Amherst)}
@@ -20,10 +27,13 @@ opts_knit$set(self.contained=FALSE)
 \input{abstract.tex}
 \end{abstract}
 
+\listoftodos
+
 \cleardoublepage
 \tableofcontents
 \listoffigures
 \listoftables
+
 
 <<introduction,child='introduction.Rnw'>>= 
 @
