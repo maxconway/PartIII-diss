@@ -2,6 +2,8 @@
 
 <<ResultsSetup,autodep=TRUE,echo=FALSE,cache=TRUE>>=
 #sources
+source('./data/getNames.R',local=TRUE)
+source('./data/getChromosomes.R',local=TRUE)
 
 #GDMO
 data(GDMO)
@@ -304,9 +306,9 @@ Since the Geobacter Metallireducens model appears to be, at least in some ways, 
 First, we view the global knockout pattern to detect any global features.
 
 <<geoMknockouts, fig.cap='knockouts in G. Sulfurreducens'>>=
-heatmap(x=as.matrix(GDMO.S.chromosomes[,1:212]*1),
-        Rowv=GDMO.S.chromosomes$pos,
-        Colv=cor(GDMO.S.chromosomes[1,1:212]),
+heatmap(x=as.matrix(GDMO.M.chromosomes[,1:212]*1),
+        Rowv=GDMO.M.chromosomes$pos,
+        Colv=cor(GDMO.M.chromosomes[1,1:212]),
         ylab='genes',
         xlab='strain'
 )

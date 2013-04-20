@@ -5,7 +5,7 @@ BindChromosomes <- function(x){
   id=unique(x$id)
   genepattern=switch(unique(x$strain),
                      sulfurreducens='GSU.*',
-                     metallireducens='MET.*')#check
+                     metallireducens='Gmet_.*')#check
   names=getNames(paste0(NameLookup(unique(x$strain))'.reduced'))
   x.chromosomes=getChromosomes(id)
   colnames(x.chromosomes)<-c((names),c('maxsyn','minsyn','biomass','front','crowding','?'))
