@@ -1,5 +1,5 @@
 getNames <- function(strainName){
-  names=read.csv(paste('./experiments/',strainName,'.names',sep=''),header=FALSE)
+  names=read.table(paste0('./experiments/',strainName,'.names'),header=FALSE,sep=';')
   # loses some names
   names = as.character(names$V1)
 }
