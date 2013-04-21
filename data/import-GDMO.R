@@ -14,6 +14,8 @@ for(file in list.files(path = './experiments/', pattern = '.*GDMO.*.log',full.na
   #timings
   data$gentime=data$cputime-c(rep(0,data$pop[1]),head(data$cputime,-data$pop[1]))
   data$soltime=data$gentime/data$pop
+  #negate
+  data[,c('maxsyn','minsyn','biomass')]<--data[,c('maxsyn','minsyn','biomass')]
   #normalization
   natural<-unique(data[data$knockouts==0,c('strain','biomass','maxsyn','minsyn')])
   colnames(natural)<-c('strain','natbiomass','natmaxsyn','natminsyn')
@@ -25,7 +27,7 @@ for(file in list.files(path = './experiments/', pattern = '.*GDMO.*.log',full.na
   GDMO=rbind(GDMO,data)
 }
 GDMO$strain=as.factor(GDMO$strain)
-FBAtimings<-read.csv('FBAtimings.csv')
+FBAtimings<-read.csv('./data/FBAtimings.csv')
 FBAtimings$FBAtime=FBAtimings$time
 FBAtime=aggregate(FBAtime~strain,FBAtimings[,c('strain','FBAtime')],mean)
 GDMO=merge(GDMO,FBAtime)
