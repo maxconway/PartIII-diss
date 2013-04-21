@@ -13,7 +13,8 @@ opts_chunk$set(
   split=TRUE,
   size='scriptsize',
   tidy=FALSE,
-  autodep=TRUE
+  autodep=TRUE,
+  cache=TRUE
   )
 opts_knit$set(
   self.contained=FALSE

@@ -298,8 +298,11 @@ These extra resources cannot necessarily be used outside of specific pathways, a
 
 \subsubsection{Minimum Synthesis Pattern}
 Figure~\ref{minsynMpattern} demonstrates that in the final G.Metallireducens pareto front, maximum and minimum synthesis are for the most part correlated. However, pushing the maximum synthesis above around \SI{102.5}{\percent} of the wild type value produces a large drop in minimum synthesis. Since this very large drop is undesirable, we will remove it from the Pareto front.
-<<minsynMpattern,fig.cap='A large penalty in minimum synthesis occurs for very high values of maximum synthesis'>>=
+<<minsynMpattern,,dependson=c('GDMO_M'),fig.cap='A large penalty in minimum synthesis occurs for very high values of maximum synthesis'>>=
 plot(nminsyn~nmaxsyn,GDMO.M,ylab='normalized minimum synthesis',xlab='normalized maximum synthesis')
+@
+
+<<GDMO_M_chromosomes2,dependson=c('results_GDMO_loadChromosomes','results_subset_setup')>>=
 GDMO.M<-GDMO.M[GDMO.M$nmaxsyn<1.025,]
 GDMO.M.chromosomes<-GDMO.M.chromosomes[GDMO.M.chromosomes$nmaxsyn<1.025,]
 pc<-princomp(GDMO.M.chromosomes[,c('maxsyn','minsyn','biomass')])
@@ -309,7 +312,7 @@ GDMO.M.chromosomes$pos<-pc$scores[,1]
 
 \subsubsection{Knockout Patterns}
 Figure~\ref{fig:geoMknockouts} shows the global knockout pattern in G.Metallireducens at the pareto front. Strains are ordered by their distance along the first principle component of the objective values (which covers \SI{96}{\percent} of variance), while genes are hierachically clustered, using Manhattan distance. Axes are absent for the sake of readability and because neither is legible on its own.
-<<geoMknockouts, fig.cap='knockouts (blue) in G. Metallireducens'>>=
+<<geoMknockouts,dependson=c('GDMO_M_chromosomes2'), fig.cap='knockouts (blue) in G. Metallireducens'>>=
 GDMO.M.chromosomes<-GDMO.M.chromosomes[sort.list(GDMO.M.chromosomes.pos)]
 heatmap(x=as.matrix(GDMO.M.chromosomes[,grep('Gmet_.*',names(GDMO.M.chromosomes))]*1),
         Rowv=NA,
@@ -325,12 +328,12 @@ heatmap(x=as.matrix(GDMO.M.chromosomes[,grep('Gmet_.*',names(GDMO.M.chromosomes)
 Here we can see a large number of essential genes---those with no knockouts. 
 This forms a larger proportion of the genes visible here than in Sulfurreducens, which may be partly due to the supplementation strategy in Sulfurreducens, but could also be due to differences in the performance of the network reduction algorithm used, and so may not have biological relevance.
 Regardless, there is no reason to suppose that this essential gene list is different to those already known~\ref{Sun2009}, and it is not of interest in finding important knockout strategies, so all essential genes were removed.
-<<>>=
+<<GDMO_M_nonessential,dependson=c('GDMO_M_chromosomes2')>>=
 GDMO.M.nonessential<-GDMO.M.chromosomes[,colSums(GDMO.M.chromosomes)!=0]
 GDMO.M.nonessential<-GDMO.M.nonessential[sort.list(GDMO.M.nonessential$pos),]
 @
 The next step was to detect individually important knockouts. These were taken to be those whos presence in a strain is strongly related to the position of that strain in the first principle component of its objectives.
-<<geoMKOtrendslinear,fig.scap='Linearly smoothed knockouts',fig.cap='knockouts for each geneset in the pareto front for G. Metallireducens, smoothed by a linear model. Larger x-axis numbers have larger biomass production>>=
+<<geoMKOtrendslinear,dependson=c('GDMO_M_nonessential'),fig.scap='Linearly smoothed knockouts',fig.cap='knockouts for each geneset in the pareto front for G. Metallireducens, smoothed by a linear model. Larger x-axis numbers have larger biomass production'>>=
 plot(NULL,NULL,
      xlab='1st principle component of objectives',
      ylab='knockouts',
@@ -349,7 +352,7 @@ for(k in grep('Gmet_.*',names(GDMO.M.nonessential),value=TRUE)){
 Figure~\ref{fig:geoMKOtrendslinear} shows how the presence of gene sets varies with their position in the G. Metallireducens pareto front. 
 The linear model used for smoothing shows that a number of knockouts are common in high biomass strains (towards the right), but are much less common in high synthesis strains, while the tendency in synthesis-favouring knockouts is less severe.
 
-<<geoMKOtrendsloess,fig.scap='Polynomial smoothed knockouts',fig.cap='knockouts for each geneset in the pareto front for G. Metallireducens, smoothed by a polynomial model'>>=
+<<geoMKOtrendsloess,dependson=c('GDMO_M_nonessential'),fig.scap='Polynomial smoothed knockouts',fig.cap='knockouts for each geneset in the pareto front for G. Metallireducens, smoothed by a polynomial model'>>=
 plot(NULL,NULL,
      xlab='1st principle component of objectives',
      ylab='knockouts',
