@@ -57,7 +57,8 @@ This is difficult for multi-objective optimization, since pareto fronts are not 
 Figure~\ref{fig:convergence} shows hypervolume against generation for a number of runs of GDMO. This shows that most convergence occured quickly---within \num{200} generations. 
 This works out at around \Sexpr{mean(GDMO[GDMO$generation==200&GDMO$strain=='sulfurreducens','walltime'])}~\si{\second}.
 
-The investigation of G. Sulfurreducens with \num{1000} generations in particular shows one of the disadvantages of an evolutionary algorithm, and many other global optimization algorithms: since the algorithm is constantly searching for a better solution, if we stop it at an arbitrary point then there is no guarantee that the solution at this point is the best available. 
+This result was verified by looking at each objective in turn.
+Minimum synthesis converged far slower than maximum synthesis, but both had converged by \numrange{200}{250} generations, lending support to the use of hypervolume as a measure of convergence, and providing reassurance that the numbers of generations chosen were sufficient.
 
 <<convergence,,fig.pos='p',fig.cap='Convergence of evolution runs',cache=TRUE,dependson=c('hypervolume','ResultsSetup')>>=
 GDMO.runs=GDMO.runs[order(GDMO.runs$strain,GDMO.runs$generation,GDMO.runs$pop),]
@@ -94,6 +95,8 @@ for(j in 1:nrow(GDMO.runs)){
 }
 @
 \nocite{Harrower2003}
+
+The investigation of G. Sulfurreducens with \num{1000} generations in particular shows one of the disadvantages of an evolutionary algorithm, and many other global optimization algorithms: since the algorithm is constantly searching for a better solution, if we stop it at an arbitrary point then there is no guarantee that the solution at this point is the best available. 
 
 To ensure that the final front is the best possible, three approaches are possible:
 \begin{enumerate}
