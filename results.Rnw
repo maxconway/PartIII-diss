@@ -326,7 +326,7 @@ heatmap(x=as.matrix(GDMO.M.chromosomes[,grep('Gmet_.*',names(GDMO.M.chromosomes)
 )
 @
 Here we can see a large number of essential genes---those with no knockouts. 
-This forms a larger proportion of the genes visible here than in Sulfurreducens, which may be partly due to the supplementation strategy in Sulfurreducens, but could also be due to differences in the performance of the network reduction algorithm used, and so may not have biological relevance.
+This forms a larger proportion of the genes visible here than in Sulfurreducens, which may be partly due to the supplementation strategy in Sulfurreducens, but could also be simply due to bias in the derivation of the models.
 Regardless, there is no reason to suppose that this essential gene list is different to those already known~\ref{Sun2009}, and it is not of interest in finding important knockout strategies, so all essential genes were removed.
 <<GDMO_M_nonessential,dependson=c('GDMO_M_chromosomes2')>>=
 GDMO.M.nonessential<-GDMO.M.chromosomes[,colSums(GDMO.M.chromosomes)!=0]
