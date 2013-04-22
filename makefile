@@ -1,8 +1,8 @@
 dissertation.pdf : dissertation.tex bibliography.bib abstract.tex mystyle.sty
-	pdflatex dissertation
-	bibtex dissertation
-	pdflatex dissertation
-	pdflatex dissertation
+	pdflatex dissertation.tex
+	bibtex dissertation.aux
+	pdflatex dissertation.tex
+	pdflatex dissertation.tex
 
 #dissertation.tex : dissertation.Rnw abstract.tex introduction.tex methods.tex results.tex conclusion.tex
 #	R CMD Sweave dissertation.Rnw
@@ -30,6 +30,10 @@ clean :
 	rm -f conclusion.tex
 	rm -f *.blg
 	rm -f *.bbl
+	rm -f *.toc
+	rm -f *.tdo
+	rm -f *.lof
+	rm -f *.lot
 	rm -f *~
 
 bibliography.bib : ../../Documents/bibtex/Part\ III\ project.bib
