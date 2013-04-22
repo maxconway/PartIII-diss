@@ -37,12 +37,6 @@ To predict the actual position within this polytope, assumption \ref{itm:maxgrow
 Of course, many adaptations and extensions to this basic approach are possible. 
 In the case of genetic design for overproduction of industrially useful metabolites, Flux Balance Analysis is used to find the region of flex space representing maximal growth. A range of excretion values for the overproduced metabolite may be possible while maintaining maximal growth. Gene knockouts can then be tried, with the goal of moving this possible production range upwards, without reducing biomass accumulation too much.
 
-\section{Genetic design algorithms}
-Genetic engineering is very much a fledgling field, with a large amount of trial and error, largely because much of our knowledge in this area is descriptive, via techniques such as knockout studies, rather than predictive. 
-This means that while we can try a set of knockouts (or knockins) and find out the result in a real organism, knowing what sets are likely to yield a desired result is difficult, especially since useful results sometimes require several simultaneous alterations to the genome, presenting a very large search space.
-
-Simpler effects, such as overproduction of a particular metabolite, require simpler engineering strategies than the more complex effects desired in synthetic biology. The search space is still far too large to manually characterize, but fortunately, and these metabolome level effects can fortunately also be well modelled by FBA, which works well for large scale, steady state effects such as overproduction, but cannot model dynamic, reactive systems. Since FBA presents a useful computational metabolic model, especially when annotated with gene-protein-reaction data, it allows the development of algorithms that can search through the huge space of possible knockout strategies (around \(2^700)\) in the E. Coli models used here), in order to draft strategies for in-vitro evaluation.
-
 \section{Optimization}
 
 Optimization problems generally consist of a multidimensional decision space, a scalar objective and an objective function which maps each position in decision space to a position in objective space. 
@@ -77,3 +71,57 @@ Evolutionary algorithms are one class of optimization algorithm. Characteristics
 
 One advantage of these algorithms is that they do not require their decision space to be differentiable, and hence can work in noisy decision spaces or those that contain discontinuities. 
 It is important to note that while evolutionary optimization algorithms are biologically inspired, they are not generally intended as models of real biology, but rather to be used as black-box optimization algorithms in exactly the same way as the metallurgically inspired simulated annealing.
+
+\subsection{Non-dominated Sorting Genetic Algorithm II (NSGA-II)}
+\label{sec:NSGA}
+NSGA-II~\ref{Deb2002a} is a multi-objective evolutionary algorithm that provides a pareto front by using two criteria to decide the quality of a solution:
+\begin{description}
+\item[Rank] Solutions are split in to groups by rank. The familiar, nondominated pareto front is assigned rank 1, while for all other solutions p, \(\mathrm{rank}(p) = 1 + \max( \mathrm{rank}(q) | q \succ p) )\), where \( a \succ b \) means a dominates b.
+\item[Crowding Distance] is a measure of the local density of solutions, based on the perimeter of the cuboid with the two nearest solutions as corners.
+\end{description}
+
+\section{Genetic design algorithms}
+Genetic engineering is very much a fledgling field, with a large amount of trial and error, largely because much of our knowledge in this area is descriptive, via techniques such as knockout studies, rather than predictive. 
+This means that while we can try a set of knockouts (or knockins) and find out the result in a real organism, knowing what sets are likely to yield a desired result is difficult, especially since useful results sometimes require several simultaneous alterations to the genome, presenting a very large search space.
+
+Simpler effects, such as overproduction of a particular metabolite, require simpler engineering strategies than the more complex effects desired in synthetic biology. 
+The search space is still far too large to manually characterize, but fortunately, and these metabolome level effects can fortunately also be well modelled by FBA, which works well for large scale, steady state effects such as overproduction, but cannot model dynamic, reactive systems. 
+Since FBA presents a useful computational metabolic model, especially when annotated with gene-protein-reaction data, it allows the development of algorithms that can search part of the huge space of possible knockout strategies (for instance around \num{5.3e210} in the E. Coli models used here), in order to draft strategies for in-vitro evaluation.
+
+In order to design knockout strategies for Geobacter, several genetic design algorithms were considered.
+
+\subsection{Genetic Design by Local Search (GDLS)}
+Genetic Design through Local Search~\cite{Lun2009}, or GDLS is an algorithm that is used to engineer organisms that produce particular metabolites. 
+Given an FBA model with gene-protein reaction annotations, it produces a knockout strategy which will alter the metabolic network to overproduce the compound required.
+
+GDLS is a local search algorithm, which means that it starts with a solution and recursively improves upon it. 
+This is a sensible decision in metabolic engineering, due to the natural starting point of no knockouts. Algorithm~\ref{alg:GDLS} outlines the procedure: at each iteration, the algorithm starts with a candidate genome, or genomes. For each of these, it evaluates every genome that differs by at most neighbourhoodsize knockouts or knockins, and selects the best from these. The search then starts again from these best solutions, and this is repeated until no better solutions are found.
+
+\begin{algorithm}
+\caption{Pseudocode of Genetic Design by Local Search}
+\label{alg:GDLS}
+\begin{algorithmic}
+\State{\(X_{0} \gets \text{Wild Type}\)}
+\While{\(X_{i} \text{is better than} X_{i-1}\)}\State{
+  \(X_{i+1} \gets \text{neighbourhood\_search} X_{i} \)
+}
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+%need to expand this 
+
+\subsection{Genetic Design by Branch and Bound (GDBB)}
+Genetic Design by Branch and Bound~\ref{Egen2012} is an enhancment on GDLS that can provide a large increase in speed by using a Branch and Bound strategy.
+This means that when the performance from a branch \(A\) is strictly poorer than from another branch, \(B\), then \(A\) can be discarded.
+Strictly poorer in this context means that the best case performance of \(A\) is worse than the worst case performance of \(B\).
+
+\todo{say something about why not using?}
+
+\subsection{Genetic Design by Multi-objective Optimization(GDMO)} 
+Genetic Design by Multi-objective Optimization~\ref{Costanza2012} is a genetic design algorithm based on the multi-objective evolutionary optimization algorithm NSGA-II, as described in Section~\ref{sec:NSGA}.
+Using a multi-objective optimization algorithm in this context has a number of advantages.
+\begin{itemize}
+\item A trade-off between different objectives does not need to be selected before use. This avoids the issue of having to guess the properties of a system that has not yet been designed.
+\item The Pareto front can be used to visualize the space of possibilities. This can provide insight into the different structures created by different pathways, and help to design an organism that will not suffer from reduced production due to evolution once in use.
+\item Crucially, this approach \todo{slower or faster?} does not have to sacrifice performance for these advantages, since maintaining a population of solutions that occupies a wide range of good phenotypes in fact helps the evolutionary process.
+\end{itemize}

@@ -1,7 +1,8 @@
 % !TeX root = dissertation.Rnw   
 \chapter{Methods}
-\section{Data and Materials}
-\subsection{Metabolic Models}
+The Methods chapter describes the Biological models used, some of the more technical decisions made, and presents the analysis performed in order to predict the impact of parameter selections on execution time.
+
+\section{Metabolic Models}
 To conduct flux balance analysis, one needs a model of the metabolism of the organism in question. A number of exchange formats exist for these models and there are many more formats internal to tools, however after some investigation it was clear that the de-facto standard format is the use of tab-separated value tables, with the reactions specified in a space-separated format. 
 \todo{describe column layout}
 Unfortunately, the order and names of columns in these tables is not standardized, and the two Geobacter models that I used were supplied in an ad-hoc format, which was a problem given the inflexible import facilities of Matlab, and the fact that these tables could have cells with >250 characters. 
@@ -15,38 +16,40 @@ The metabolic models used are listed in table~\ref{tab:models}. The columns used
 \item[Synthetic Objective] The material that we seek to overproduce.
 \end{description}
 
-\todo{discuss model reduction}
-
 \todo{table needs citations}
 \begin{table}
-    \begin{tabular}{|l|l|l|l|}
+    \begin{tabular}{|l|l|l|l|l|}
     \hline
-    \textbf{Species}         & \textbf{Shorthand}       & \textbf{Size} & \textbf{Synthetic Objective} \\ \hline
-    Geobacter Sulfurreducens  & sulfurreducens  & 609  & \ce{FE2}            \\ \hline
-    Geobacter Metallireducens & metallireducens & 788  & \ce{FE2}            \\ \hline
-    Escherichia Coli          & iaf-1260        & 2383 & Acetate             \\ \hline
-    Escherichia Coli          & iJO-1366        & 2583 & Acetate             \\ \hline
+    Species         & Shorthand       & Size & Synthetic Objective \\ \hline
+    Geobacter Sulfurreducens  & sulfurreducens  & 609  & \ce{FE2}            \\ 
+    Geobacter Metallireducens & metallireducens & 788  & \ce{FE2}            \\ 
+    Escherichia Coli          & iaf-1260        & 2383 & Acetate             \\ 
+    Escherichia Coli          & iJO-1366-aerobic        & 2583 & Acetate             \\
+    Escherichia Coli          & iJO-1366-anaerobic        & 2583 & Acetate             \\ \hline
     \end{tabular}
     \label{tab:models}
 \end{table}
 
-\subsubsection{Sulfurreducens}
-Described in 2009 in~\ref{Mahadevan2006}, this model helfully focusses on the \ce{FE3} reducing capabilities of Geobacter Sulfurreducens. 
+\subsection{Sulfurreducens}
+Described in 2009 in~\ref{Mahadevan2006}, this model focusses on the \ce{FE3} reducing capabilities of Geobacter Sulfurreducens. 
 Its primary energy source is chosen as Acetate, with traces of a number of other necessary compounds. 
-\ce{FE2} is chosen as the target since due to the pilli that Geobacter possess, production of \ce{FE2}, can be considered to be biologically equivalent to electron transfer via an electrode\todo{check I've got this right way round}.
+\ce{FE2} is chosen as the target since due to the pilli that Geobacter possess, production of \ce{FE2}, can be considered to be biologically equivalent to electron transfer via an electrode.
 \ce{FE2} overproduction is chosen instead of \ce{FE3} overconsumption simply for uniformity---the two are equivalent, since Flux Balance Analysis rules out the organism having any net accumulation of Iron.
 
-\subsubsection{Metallireducens}
+\subsection{Metallireducens}
 This model~\ref{Sun2009} is based on a model of G. Sulfurreducens, but with the addition of a number of reactions that are not present in the base model. 
 
-\subsubsection{iaf-1260}
+\subsection{iaf-1260}
 iAF1260~\ref{Feist2007} is a widely used reconstruction of the E. Coli metabolism.
 Due to the extensive use of E. coli as a model organism, it is far better characterized than the Geobacteraceae, and hence 3-4 times as many reactions are known. As discussed in section~\ref{sex:complexity}, this results in much slower analysis of these networks.
-\todo{couple E-coli and geobacter?}
 
-\subsubsection{iJO-1366}
+\subsection{iJO-1366}
 iJO1366~\ref{Orth2011} is newer and somewhat more comprehensive than iAF1260.
 
+\subsection{Model Reduction}
+In order to increase execution speed and clarify the results, the model reduction technique designed for use with the GDLS~\ref{Lun2009} procedure was used. This iteratively removed dead end reactions and merged reactions that uniquely shared a metabolite until no more simplifications were possible, resulting in final models with sizes \SIrange{44}{80}{\percent} of the original, without loss of descriptive power.
+
+\section{Computational Decisions}
 \subsection{Optimization Libraries}
 Flux Balance Analysis is a linear optimization problem, and can therefore be solved by the techniques of Mathematical Programming; in addtion, exhaustive enumeration of knockout strategies when coupled with Flux Balance Analysis is a Mixed Integer Programming problem. 
 Various techniques exist to solve these problems, in particular the simplex algorithm for linear programming \todo{cite}. These techniques are extremely compute intensive, so simple Matlab libraries would be far too slow.
@@ -55,53 +58,104 @@ Instead, the common approach is to use Optimization Toolkits, which have a core 
 A number of these toolkits exist, with various papers discussing their relative merits \todo{cite}. The two used here are GNU Linear Programming Kit (GLPK) and Gurobi. 
 \begin{description}
 \item[GLPK] is free and open source and one of the most widely available toolkits, with interfaces to many languages on many platforms.
-\item[Gurobi] is a commerical toolkit also with a good number of interfaces on all relevant platforms. The literature suggests that it is the fastest performing toolkit. \todo{cite}
+\item[Gurobi] is a commerical toolkit also with a good number of interfaces on all relevant platforms. The literature suggests that it is the fastest performing toolkit~\ref{Meindl2012}.
 \end{description}
 The timing section~\ref{sec:complexity} is entirely based on GLPK. This is because initial experiments found it to perform faster for smaller problem sizes, despite the evidence that Gurobi is faster for large problems. Assuming that this is due to higher overheads in Gurobi, we can expect that measurments from small cases for GLPK will scale to large cases in a manner that is closer to theoretical predictions, allowing a more accurate model.
 
-\subsection{Computing resources}
-
 \subsection{Languages and programs}
-The genetic design algorithms used were written in Matlab, while analysis was conducted in R due to its superior text handling abilities.
+The genetic design algorithms used were written in Matlab, while analysis was conducted in R to take advantage of the safety and reproducibility provided by its stricter type system.
 Git was used for version control, while the parsing and reduction of metabolic models was automated using the Make build system.
 
-\section{Overview of Genetic Design Techniques Studied}
+\subsection{Hypervolume computation}
+Techniques to compare the output of multi-objective optimization algorithms are an area of active research~\ref{Okabe2003}. 
+Ultimately, one cannot definitively say that pareto front A is better than pareto front B unless every point in B is dominated by a point in A. 
+One relatively common metric for comparison of pareto fronts is the hypervolume enclosed by the front~\ref{Zitzler1999,Zitzler}. 
+This can be defined as the volume of the space for which points \(p\) obey \(\exists s . (s \in \mathrm{Front} \land s \succ p)\).
+This has the properties of providing some measure of both spread and optimality of solutions, and reducing to the product of the objectives with only one solution. 
 
-\subsection{Genetic Design by Local Search (GDLS)}
-%this all needs some nicer presentation
-Genetic Design through Local Search~\cite{Lun2009}, or GDLS is an algorithm that is used to engineer organisms that produce particular metabolites. 
-Given an FBA model with gene-protein reaction annotations, it produces a knockout strategy which will alter the metabolic network to overproduce the compound required.
+Since hypervolume increases with density of solutions, and with their mangitude, it only makes sense to use when we aim to maximize all objectives; this is already the case with this research, but nevertheless all objectives will still be normalized against the wild-type phenotype, to avoid undue influence from their relative absolute magnitudes.
 
-GDLS is a local search algorithm, which means that it starts with a solution and recursively improves upon it. 
-This is a sensible decision in metabolic engineering, due to the natural starting point of no knockouts. 
-The detailed procedure is as follows:
+While libraries exist that can find the volume of a point cloud efficiently, the colume that they find is gnerally not the dominated volume that we desire, but instead the volume of a mesh, or of the convex hull. 
+While the difference between the volume of a mesh fitted to the points and the dominated volume may potentially be small, it is this small difference that provides a measurment of solution density, and so these approximations cannot be tolerated.
 
-\begin{algorithm}
-\caption{Pseudocode of Genetic Design by Local Search}
-\label{alg:GDLS}
-\begin{algorithmic}
-\State{\(X_{0} \gets \text{natural}\)}
-\While{\(X_{i} \text{is better than} X_{i-1}\)}\State{
-	\(X_{i+1} \gets \text{neighbourhood\_search} X_{i} \)
+For this reason, I wrote a custom Monte Carlo integration function, which could calculate the hypervolume to any desired degree of accuracy. This was further optimized by a deterministic bounding box---this quickly partitions the objective space into sections:
+\begin{enumerate}
+\item the volume dominated by all solutions\label{enum:alldom},
+\item the volume dominated by some of the solutions and\label{enum:somedom}
+\item the volume that dominates all the solutions.\label{enum:nodom}
+\end{enumerate}
+We know that volume~\ref{enum:alldom} should be included in the hypervolume and that volume~\ref{enum:nodom} should not, so the search space can be narrowed down to just volume~\ref{enum:somedom}.
+The domination calculation itself was optimized by a short circuit evaluation: the majority of samples taken in the Monte Carlo simulation either dominate many solutions or very few, so many can be found to be inside the dominated volume by comparison to only a small number of pareto-optimal points.
+
+<<dominated,cache=TRUE>>=
+dominates <- function(a,b){
+  # does a dominate b?
+  any(a>b)&!any(a<b)
 }
-\EndWhile
-\end{algorithmic}
-\end{algorithm}
-%need to expand this
 
-This means that at each iteration, the algorithm starts with a candidate genome, or genomes. For each of these, it evaluates every genome that differs by at most neighbourhoodsize knockouts or knockins, and selects the best from these. The search then starts again from these best solutions, and this is repeated until no better solutions are found. 
+#helper function
+singledom <- function(p,front){
+  stopifnot(is.data.frame(p) 
+            & nrow(p)==1
+            )  # this also covers NULL
+  for(i in 1:nrow(front)){
+    a=front[i,]
+    if(dominates(a,p)){
+      return(TRUE)
+    }
+  } 
+  return(FALSE)
+}
 
-\subsection{Genetic Design by Multi-objective Optimization(GDMO)} 
-Genetic Design by Multi-objective Optimization \todo{who it's written by} is a genetic design algorithm based on the multi-objective evolutionary optimization algorithm NSGA-II.
-Using a multi-objective optimization algorithm in this context has a number of advantages.
-\begin{itemize}
-\item A trade-off between different objectives does not need to be selected before use. This avoids the issue of having to guess the properties of a system that has not yet been designed.
-\item The Pareto front can be used to visualize the space of possibilities. This can provide insight into the different structures created by different pathways, and help to design an organism that will not suffer from reduced production due to evolution once in use.
-\item Crucially, this approach \todo{slower or faster?} does not have to sacrifice performance for these advantages, since maintaining a population of solutions that occupies a wide range of good phenotypes in fact helps the evolutionary process.
-\end{itemize}
+dominated <- function(p,front){
+  # if on arg, return self dominance
+  if(nargs()==1){
+    return(dominated(p,p))
+  }
+  
+  # if p is a point, points in front that dominate p
+  if(!nrow(p)>1){
+    return(apply(front,1,function(f){
+      dominates(f,p)
+    }))
+  }
+  
+  # if p is a set of points, is each point dominated?
+  if(is.data.frame(p) & nrow(p)>1){
+    return(apply(p,1,function(a){
+      singledom(a,front)
+    }))
+  }
+}
+@
+
+<<hypervolumeMonteCarlo,echo=T,dependson=c('dominated'),cache=TRUE>>=
+hypervolumeMonteCarlo <- function(x,num){
+  range<-function(x){
+    return(max(x)-min(x))
+  }
+  # deterministic portion
+  excluded=range(x$nbiomass)*range(x$nmaxsyn)*range(x$nminsyn)
+  included=max(x$nbiomass)*max(x$nmaxsyn)*max(x$nminsyn) - excluded
+  
+  #stochastic portion
+  points=data.frame(nbiomass=runif(num,
+                                   min(x$nbiomass),
+                                   max(x$nbiomass)),
+                    nmaxsyn =runif(num,
+                                   min(x$nmaxsyn),
+                                   max(x$nmaxsyn)),
+                    nminsyn =runif(num,
+                                   min(x$nminsyn),
+                                   max(x$nminsyn)))
+  a=dominated(points,x)
+  
+  return(excluded*sum(a)/num + included)
+}
+@
 
 \section{Computational Complexity analysis}
-\label{sex:complexity}
+\label{sec:complexity}
 The core problem of this kind of genetic design (which does not use network structure information) is 0-1 integer linear programming~\cite{Karp1972}---indeed GDLS works by repeatedly solving small cases of this problem.
 This means that this problem is NP-complete, and assuming \(\mathcal{P} \neq \mathcal{NP}\), these algorithms have running times that are not bounded by any polynomial.
 This suggests extremely long running times for some combinations of input parameters.
@@ -172,93 +226,6 @@ legend('topleft',
        col=unique(GDMO.test$strain),pch='O')
 @
 
-\subsubsection{Hypervolume computation}
-Techniques to compare the output of multi-objective optimization algorithms is an area of active research. 
-Ultimately, one cannot definitively say that pareto front A is better than pareto front B unless every point in B is dominated by a point in A. 
-%equation
-One relatively common metric for comparison of pareto fronts is the hypervolume enclosed by the front. 
-This provides some measure of both spread and optimality of solutions, and reduces to the product of the objectives with only one solution. 
-Since hypervolume increases with spread of solutions, it only makes sense to use when we aim to maximize all objectives; this is already the case with this research, but nevertheless all objectives will still be normalized against the wild-type phenotype, to avoid undue influence from their relative absolute magnitudes.
-
-Off the shelf techniques for finding volumes of point clouds tend to find the volume of the convex hull, which is larger than the dominated volume, and in general the efficient calculation of volumes of point clouds is an area of active research in Computer Graphics.\todo{cite}
-
-To avoid some of these problems, I wrote a custom Monte Carlo integration function, which could calculate the hypervolume to any desired degree of accuracy. This was further optimized by a deterministic bounding box---this quickly partitions the objective space into sections:
-\begin{enumerate}
-\item the volume dominated by all solutions\label{enum:alldom},
-\item the volume dominated by some of the solutions and\label{enum:somedom}
-\item the volume that dominates all the solutions.\label{enum:nodom}
-\end{enumerate}
-We know that volume~\ref{enum:alldom} should be included in the hypervolume and that volume~\ref{enum:nodom} should not, so the search space can be narrowed down to just volume~\ref{enum:somedom}.
-The domination calculation itself was optimized by a short circuit evaluation: the majority of samples taken in the Monte Carlo simulation either dominate many solutions or very few, so many can be found to be inside the dominated volume by comparison to only a small number of pareto-optimal points.
-
-<<dominated,echo=F,cache=TRUE>>=
-dominates <- function(a,b){
-  # does a dominate b?
-  any(a>b)&!any(a<b)
-}
-
-#helper function
-singledom <- function(p,front){
-  stopifnot(is.data.frame(p) 
-            & nrow(p)==1
-            )  # this also covers NULL
-  for(i in 1:nrow(front)){
-    a=front[i,]
-    if(dominates(a,p)){
-      return(TRUE)
-    }
-  } 
-  return(FALSE)
-}
-
-dominated <- function(p,front){
-  # if on arg, return self dominance
-  if(nargs()==1){
-    return(dominated(p,p))
-  }
-  
-  # if p is a point, points in front that dominate p
-  if(!nrow(p)>1){
-    return(apply(front,1,function(f){
-      dominates(f,p)
-    }))
-  }
-  
-  # if p is a set of points, is each point dominated?
-  if(is.data.frame(p) & nrow(p)>1){
-    return(apply(p,1,function(a){
-      singledom(a,front)
-    }))
-  }
-}
-@
-
-<<hypervolumeMonteCarlo,echo=T,dependson=c('dominated'),cache=TRUE>>=
-hypervolumeMonteCarlo <- function(x,num){
-  range<-function(x){
-    return(max(x)-min(x))
-  }
-  # deterministic portion
-  excluded=range(x$nbiomass)*range(x$nmaxsyn)*range(x$nminsyn)
-  included=max(x$nbiomass)*max(x$nmaxsyn)*max(x$nminsyn) - excluded
-  
-  #stochastic portion
-  points=data.frame(nbiomass=runif(num,
-                                   min(x$nbiomass),
-                                   max(x$nbiomass)),
-                    nmaxsyn =runif(num,
-                                   min(x$nmaxsyn),
-                                   max(x$nmaxsyn)),
-                    nminsyn =runif(num,
-                                   min(x$nminsyn),
-                                   max(x$nminsyn)))
-  a=dominated(points,x)
-  
-  return(excluded*sum(a)/num + included)
-}
-@
-
-
 \subsection{GDLS}
 GDLS does not run to a hard limit, but instead stops when it finds the local optimum, so we cannot work out a useful upper bound on running time. 
 A lower bound is, however, possible, and appears from exploratory experiments to be useful.
@@ -270,7 +237,6 @@ Four variables are used here to parametrize GDLS:
 \item \texttt{knockouts}, the maximum total number of knockouts (fixed at 40 for fair comparison with GDMO).
 \end{enumerate}
 Here we can see that the metabolic model used will have a very large effect, since not only does this effect the time to complete one FBA evaluation, but the space that much be searched around a given solution is \(\texttt{modelsize} ^ \texttt{neighbourhoodsize}\). This means that, total search time for one solution is roughly \(\texttt{modelsize}^{(3+\texttt{neighbourhoodsize})}\), once the time to conduct FBA is included. Overall, this gives a lower bound on running time of \(\texttt{M} * \texttt{modelsize} ^{ ( 3 + \texttt{neighbourhoodsize})}\).
-\todo{is branching factor number of search paths, or is it at each stage?}
 
 To find the relative effects of these parameters on execution time, the trials listed in table~\ref{tab:GDLSevals} were performed.
 <<GDLSevals,results='asis'>>=
