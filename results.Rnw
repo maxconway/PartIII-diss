@@ -59,7 +59,7 @@ This works out at around \Sexpr{mean(GDMO[GDMO$generation==200&GDMO$strain=='sul
 
 The investigation of G. Sulfurreducens with \num{1000} generations in particular shows one of the disadvantages of an evolutionary algorithm, and many other global optimization algorithms: since the algorithm is constantly searching for a better solution, if we stop it at an arbitrary point then there is no guarantee that the solution at this point is the best available. 
 
-<<convergence,fig.cap='Convergence of evolution runs',cache=TRUE,dependson=c('hypervolume','ResultsSetup')>>=
+<<convergence,,fig.pos='p',fig.cap='Convergence of evolution runs',cache=TRUE,dependson=c('hypervolume','ResultsSetup')>>=
 GDMO.runs=GDMO.runs[order(GDMO.runs$strain,GDMO.runs$generation,GDMO.runs$pop),]
 plot(NULL,NULL,
      xlab='generation',
@@ -81,13 +81,13 @@ legend('bottomright',
 natvol<-1  #due to normalization
 for(j in 1:nrow(GDMO.runs)){
   w=GDMO[GDMO$id==GDMO.runs[j,'id'],]
-  measureat = seq(1,max(w$generation),max(w$generation)%/%10)
+  measureat = seq(1,max(w$generation),max(w$generation)%/%5)
   volume=sapply(measureat,function(i){
     hypervolumeMonteCarlo(
       w[w$generation==i,
         c('nbiomass','nmaxsyn','nminsyn')
         ],
-      10 # must be > 1
+      100 # must be > 1
     ) 
   })
   lines(measureat,volume*100,col=colours[j])
@@ -144,7 +144,7 @@ The first stage of technical evaluation of GDLS is to find the effect of neighbo
 \subsection{Comparison}
 Figure~\ref{fig:comparison} shows the results of the algorithms on one plot. 
 The axes chosen are just maximum synthesis and biomass production, since these are what GDLs optimizes.
-<<comparison,dependson='methods_GDMO_subsets'>>=
+<<comparison,out.width='0.8\\linewidth',dependson='methods_GDMO_subsets'>>=
 plot(nbiomass~nmaxsyn,hs,col='pink')
 points(nbiomass~nmaxsyn,GDLS[GDLS$strain=='sulfurreducens',],col='red')
 @
@@ -164,11 +164,11 @@ However, only a small increase over wild type of \Sexpr{(max(ls$nminsyn))*100}~\
 This is likely to be because, while there are likely to be many knockouts that limit the energy that can be used in biomass generation, and so leave a surplus reduction potential, knockout strategies that actually force higher reduction require much more extensive modifications.
 Figure~\ref{fit:sulfurreducensmin} shows a pronounced jump at around 0.935 in the biomass axis. This is discussed further in Section~\ref{sec:gskink}. \label{sec:gskinkfind}
 
-<<sulfurreducensmax,dependson='methods_GDMO_subsets',fig.cap='Pareto front of maximum reduction potential for Geobacter Sulfurreducens, normalized against wild type'>>=
+<<sulfurreducensmax,out.width='0.8\\linewidth',dependson='methods_GDMO_subsets',fig.cap='Pareto front of maximum reduction potential for Geobacter Sulfurreducens, normalized against wild type'>>=
 plot(nmaxsyn~nbiomass,hs,xlab='biomass',ylab='reduction potential')
 @
 
-<<sulfurreducensmin,fig.cap='Pareto front of minimum reduction potential for Geobacter Sulfurreducens, normalized against wild type',dependson='methods_GDMO_subsets'>>=
+<<sulfurreducensmin,out.width='0.8\\linewidth',fig.cap='Pareto front of minimum reduction potential for Geobacter Sulfurreducens, normalized against wild type',dependson='methods_GDMO_subsets'>>=
 plot(nminsyn~nbiomass,ls,xlab='biomass',ylab='reduction potential')
 @
 
@@ -192,7 +192,7 @@ One major advantage of GDMO is that the shape of the pareto front can yield info
 Figure~\ref{fig:geoSknockouts} shows the knockouts in each member of the final population. 
 Knockout vectors are ordered by the first principle component of their objectives, which lies along the Pareto front, while genes are ordered according to a manual subsystem clustering.
 
-<<geoSknockouts, fig.cap='knockouts in G. Sulfurreducens'>>=
+<<geoSknockouts, out.width='0.8\\linewidth', fig.cap='knockouts in G. Sulfurreducens'>>=
 heatmap(x=as.matrix(GDMO.S.chromosomes[,1:212]*1),
         Rowv=GDMO.S.chromosomes$pos,
         Colv=cor(GDMO.S.chromosomes[1,1:212]),
@@ -207,7 +207,7 @@ Figure~\ref{fig:geoSknockouts} does show an obvious banding pattern in the gene 
 In order to get deeper insight, we need to look at more focussed groups of strains;
 Figure~\ref{fig:sulfurreducensmin} \label{sec:gskink} shows a pronounced kink in the biomass vs minimum synthesis Pareto front of G. Sulfurreducens. \todo{find these in chart}
 To look at this in more detail, we can extract the relevant sets of strains and compare the their knockouts.
-<<kinkanalysis,dependson=c('emthods_GDMO_subsets','results_GDMO_loadChromosomes')>>=
+<<kinkanalysis, out.width='0.8\\linewidth', dependson=c('emthods_GDMO_subsets','results_GDMO_loadChromosomes')>>=
 A <- merge(GDMO.S.chromosomes,ls) # A is all strains in the minsyn vs biomass pareto front
 A <- A[0.92<A$nbiomass & A$nbiomass<0.94, ] # strains with 0.92 < biomass < 0.94
 low <- A[A$nminsyn<1.003,grepl('GSU.*',colnames(A))]  # strains with synthesis < 1.003
@@ -238,7 +238,7 @@ diff <- colSums(engineered)        # numer of times each knockout was used
 k2 = diff[order(-abs(diff))]
 @
 These can then be plotted to find the most important.
-<<commonmodifications,fig.cap='Common modifications',>>=
+<<commonmodifications, out.width='0.8\\linewidth', fig.cap='Common modifications',>>=
 plot(k2,xlab='modification index',ylab='usages')      # most common knockouts
 abline(v=10)
 @
@@ -254,35 +254,41 @@ GDMO.S.reactions[GDMO.S.reactions$GeneAssociation %in% names(head(k2,10)),c('Off
 \todo{some intro text to Geobacter Metallireducens}
 \subsubsection{Fronts}
 The general shape of the Pareto front in G. Metallireducens is shown in figure~\ref{m_fronts}.
-<<m_fronts,echo=FALSE>>=
+<<m_fronts,out.width='0.8\\linewidth',fig.cap='G. Metallireducens Pareto Front'>>=
 require('lattice',quietly=TRUE)
 m<-GDMO[GDMO$strain=='metallireducens'&GDMO$generation==500&GDMO$pop==500,]
 cloud(m$nbiomass~m$nmaxsyn*m$nminsyn)
 @
 The Pareto front for G. Metallireducens electricity production shown in figure ~\ref{m_fronts} is appears to be almost completely linear, which was to start with extremely suprising, and suggested that some error had been made---one does not expect that random knockouts would be able to achieve such a precise tradeoff. To verify this shape, a number of comparisons were made with the G. Sulfurreducens model.
-<<straight_line_verification1,fig.cap='verification of G. Metallireducens Pareto Front',fig.pos='p'>>=
+<<straight_line_verification1,fig.pos='p',fig.cap='verification of G. Metallireducens Pareto Front',fig.pos='p'>>=
 layout(matrix(1:8,4,2,byrow=F))
 for(strain in c('sulfurreducens','metallireducens')){
+  colour <- switch(strain,
+                   sulfurreducens='red',
+                   metallireducens='blue')
   a<-GDMO[GDMO$strain==strain&GDMO$pop==500,]
   b<-a[sample(nrow(a),500),]
-  plot(knockouts~generation,b,main=unique(strain),sub='knockouts vs time')
-  plot(nbiomass~generation,b,ylim=c(0,1),sub='biomass vs time')
-  plot(nmaxsyn~generation,b,ylim=c(1,1.05),sub='maximum synthesis vs time')
-  plot(nminsyn~generation,b,ylim=c(0,1.05),sub='minimum synthesis vs time')
-#  cloud(nbiomass~generation*nmaxsyn,sub='maximum synthesis vs biomass vs time')
+  plot(knockouts~generation,b,main=unique(strain),sub='knockouts vs time',pch='.',col=colour)
+  plot(nbiomass~generation,b,ylim=c(0,1),sub='biomass vs time',pch='.',col=colour)
+  plot(nmaxsyn~generation,b,ylim=c(1,1.05),sub='maximum synthesis vs time',pch='.',col=colour)
+  plot(nminsyn~generation,b,ylim=c(0,1.05),sub='minimum synthesis vs time',pch='.',col=colour)
 }
 @
 
 <<straight_line_verification2,fig.cap='PCA of Pareto Fronts'>>=
 layout(matrix(1:2,1,2,byrow=F))
 for(strain in c('sulfurreducens','metallireducens')){
+  colour <- switch(strain,
+                   sulfurreducens='red',
+                   metallireducens='blue')
   c<-GDMO[GDMO$strain==strain
           &GDMO$pop==500
           &GDMO$generation==500,]
   plot(princomp(c[,c('nbiomass','nminsyn','nmaxsyn')]),
        sub='principle components',
-       main=unique(strain)
-       )
+       main=unique(strain),
+       col=colour
+  )
 }
 @
 \todo{add colours}
@@ -298,7 +304,7 @@ These extra resources cannot necessarily be used outside of specific pathways, a
 
 \subsubsection{Minimum Synthesis Pattern}
 Figure~\ref{minsynMpattern} demonstrates that in the final G.Metallireducens pareto front, maximum and minimum synthesis are for the most part correlated. However, pushing the maximum synthesis above around \SI{102.5}{\percent} of the wild type value produces a large drop in minimum synthesis. Since this very large drop is undesirable, we will remove it from the Pareto front.
-<<minsynMpattern,,dependson=c('GDMO_M'),fig.cap='A large penalty in minimum synthesis occurs for very high values of maximum synthesis'>>=
+<<minsynMpattern, out.width='0.8\\linewidth', dependson=c('GDMO_M'),fig.cap='A large penalty in minimum synthesis occurs for very high values of maximum synthesis'>>=
 plot(nminsyn~nmaxsyn,GDMO.M,ylab='normalized minimum synthesis',xlab='normalized maximum synthesis')
 @
 
@@ -312,7 +318,7 @@ GDMO.M.chromosomes$pos<-pc$scores[,1]
 
 \subsubsection{Knockout Patterns}
 Figure~\ref{fig:geoMknockouts} shows the global knockout pattern in G.Metallireducens at the pareto front. Strains are ordered by their distance along the first principle component of the objective values (which covers \SI{96}{\percent} of variance), while genes are hierachically clustered, using Manhattan distance. Axes are absent for the sake of readability and because neither is legible on its own.
-<<geoMknockouts,dependson=c('GDMO_M_chromosomes2'), fig.cap='knockouts (blue) in G. Metallireducens'>>=
+<<geoMknockouts, out.width='0.8\\linewidth', dependson=c('GDMO_M_chromosomes2'), fig.cap='knockouts (blue) in G. Metallireducens'>>=
 GDMO.M.chromosomes<-GDMO.M.chromosomes[sort.list(GDMO.M.chromosomes.pos)]
 heatmap(x=as.matrix(GDMO.M.chromosomes[,grep('Gmet_.*',names(GDMO.M.chromosomes))]*1),
         Rowv=NA,
@@ -333,7 +339,7 @@ GDMO.M.nonessential<-GDMO.M.chromosomes[,colSums(GDMO.M.chromosomes)!=0]
 GDMO.M.nonessential<-GDMO.M.nonessential[sort.list(GDMO.M.nonessential$pos),]
 @
 The next step was to detect individually important knockouts. These were taken to be those whos presence in a strain is strongly related to the position of that strain in the first principle component of its objectives.
-<<geoMKOtrendslinear,dependson=c('GDMO_M_nonessential'),fig.scap='Linearly smoothed knockouts',fig.cap='knockouts for each geneset in the pareto front for G. Metallireducens, smoothed by a linear model. Larger x-axis numbers have larger biomass production'>>=
+<<geoMKOtrendslinear, out.width='0.8\\linewidth', fig.pos='p', dependson=c('GDMO_M_nonessential'),fig.scap='Linearly smoothed knockouts',fig.cap='knockouts for each geneset in the pareto front for G. Metallireducens, smoothed by a linear model. Larger x-axis numbers have larger biomass production'>>=
 plot(NULL,NULL,
      xlab='1st principle component of objectives',
      ylab='knockouts',
@@ -345,14 +351,14 @@ for(k in grep('Gmet_.*',names(GDMO.M.nonessential),value=TRUE)){
   interaction<-GDMO.M.nonessential[,c(k,'pos')]
   interaction.fit<-lm(interaction[[k]]~pos,interaction)
   interaction$smoothed<-predict(interaction.fit)
-  lines(smoothed~pos,interaction,col='navy')
+  lines(smoothed~pos,interaction,col='blue')
 }
 @
 
 Figure~\ref{fig:geoMKOtrendslinear} shows how the presence of gene sets varies with their position in the G. Metallireducens pareto front. 
 The linear model used for smoothing shows that a number of knockouts are common in high biomass strains (towards the right), but are much less common in high synthesis strains, while the tendency in synthesis-favouring knockouts is less severe.
 
-<<geoMKOtrendsloess,dependson=c('GDMO_M_nonessential'),fig.scap='Polynomial smoothed knockouts',fig.cap='knockouts for each geneset in the pareto front for G. Metallireducens, smoothed by a polynomial model'>>=
+<<geoMKOtrendsloess, out.width='0.8\\linewidth', fig.pos='p', dependson=c('GDMO_M_nonessential'),fig.scap='Polynomial smoothed knockouts',fig.cap='knockouts for each geneset in the pareto front for G. Metallireducens, smoothed by a polynomial model'>>=
 plot(NULL,NULL,
      xlab='1st principle component of objectives',
      ylab='knockouts',
@@ -363,7 +369,7 @@ for(k in grep('Gmet_.*',names(GDMO.M.nonessential),value=TRUE)){
   interaction<-GDMO.M.nonessential[GDMO.M.nonessential$pos>-5,c(k,'pos')]
   interaction.fit<-loess(interaction[[k]]~pos,interaction,degree=2)
   interaction$smoothed<-predict(interaction.fit)
-  lines(smoothed~pos,interaction,type='l',col='navy')
+  lines(smoothed~pos,interaction,type='l',col='blue')
 }
 @
 
