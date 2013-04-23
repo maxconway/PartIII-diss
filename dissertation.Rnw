@@ -52,6 +52,7 @@ opts_knit$set(
 @
 \clearpage
 
+\todo{use knitr bibliography}
 \bibliographystyle{plain}
 \bibliography{bibliography}
 
