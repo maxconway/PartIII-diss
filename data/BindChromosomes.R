@@ -7,16 +7,16 @@ BindChromosomes <- function(x){
   x.chromosomes<-NULL
   
   for(id in unique(x$id)){
-  y<-x[x$id==id]
-  y.chromosomes=getChromosomes(id)
-  colnames(y.chromosomes)<-c((names),c('maxsyn','minsyn','biomass','front','crowding','removeme'))
-  y.chromosomes[,grepl(pattern=genepattern,colnames(y.chromosomes))]<-y.chromosomes[,grepl(genepattern,colnames(y.chromosomes))]==1
-  y.chromosomes<-cbind(y.chromosomes,y[,c('knockouts','nmaxsyn','nminsyn','nbiomass')])
-  #deduplicate
-  y.chromosomes<-unique(y.chromosomes)
-  #remove removeme
-  y.chromosomes$removeme<-NULL
-  x.chromosomes<-rbind(x.chromosomes,y.chromosomes)
+    y<-x[x$id==id,]
+    y.chromosomes=getChromosomes(id)
+    colnames(y.chromosomes)<-c((names),c('maxsyn','minsyn','biomass','front','crowding','removeme'))
+    y.chromosomes[,grepl(pattern=genepattern,colnames(y.chromosomes))]<-y.chromosomes[,grepl(genepattern,colnames(y.chromosomes))]==1
+    y.chromosomes<-merge(y.chromosomes,y[,c('biomass','minsyn','maxsyn','knockouts','nmaxsyn','nminsyn','nbiomass')],by=c('biomass','minsyn','maxsyn'))
+    #deduplicate
+    y.chromosomes<-unique(y.chromosomes)
+    #remove removeme
+    y.chromosomes$removeme<-NULL
+    x.chromosomes<-rbind(x.chromosomes,y.chromosomes)
   }
   
   return(x.chromosomes)

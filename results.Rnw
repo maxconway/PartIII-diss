@@ -6,6 +6,7 @@ source('./data/getNames.R',local=TRUE)
 source('./data/NameLookup.R',local=TRUE)
 source('./data/getChromosomes.R',local=TRUE)
 source('./data/BindChromosomes.R',local=TRUE)
+require(stats,quietly=TRUE)
 
 #GDMO
 data(GDMO)
@@ -109,15 +110,41 @@ To ensure that the final front is the best possible, three approaches are possib
 Approach~\ref{enum:approachtaken} was taken, since this is effective without requiring modification to the core algoritm. At this stage this was used to select fronts for further analysis---for each strain the pareto front was found for the union of:
 \todo{haven't actualy done this yet}
 \begin{enumerate}
-\item The front at generation 250 for a population of 1000 and
-\item the front at generations \numlist{400;450;500} for a population of 500.
+\item The front at generation 250 for a population of 1000, and
+\item the front at generation 500 for a population of 500.
 \end{enumerate}
-<<results_subset_setup,eval=TRUE,cache=TRUE,dependson=c('dominated','ResultsSetup')>>=
-GDMO.S=GDMO[GDMO$strain=='sulfurreducens'&GDMO$pop==500&GDMO$generation==500,]
-GDMO.M=GDMO[GDMO$strain=='metallireducens'&GDMO$pop==500&GDMO$generation==500,]
+<<GDMO_S,eval=TRUE,cache=TRUE,dependson=c('dominated','ResultsSetup')>>=
+GDMO.S=GDMO[GDMO$strain=='sulfurreducens' 
+            & (
+              (GDMO$pop==500 & GDMO$generation==500)
+              |(GDMO$pop==1000 & GDMO$generation==250)
+            ), ]
+GDMO.S.chromosomes<-BindChromosomes(GDMO.S)
+GDMO.S.nondom<-!dominated(GDMO.S[,c('nbiomass','nmaxsyn','nminsyn')])
+GDMO.S<-GDMO.S[GDMO.S.nondom,]
+GDMO.S.chromosomes<-GDMO.S[GDMO.S.nondom,]
+pc<-princomp(GDMO.S.chromosomes[,c('maxsyn','minsyn','biomass')])
+GDMO.S.chromosomes$pos<-pc$scores[,1]
+GDMO.S.reactions=read.delim('./data/geo_s_react.txt',)
+
+@
+<<GDMO_M,eval=TRUE,cache=TRUE,dependson=c('dominated','ResultsSetup')>>=
+GDMO.M=GDMO[GDMO$strain=='metallireducens' 
+            & (
+              (GDMO$pop==500 & GDMO$generation==500)
+              |(GDMO$pop==1000 & GDMO$generation==250)
+            ), ]
+GDMO.M.chromosomes<-BindChromosomes(GDMO.M)
+GDMO.M.nondom<-!dominated(GDMO.M[,c('nbiomass','nmaxsyn','nminsyn')])
+GDMO.M<-GDMO.M[GDMO.M.nondom,]
+GDMO.M.chromosomes<-GDMO.M[GDMO.M.nondom,]
+pc<-princomp(GDMO.M.chromosomes[,c('maxsyn','minsyn','biomass')])
+GDMO.M.chromosomes$pos<-pc$scores[,1]
+GDMO.M.reactions=read.delim('./data/geo_m_react.txt',)
+
 @
 
-<<methods_GDMO_subsets,cache=TRUE,dependson=c('dominated','ResultsSetup','results_subset_setup')>>=
+<<methods_GDMO_subsets,cache=TRUE,dependson=c('dominated','ResultsSetup','GDMO_S','GDMO_M')>>=
 #extract pareto fronts for each dimension
 hs<-GDMO.S[,c('nbiomass','nmaxsyn')]
 hs<-hs[!dominated(hs),]
@@ -177,28 +204,14 @@ plot(nminsyn~nbiomass,ls,xlab='biomass',ylab='reduction potential')
 
 
 \subsubsection{Knockouts}
-<<results_GDMO_loadChromosomes,echo=FALSE,dependson=c('ResultsSetup','results_subset_setup')>>=
-GDMO.S.chromosomes<-BindChromosomes(GDMO.S)
-GDMO.M.chromosomes<-BindChromosomes(GDMO.M)
-#principle components
-require(stats,quietly=TRUE)
-pc<-princomp(GDMO.S.chromosomes[,c('maxsyn','minsyn','biomass')])
-GDMO.S.chromosomes$pos<-pc$scores[,1]
-pc<-princomp(GDMO.M.chromosomes[,c('maxsyn','minsyn','biomass')])
-GDMO.M.chromosomes$pos<-pc$scores[,1]
-#prepare reaction list
-GDMO.S.reactions=read.delim('./data/geo_s_react.txt',)
-GDMO.M.reactions=read.delim('./data/geo_m_react.txt',)
-@
-
 One major advantage of GDMO is that the shape of the pareto front can yield information about the properties of pathways. 
 Figure~\ref{fig:geoSknockouts} shows the knockouts in each member of the final population. 
 Knockout vectors are ordered by the first principle component of their objectives, which lies along the Pareto front, while genes are ordered according to a manual subsystem clustering.
 
-<<geoSknockouts, out.width='0.8\\linewidth', fig.cap='knockouts in G. Sulfurreducens'>>=
-heatmap(x=as.matrix(GDMO.S.chromosomes[,1:212]*1),
+<<geoSknockouts, out.width='0.8\\linewidth', fig.cap='knockouts in G. Sulfurreducens',dependson=c('GDMO_S')>>=
+heatmap(x=as.matrix(GDMO.S.chromosomes[,grep(pattern='GSU.*',colnames(y.chromosomes))]*1),
         Rowv=GDMO.S.chromosomes$pos,
-        Colv=cor(GDMO.S.chromosomes[1,1:212]),
+        Colv=cor(GDMO.S.chromosomes[,grep(pattern='GSU.*',colnames(y.chromosomes))]),
         ylab='genes',
         xlab='strain'
 )
@@ -210,7 +223,7 @@ Figure~\ref{fig:geoSknockouts} does show an obvious banding pattern in the gene 
 In order to get deeper insight, we need to look at more focussed groups of strains;
 Figure~\ref{fig:sulfurreducensmin} \label{sec:gskink} shows a pronounced kink in the biomass vs minimum synthesis Pareto front of G. Sulfurreducens. \todo{find these in chart}
 To look at this in more detail, we can extract the relevant sets of strains and compare the their knockouts.
-<<kinkanalysis, out.width='0.8\\linewidth', dependson=c('emthods_GDMO_subsets','results_GDMO_loadChromosomes')>>=
+<<kinkanalysis, out.width='0.8\\linewidth', dependson=c('GDMO_S','methods_GDMO_subsets')>>=
 A <- merge(GDMO.S.chromosomes,ls) # A is all strains in the minsyn vs biomass pareto front
 A <- A[0.92<A$nbiomass & A$nbiomass<0.94, ] # strains with 0.92 < biomass < 0.94
 low <- A[A$nminsyn<1.003,grepl('GSU.*',colnames(A))]  # strains with synthesis < 1.003
@@ -218,35 +231,35 @@ high <- A[A$nminsyn>1.003,grepl('GSU.*',colnames(A))] # strains with synthesis >
 diff <- colSums(high)-colSums(low)        #  knockout vector sets
 k1 = head(diff[order(-abs(diff))],20)     # most relevant knockouts
 
-heatmap(x=as.matrix(A[,1:212]*1),
+heatmap(x=as.matrix(A[,grep(pattern='GSU.*',colnames(y.chromosomes))]*1),
         Rowv=NA,
         Colv=NULL,
         labRow=A$nminsyn,
-        labCol=colnames(A[,1:212]),
+        labCol=colnames(A[,grep(pattern='GSU.*',colnames(y.chromosomes))]),
         distfun=function(x){dist(x,'manhattan')}
 )
 @
 Of course, just seeing the genes that are knocked out is not as helpful as seeing the actual reactions affected. To find these, we can refer back to the original gene annotations of the metabolic network.
-<<dependson=c('results_GDMO_loadChromosomes')>>=
+<<dependson=c('GDMO_S')>>=
 GDMO.S.reactions[GDMO.S.reactions$GeneAssociation %in% names(k1),c('OfficialName','Equation')]
 @
 \todo{find out if these should be synthetic lethal}
 
 \subsubsection{Common modifications}
 Another obvious comparison to make is to find the most common knockouts in the engineered strains.
-<<>>=
+<<k2,dependson=c('GDMO_S')>>=
 #create wildtype
 engineered <- GDMO.S.chromosomes[,grepl('GSU.*',colnames(GDMO.S.chromosomes))] # get engineered strains
 diff <- colSums(engineered)        # numer of times each knockout was used
 k2 = diff[order(-abs(diff))]
 @
 These can then be plotted to find the most important.
-<<commonmodifications, out.width='0.8\\linewidth', fig.cap='Common modifications',>>=
+<<commonmodifications, out.width='0.8\\linewidth', fig.cap='Common modifications',dependson=c('k2')>>=
 plot(k2,xlab='modification index',ylab='usages')      # most common knockouts
 abline(v=10)
 @
 This shows that 10 knockouts (to the left of the line) are highly common. These may be of particular intrest.
-<<>>= 
+<<dependson=c('GDMO_S')>>= 
 GDMO.S.reactions[GDMO.S.reactions$GeneAssociation %in% names(head(k2,10)),c('OfficialName','Equation')]
 @
 \todo{plot knockouts onto genome indicies}
@@ -259,19 +272,17 @@ GDMO.S.reactions[GDMO.S.reactions$GeneAssociation %in% names(head(k2,10)),c('Off
 The general shape of the Pareto front in G. Metallireducens is shown in figure~\ref{m_fronts}.
 <<m_fronts,out.width='0.8\\linewidth',fig.cap='G. Metallireducens Pareto Front'>>=
 require('lattice',quietly=TRUE)
-m<-GDMO[GDMO$strain=='metallireducens'&GDMO$generation==500&GDMO$pop==500,]
-cloud(m$nbiomass~m$nmaxsyn*m$nminsyn)
+cloud(GDMO.M$nbiomass~GDMO.M$nmaxsyn*GDMO.M$nminsyn)
 @
 The Pareto front for G. Metallireducens electricity production shown in figure ~\ref{m_fronts} is appears to be almost completely linear, which was to start with extremely suprising, and suggested that some error had been made---one does not expect that random knockouts would be able to achieve such a precise tradeoff. To verify this shape, a number of comparisons were made with the G. Sulfurreducens model.
-<<straight_line_verification1,fig.pos='p',fig.cap='verification of G. Metallireducens Pareto Front',fig.pos='p'>>=
+<<straight_line_verification1,fig.pos='p',fig.cap='verification of G. Metallireducens Pareto Front',fig.pos='p',dependson=c('GDMO_M','GDMO_S')>>=
 layout(matrix(1:8,4,2,byrow=F))
-for(strain in c('sulfurreducens','metallireducens')){
-  colour <- switch(strain,
+for(a in list(GDMO.S, GDMO.M)){
+  colour <- switch(unique(a$strain),
                    sulfurreducens='red',
                    metallireducens='blue')
-  a<-GDMO[GDMO$strain==strain&GDMO$pop==500,]
   b<-a[sample(nrow(a),500),]
-  plot(knockouts~generation,b,main=unique(strain),sub='knockouts vs time',pch='.',col=colour)
+  plot(knockouts~generation,b,main=unique(a$strain),sub='knockouts vs time',pch='.',col=colour)
   plot(nbiomass~generation,b,ylim=c(0,1),sub='biomass vs time',pch='.',col=colour)
   plot(nmaxsyn~generation,b,ylim=c(1,1.05),sub='maximum synthesis vs time',pch='.',col=colour)
   plot(nminsyn~generation,b,ylim=c(0,1.05),sub='minimum synthesis vs time',pch='.',col=colour)
@@ -280,16 +291,13 @@ for(strain in c('sulfurreducens','metallireducens')){
 
 <<straight_line_verification2,fig.cap='PCA of Pareto Fronts'>>=
 layout(matrix(1:2,1,2,byrow=F))
-for(strain in c('sulfurreducens','metallireducens')){
-  colour <- switch(strain,
+for(c in list(GDMO.S, GDMO.M)){
+  colour <- switch(unique(c$strain),
                    sulfurreducens='red',
                    metallireducens='blue')
-  c<-GDMO[GDMO$strain==strain
-          &GDMO$pop==500
-          &GDMO$generation==500,]
   plot(princomp(c[,c('nbiomass','nminsyn','nmaxsyn')]),
        sub='principle components',
-       main=unique(strain),
+       main=unique(c$strain),
        col=colour
   )
 }
@@ -311,7 +319,7 @@ Figure~\ref{minsynMpattern} demonstrates that in the final G.Metallireducens par
 plot(nminsyn~nmaxsyn,GDMO.M,ylab='normalized minimum synthesis',xlab='normalized maximum synthesis')
 @
 
-<<GDMO_M_chromosomes2,dependson=c('results_GDMO_loadChromosomes','results_subset_setup')>>=
+<<GDMO_M_chromosomes2,dependson=c('GDMO_S','GDMO_M','GDMO_S','GDMO_M')>>=
 GDMO.M<-GDMO.M[GDMO.M$nmaxsyn<1.025,]
 GDMO.M.chromosomes<-GDMO.M.chromosomes[GDMO.M.chromosomes$nmaxsyn<1.025,]
 pc<-princomp(GDMO.M.chromosomes[,c('maxsyn','minsyn','biomass')])
