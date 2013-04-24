@@ -23,9 +23,9 @@ The metabolic models used are listed in table~\ref{tab:models}. The columns used
     Species         & Shorthand       & Size & Synthetic Objective \\ \hline
     Geobacter Sulfurreducens  & sulfurreducens  & 609  & \ce{FE2}            \\ 
     Geobacter Metallireducens & metallireducens & 788  & \ce{FE2}            \\ 
-    Escherichia Coli          & iaf-1260        & 2383 & Acetate             \\ 
-    Escherichia Coli          & iJO-1366-aerobic        & 2583 & Acetate             \\
-    Escherichia Coli          & iJO-1366-anaerobic        & 2583 & Acetate             \\ \hline
+    Escherichia Coli          & iaf1260        & 2383 & Acetate             \\ 
+    Escherichia Coli          & iJO1366-aerobic        & 2583 & Acetate             \\
+    Escherichia Coli          & iJO1366-anaerobic        & 2583 & Acetate             \\ \hline
     \end{tabular}
     \label{tab:models}
 \end{table}
@@ -39,12 +39,15 @@ Its primary energy source is chosen as Acetate, with traces of a number of other
 \subsection{Metallireducens}
 This model~\ref{Sun2009} is based on a model of G. Sulfurreducens, but with the addition of a number of reactions that are not present in the base model. 
 
-\subsection{iaf-1260}
+\subsection{iaf1260}
 iAF1260~\ref{Feist2007} is a widely used reconstruction of the E. Coli metabolism.
-Due to the extensive use of E. coli as a model organism, it is far better characterized than the Geobacteraceae, and hence 3-4 times as many reactions are known. As discussed in section~\ref{sex:complexity}, this results in much slower analysis of these networks.
+Due to the extensive use of E. coli as a model organism, it is far better characterized than the Geobacteraceae, and hence 3-4 times as many reactions are known. 
+As discussed in section~\ref{sex:complexity}, this results in much slower analysis of these networks.
+This reconstruction of E. Coli has been used extensively\footnote{218 citations for iAF1260 are listed by Google Scholar, versus 28 for iJO1366}, and so it was used in this project for testing and validation; specifically it allowed problems to be narrowed down to being either with the otpimization algorithm, or the model being optimized.
 
-\subsection{iJO-1366}
+\subsection{iJO1366}
 iJO1366~\ref{Orth2011} is newer and somewhat more comprehensive than iAF1260.
+Since iJO1366 contains more reactions and more comprehensive gene-protein-reaction annotations, subsystems from this were used for knock-in investigations.
 
 \subsection{Model Reduction}
 In order to increase execution speed and clarify the results, the model reduction technique designed for use with the GDLS~\ref{Lun2009} procedure was used. This iteratively removed dead end reactions and merged reactions that uniquely shared a metabolite until no more simplifications were possible, resulting in final models with sizes \SIrange{44}{80}{\percent} of the original, without loss of descriptive power.
