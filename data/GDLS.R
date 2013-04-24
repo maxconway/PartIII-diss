@@ -1,4 +1,5 @@
 GDLS=NULL
+source('./natural.R')
 require(gdata,quiet=TRUE)
 for(file in list.files(path = './experiments/', pattern = '.*GDLS.*.log',full.names=FALSE)){
   data = read.delim(paste('./experiments/',file,sep=''),
@@ -12,9 +13,7 @@ for(file in list.files(path = './experiments/', pattern = '.*GDLS.*.log',full.na
   if(startsWith(file,'geo_m_react')) data$strain<-'metallireducens'
   if(startsWith(file,'geo_s_react')) data$strain<-'sulfurreducens'
   #normalization
-  natural<-unique(data[data$knockouts==0,c('strain','biomass','maxsyn','minsyn')])
-  colnames(natural)<-c('strain','natbiomass','natmaxsyn','natminsyn')
-  data<-merge(data,natural)
+  data<-merge(data,natural,by=c('strain'))
   data$nbiomass <- data$biomass/data$natbiomass
   data$nmaxsyn <- data$maxsyn/data$natmaxsyn
   data$nminsyn <- data$minsyn/data$natminsyn
@@ -24,8 +23,7 @@ for(file in list.files(path = './experiments/', pattern = '.*GDLS.*.log',full.na
 GDLS$strain=as.factor(GDLS$strain)
 GDLS$nbhdsz<-as.integer(GDLS$nbhdsz)
 GDLS$M<-as.integer(GDLS$M)
-
-FBAtimings<-read.csv('FBAtimings.csv')
+FBAtimings<-read.csv('./FBAtimings.csv')
 FBAtimings$FBAtime=FBAtimings$time
 FBAtime=aggregate(FBAtime~strain,FBAtimings[,c('strain','FBAtime')],mean)
 GDLS=merge(GDLS,FBAtime)

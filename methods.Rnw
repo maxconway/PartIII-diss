@@ -240,6 +240,7 @@ Here we can see that the metabolic model used will have a very large effect, sin
 
 To find the relative effects of these parameters on execution time, the trials listed in table~\ref{tab:GDLSevals} were performed.
 <<GDLSevals,results='asis'>>=
+data(GDMO)
 data(GDLS)
 library(xtable,quietly=TRUE)
 GDLS.runs=unique(GDLS[,c('strain','nbhdsz','M')])
