@@ -39,7 +39,7 @@ This section discusses each strategy individually, before comparing their relati
 \subsection{GDMO}
 A number of different evolution runs were completed for each strain, summarised in table~\ref{tab:GDMOevals}. As can be seen, more evaluations were done for smaller population and generation sizes, in order to find the importance of these two factors on running time and performance.
 
-<<GDMOevals,echo=FALSE,results='asis',dependson='ResultsSetup'>>=
+<<GDMOevals,results='asis',dependson='ResultsSetup'>>=
 require(xtable,quietly=TRUE)
 GDMO.runs$population<-GDMO.runs$pop
 print(xtable(
