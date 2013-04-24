@@ -30,7 +30,7 @@ GDLS.runs=unique(GDLS[,c('strain','id','nbhdsz','M')])
 
 
 \chapter{Results}
-This chapter details the results of the investigation, in terms of the properties of the design strategies used, and the biological properties of the strains designed.
+This chapter details the results of the investigation: first the technical evaluation focusses on the properties of GDMO and GDLS themselves, then the biological evaluation discusses the synthesis possible with both Geobacter models, the knockout strategies that were used, and the results of using GDMO for evaluating potential knockins from E. Coli.
 \todo{section references}
 
 \section{Technical Evaluation}
@@ -108,7 +108,6 @@ To ensure that the final front is the best possible, three approaches are possib
 \todo{actually re-run code in order to find a better front}
 
 Approach~\ref{enum:approachtaken} was taken, since this is effective without requiring modification to the core algoritm. At this stage this was used to select fronts for further analysis---for each strain the pareto front was found for the union of:
-\todo{haven't actualy done this yet}
 \begin{enumerate}
 \item The front at generation 250 for a population of 1000, and
 \item the front at generation 500 for a population of 500.
@@ -159,24 +158,26 @@ lm<-GDMO.M[,c('nbiomass','nminsyn')]
 lm<-lm[!dominated(lm),]
 @
 
-\todo{not necessarily here, but do write about 3d pareto fronts}
-
-\subsubsection{Quality}
-Solution quality can only really be evaluated in comparison with other techniques and with the literature.\todo{not done}
-
 \subsection{GDLS}
 The first stage of technical evaluation of GDLS is to find the effect of neighbourhood size and branching factor on the quality of solutions.
-<<GDLS:solutionquality>>=
-
+<<GDLS_solutionquality>>=
+cloud(nmaxsyn~nbhdsz+M,GDLS,default.scales=list(arrows=F),col='red')
 @
+\todo{discuss graph when results are ready}
 
 
 \subsection{Comparison}
 Figure~\ref{fig:comparison} shows the results of the algorithms on one plot. 
 The axes chosen are just maximum synthesis and biomass production, since these are what GDLs optimizes.
 <<comparison,out.width='0.8\\linewidth',dependson='methods_GDMO_subsets'>>=
-plot(nbiomass~nmaxsyn,hs,col='pink')
-points(nbiomass~nmaxsyn,GDLS[GDLS$strain=='sulfurreducens',],col='red')
+plot(nbiomass~nmaxsyn,hs,col='pink',pch='o')
+points(nbiomass~nmaxsyn,GDLS[GDLS$strain=='sulfurreducens',],col='darkred',pch='x')
+legend(
+  'topright',
+  legend=c('GDMO','GDLS'),
+  pch=c('o','x'),
+  col=c('pink','darkred')
+)
 @
 We can see that the solutions produced by GDLS are in the Pareto front, but that they do not achieve as high synthesis rates as GDMO. This is likely to be due to the inability of GDLs to make jumps over more than a certain number of knockouts.
 \todo{find out knockout difference}
