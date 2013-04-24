@@ -34,7 +34,10 @@ This chapter details the results of the investigation: first the technical evalu
 \todo{section references}
 
 \section{Technical Evaluation}
-This section discusses each strategy individually, before comparing their relative merits.
+This section focusses on the relative merits of GDMO and GDLS, and why GDMO was chosen for further use.
+First the convergence behaviour of both algorithms is evaluated, to ensure that the comparison is as fair as possible; secondly the solutions from both technques are compared.
+The comparisons performed here are based on G. Sulfurreducens.
+It was confirmed that the results remained valid with G. Metallireducens and the iAF1260 E. Coli model.
 
 \subsection{GDMO}
 A number of different evolution runs were completed for each strain, summarised in table~\ref{tab:GDMOevals}. As can be seen, more evaluations were done for smaller population and generation sizes, in order to find the importance of these two factors on running time and performance.
@@ -50,10 +53,8 @@ print(xtable(
 ),include.rownames=FALSE)
 @
 
-\subsection{Convergence time}
-The first property investigated was how quickly convergence to a stable solution was achieved. 
-This is difficult for multi-objective optimization, since pareto fronts are not generally comparable.
-\todo{check if hypervolume already defined}
+Measurement of convergence is difficult for multi-objective optimization, since pareto fronts are not generally comparable.
+A number of techniques have been proposed for comparison, but as discussed in section~\ref{hypervolume}, the heuristic used here is hypervolume, calculated by Monte-Carlo integration.
 
 Figure~\ref{fig:convergence} shows hypervolume against generation for a number of runs of GDMO. This shows that most convergence occured quickly---within \num{200} generations. 
 This works out at around \Sexpr{mean(GDMO[GDMO$generation==200&GDMO$strain=='sulfurreducens','walltime'])}~\si{\second}.
@@ -143,6 +144,8 @@ GDMO.M.reactions=read.delim('./data/geo_m_react.txt',)
 
 @
 
+And, from these fronts, the pareto fronts were calculated for pairs of objectives.
+
 <<methods_GDMO_subsets,cache=TRUE,dependson=c('dominated','ResultsSetup','GDMO_S','GDMO_M')>>=
 #extract pareto fronts for each dimension
 hs<-GDMO.S[,c('nbiomass','nmaxsyn')]
@@ -159,12 +162,11 @@ lm<-lm[!dominated(lm),]
 @
 
 \subsection{GDLS}
-The first stage of technical evaluation of GDLS is to find the effect of neighbourhood size and branching factor on the quality of solutions.
+The knockout strategies returned by GDLS provided a maximum synthesis of \sexpr{GDLS$nmaxsyn*100}\si{\percent}. This was possible using a small neighbourhoodsize (nbhdsz) of 3 and branching factor (M) of 1.
+GDLS was not able to improve upon this even with parameters that allowed it to explore a much larger region.
 <<GDLS_solutionquality>>=
 cloud(nmaxsyn~nbhdsz+M,GDLS,default.scales=list(arrows=F),col='red')
 @
-\todo{discuss graph when results are ready}
-
 
 \subsection{Comparison}
 Figure~\ref{fig:comparison} shows the results of the algorithms on one plot. 
@@ -179,11 +181,17 @@ legend(
   col=c('pink','darkred')
 )
 @
-We can see that the solutions produced by GDLS are in the Pareto front, but that they do not achieve as high synthesis rates as GDMO. This is likely to be due to the inability of GDLs to make jumps over more than a certain number of knockouts.
-\todo{find out knockout difference}
+We can see that the solutions produced by GDLS are in the Pareto front, but that GDLS is not able to achieve as high a synthesis rate as GDMO.
+This is likely to be because the wild type is in a local minimum for \ce{FE2} production, and since GDLS is a local, rather than global, search strategy, it cannot escape this minimum. 
+This theory is supported by the `knee' in the pareto front that GDLs does not appear to have been able to pass.
+
+GDMO took large amounts of time to find some solutions, up to a maximum of \sexpr{max(GDMO[GDMO$strain=='sulfurreducens','cputime'])/3600}\si{hour} of CPU time in one case, compared to a maximum of \sexpr{max(GDLS[GDLS$strain=='sulfurreducens','cputime'])/60}\si{minute} for GDLS\footnote{both used the same computer and optimization package, and this comparison is restricted to G. Sulfurreducens}.
+However, GDMO created a solution that was superior to any provided by GDLS in only \sexpr{min(GDMO[GDMO$strain=='sulfurreducens'&GDMO$nmaxsyn>1.014673,'cputime'])}\si{\seconds} of cputime, at one point.
+
+Since GDMO provided appeared to provide better knockout vectors more quickly than GDLS, and with the added benefit of describing the whole Pareto front, GDMO was chosen for use from this point forwards.
 
 \section{Biological Evaluation}
-The most interesting biological data was produced by GDMO, since this was able to show how the pathways altered varied with the solution properties.
+\todo{intro}
 
 \subsection{Geobacter Sulfurreducens}
 \subsubsection{Fronts}

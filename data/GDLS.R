@@ -27,4 +27,7 @@ FBAtimings<-read.csv('./FBAtimings.csv')
 FBAtimings$FBAtime=FBAtimings$time
 FBAtime=aggregate(FBAtime~strain,FBAtimings[,c('strain','FBAtime')],mean)
 GDLS=merge(GDLS,FBAtime)
+
+GDLS<-GDLS[GDLS$nmaxsyn<10,]
+
 save(GDLS,file='GDLS.RData')

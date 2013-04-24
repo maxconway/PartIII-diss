@@ -70,6 +70,7 @@ The genetic design algorithms used were written in Matlab, while analysis was co
 Git was used for version control, while the parsing and reduction of metabolic models was automated using the Make build system.
 
 \subsection{Hypervolume computation}
+\lable{hypervolume}
 Techniques to compare the output of multi-objective optimization algorithms are an area of active research~\ref{Okabe2003}. 
 Ultimately, one cannot definitively say that pareto front A is better than pareto front B unless every point in B is dominated by a point in A. 
 One relatively common metric for comparison of pareto fronts is the hypervolume enclosed by the front~\ref{Zitzler1999,Zitzler}. 
