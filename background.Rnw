@@ -115,7 +115,8 @@ Genetic Design by Branch and Bound~\ref{Egen2012} is an enhancment on GDLS that 
 This means that when the performance from a branch \(A\) is strictly poorer than from another branch, \(B\), then \(A\) can be discarded.
 Strictly poorer in this context means that the best case performance of \(A\) is worse than the worst case performance of \(B\).
 
-\todo{say something about why not using?}
+Although GDBB offers a huge speedup over GDLS---sometimes several orders of magnitude---it is still a deterministic local search algorithm, and so for a given area searched, it finds the same result as GDLS. 
+For this reason, GDLS was used as a proxy for GDBB in comparing between algorithms, and ultimately solution quality, rather than the time taken, was found to be the deciding factor.
 
 \subsection{Genetic Design by Multi-objective Optimization(GDMO)} 
 Genetic Design by Multi-objective Optimization~\ref{Costanza2012} is a genetic design algorithm based on the multi-objective evolutionary optimization algorithm NSGA-II, as described in Section~\ref{sec:NSGA}.
