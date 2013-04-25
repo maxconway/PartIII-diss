@@ -162,7 +162,7 @@ lm<-lm[!dominated(lm),]
 @
 
 \subsection{GDLS}
-The knockout strategies returned by GDLS provided a maximum synthesis of \sexpr{GDLS$nmaxsyn*100}\si{\percent}. This was possible using a small neighbourhoodsize (nbhdsz) of 3 and branching factor (M) of 1.
+The knockout strategies returned by GDLS provided a maximum synthesis of \Sexpr{GDLS$nmaxsyn*100}~\si{\percent}. This was possible using a small neighbourhoodsize (nbhdsz) of 3 and branching factor (M) of 1.
 GDLS was not able to improve upon this even with parameters that allowed it to explore a much larger region.
 <<GDLS_solutionquality>>=
 cloud(nmaxsyn~nbhdsz+M,GDLS,default.scales=list(arrows=F),col='red')
@@ -185,8 +185,8 @@ We can see that the solutions produced by GDLS are in the Pareto front, but that
 This is likely to be because the wild type is in a local minimum for \ce{FE2} production, and since GDLS is a local, rather than global, search strategy, it cannot escape this minimum. 
 This theory is supported by the `knee' in the pareto front that GDLs does not appear to have been able to pass.
 
-GDMO took large amounts of time to find some solutions, up to a maximum of \sexpr{max(GDMO[GDMO$strain=='sulfurreducens','cputime'])/3600}\si{hour} of CPU time in one case, compared to a maximum of \sexpr{max(GDLS[GDLS$strain=='sulfurreducens','cputime'])/60}\si{minute} for GDLS\footnote{both used the same computer and optimization package, and this comparison is restricted to G. Sulfurreducens}.
-However, GDMO created a solution that was superior to any provided by GDLS in only \sexpr{min(GDMO[GDMO$strain=='sulfurreducens'&GDMO$nmaxsyn>1.014673,'cputime'])}\si{\seconds} of cputime, at one point.
+GDMO took large amounts of time to find some solutions, up to a maximum of \Sexpr{max(GDMO[GDMO$strain=='sulfurreducens','cputime'])/3600}~\si{hour} of CPU time in one case, compared to a maximum of \Sexpr{max(GDLS[GDLS$strain=='sulfurreducens','cputime'])/60}~\si{minute} for GDLS\footnote{both used the same computer and optimization package, and this comparison is restricted to G. Sulfurreducens}.
+However, GDMO took only \Sexpr{min(GDMO[GDMO$strain=='sulfurreducens'&GDMO$nmaxsyn>1.014673,'cputime'])}~\si{\second} of (amortized) CPU time to find a solution that was better than any provided by GDLS.
 
 Since GDMO provided appeared to provide better knockout vectors more quickly than GDLS, and with the added benefit of describing the whole Pareto front, GDMO was chosen for use from this point forwards.
 
