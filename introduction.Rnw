@@ -18,9 +18,9 @@ This document is split into five chapters:
 \subsection{Colours}
 Colours have been used to highlight which species strains belong to:
 \begin{itemize}
-\item Geobacter Sulfurreducens is represented by \color{red}{red}.
-\item Geobacter Metallireducens is represented by \color{blue}{blue}.
-\item Escherichia Coli is represented by \color{green}{green}.
+\item Geobacter Sulfurreducens is represented by {\color{red} red}.
+\item Geobacter Metallireducens is represented by {\color{blue} blue}.
+\item Escherichia Coli is represented by {\color{green} green}.
 \end{itemize}
 
 \section{Embedded code}
