@@ -4,7 +4,7 @@ The Methods chapter describes the Biological models used, some of the more techn
 
 \section{Metabolic Models}
 To conduct flux balance analysis, one needs a model of the metabolism of the organism in question. A number of exchange formats exist for these models and there are many more formats internal to tools, however after some investigation it was clear that the de-facto standard format is the use of tab-separated value tables, with the reactions specified in a space-separated format. 
-\todo{describe column layout}
+
 Unfortunately, the order and names of columns in these tables is not standardized, and the two Geobacter models that I used were supplied in an ad-hoc format, which was a problem given the inflexible import facilities of Matlab, and the fact that these tables could have cells with >250 characters. 
 To fix this, I rewrote the import facilities in GDMO and GDLS in order to give them greater flexibility in the file formats that they could read.
 
@@ -16,9 +16,8 @@ The metabolic models used are listed in table~\ref{tab:models}. The columns used
 \item[Synthetic Objective] The material that we seek to overproduce.
 \end{description}
 
-\todo{table needs citations}
 \begin{table}
-    \begin{tabular}{|l|l|l|l|l|}
+    \begin{tabular}{ l l l l l}
     \hline
     Species         & Shorthand       & Size & Synthetic Objective \\ \hline
     Geobacter Sulfurreducens  & sulfurreducens  & 609  & \ce{FE2}            \\ 
@@ -31,37 +30,37 @@ The metabolic models used are listed in table~\ref{tab:models}. The columns used
 \end{table}
 
 \subsection{Sulfurreducens}
-Described in 2009 in~\ref{Mahadevan2006}, this model focusses on the \ce{FE3} reducing capabilities of Geobacter Sulfurreducens. 
+Described in 2009 in~\cite{Mahadevan2006}, this model focusses on the \ce{FE3} reducing capabilities of Geobacter Sulfurreducens. 
 Its primary energy source is chosen as Acetate, with traces of a number of other necessary compounds. 
 \ce{FE2} is chosen as the target since due to the pilli that Geobacter possess, production of \ce{FE2}, can be considered to be biologically equivalent to electron transfer via an electrode.
 \ce{FE2} overproduction is chosen instead of \ce{FE3} overconsumption simply for uniformity---the two are equivalent, since Flux Balance Analysis rules out the organism having any net accumulation of Iron.
 
 \subsection{Metallireducens}
-This model~\ref{Sun2009} is based on a model of G. Sulfurreducens, but with the addition of a number of reactions that are not present in the base model. 
+This model~\cite{Sun2009} is based on a model of G. Sulfurreducens, but with the addition of a number of reactions that are present in G. Metallireducens but not G. Sulfurreducens. 
 
 \subsection{iaf1260}
-iAF1260~\ref{Feist2007} is a widely used reconstruction of the E. Coli metabolism.
+iAF1260~\cite{Feist2007} is a widely used reconstruction of the E. Coli metabolism.
 Due to the extensive use of E. coli as a model organism, it is far better characterized than the Geobacteraceae, and hence 3-4 times as many reactions are known. 
-As discussed in section~\ref{sex:complexity}, this results in much slower analysis of these networks.
+As discussed in section~\ref{sec:complexity}, this results in much slower analysis of these networks.
 This reconstruction of E. Coli has been used extensively\footnote{218 citations for iAF1260 are listed by Google Scholar, versus 28 for iJO1366}, and so it was used in this project for testing and validation; specifically it allowed problems to be narrowed down to being either with the otpimization algorithm, or the model being optimized.
 
 \subsection{iJO1366}
-iJO1366~\ref{Orth2011} is newer and somewhat more comprehensive than iAF1260.
+iJO1366~\cite{Orth2011} is newer and somewhat more comprehensive than iAF1260.
 Since iJO1366 contains more reactions and more comprehensive gene-protein-reaction annotations, subsystems from this were used for knock-in investigations.
 
 \subsection{Model Reduction}
-In order to increase execution speed and clarify the results, the model reduction technique designed for use with the GDLS~\ref{Lun2009} procedure was used. This iteratively removed dead end reactions and merged reactions that uniquely shared a metabolite until no more simplifications were possible, resulting in final models with sizes \SIrange{44}{80}{\percent} of the original, without loss of descriptive power.
+In order to increase execution speed and clarify the results, the model reduction technique designed for use with the GDLS~\cite{Lun2009} procedure was used. This iteratively removed dead end reactions and merged reactions that uniquely shared a metabolite until no more simplifications were possible, resulting in final models with sizes \SIrange{44}{80}{\percent} of the original, without loss of descriptive power.
 
 \section{Computational Decisions}
 \subsection{Optimization Libraries}
 Flux Balance Analysis is a linear optimization problem, and can therefore be solved by the techniques of Mathematical Programming; in addtion, exhaustive enumeration of knockout strategies when coupled with Flux Balance Analysis is a Mixed Integer Programming problem. 
-Various techniques exist to solve these problems, in particular the simplex algorithm for linear programming \todo{cite}. These techniques are extremely compute intensive, so simple Matlab libraries would be far too slow.
+Various techniques exist to solve these problems, in particular the simplex algorithm for linear programming mentioned in section~\ref{sec:FBA}. These techniques are extremely compute intensive, so simple Matlab libraries would be far too slow.
 Instead, the common approach is to use Optimization Toolkits, which have a core of extremely high performance code in a low level language such as C\todo{cite}, with various wrappers to allow calls from more convenient languages like Matlab.
 
 A number of these toolkits exist, with various papers discussing their relative merits \todo{cite}. The two used here are GNU Linear Programming Kit (GLPK) and Gurobi. 
 \begin{description}
 \item[GLPK] is free and open source and one of the most widely available toolkits, with interfaces to many languages on many platforms.
-\item[Gurobi] is a commerical toolkit also with a good number of interfaces on all relevant platforms. The literature suggests that it is the fastest performing toolkit~\ref{Meindl2012}.
+\item[Gurobi] is a commerical toolkit also with a good number of interfaces on all relevant platforms. The literature suggests that it is the fastest performing toolkit~\cite{Meindl2012}.
 \end{description}
 The timing section~\ref{sec:complexity} is entirely based on GLPK. This is because initial experiments found it to perform faster for smaller problem sizes, despite the evidence that Gurobi is faster for large problems. Assuming that this is due to higher overheads in Gurobi, we can expect that measurments from small cases for GLPK will scale to large cases in a manner that is closer to theoretical predictions, allowing a more accurate model.
 
@@ -71,9 +70,9 @@ Git was used for version control, while the parsing and reduction of metabolic m
 
 \subsection{Hypervolume computation}
 \label{hypervolume}
-Techniques to compare the output of multi-objective optimization algorithms are an area of active research~\ref{Okabe2003}. 
-Ultimately, one cannot definitively say that pareto front A is better than pareto front B unless every point in B is dominated by a point in A. 
-One relatively common metric for comparison of pareto fronts is the hypervolume enclosed by the front~\ref{Zitzler1999,Zitzler}. 
+Techniques to compare the output of multi-objective optimization algorithms are an area of active research~\cite{Okabe2003}. 
+Ultimately, one cannot definitively say that Pareto front A is better than Pareto front B unless every point in B is dominated by a point in A. 
+One relatively common metric for comparison of Pareto fronts is the hypervolume enclosed by the front~\cite{Zitzler1999,Zitzler}. 
 This can be defined as the volume of the space for which points \(p\) obey \(\exists s . (s \in \mathrm{Front} \land s \succ p)\).
 This has the properties of providing some measure of both spread and optimality of solutions, and reducing to the product of the objectives with only one solution. 
 
@@ -89,7 +88,7 @@ For this reason, I wrote a custom Monte Carlo integration function, which could 
 \item the volume that dominates all the solutions.\label{enum:nodom}
 \end{enumerate}
 We know that volume~\ref{enum:alldom} should be included in the hypervolume and that volume~\ref{enum:nodom} should not, so the search space can be narrowed down to just volume~\ref{enum:somedom}.
-The domination calculation itself was optimized by a short circuit evaluation: the majority of samples taken in the Monte Carlo simulation either dominate many solutions or very few, so many can be found to be inside the dominated volume by comparison to only a small number of pareto-optimal points.
+The domination calculation itself was optimized by a short circuit evaluation: the majority of samples taken in the Monte Carlo simulation either dominate many solutions or very few, so many can be found to be inside the dominated volume by comparison to only a small number of Pareto-optimal points.
 
 <<dominated,cache=TRUE>>=
 dominates <- function(a,b){
@@ -161,31 +160,27 @@ hypervolumeMonteCarlo <- function(x,num){
 \section{Computational Complexity analysis}
 \label{sec:complexity}
 The core problem of this kind of genetic design (which does not use network structure information) is 0-1 integer linear programming~\cite{Karp1972}---indeed GDLS works by repeatedly solving small cases of this problem.
-This means that this problem is NP-complete, and assuming \(\mathcal{P} \neq \mathcal{NP}\), these algorithms have running times that are not bounded by any polynomial.
+This means that this problem is NP-complete, and assuming \( \P \neq \NP \), these algorithms have running times that are not bounded by any polynomial.
 This suggests extremely long running times for some combinations of input parameters.
 This makes it important to be able to form an a priori estimate of the running time, so that computation time is not wasted with infeasibly long runs.
 These very long running times mean that forming a model purely by regression analysis over the whole parameter space would be impractical, and so a partly analytic approach must be taken, by examining the algorithm's procedures.
 
 \subsection{Flux Balance Analysis}
 Since FBA is at the core of the algorithms studied, it makes sense to consider this separately. 
-Here, FBA is done via the Simplex linear programming algorithm, which has which takes \(O(n^3)\) steps for practical problems~\cite{Dantzig1963}. 
+Here, FBA is done via the Simplex linear programming algorithm, which takes \(O(n^3)\) steps for practical problems~\cite{Dantzig1963}. 
 %A number of different solvers exist, with GLPK being used here, as the lowest common denominator.
 %solvers vary in code speed by around 100-fold
-In order to characterize the differences between running times for different models, FBA was performed 100 times with each or a number of models. The results, shown in figure~\ref{fig:FBAtimings}, show that times can vary by \todo{find out fold change} X-fold. This can be attributed to the variance in sizes of the different models used.
+In order to characterize the differences between running times for different models, FBA was performed 100 times with each or a number of models. The results, shown in figure~\ref{fig:FBAtimings}, show that times can vary by 35-fold. This can be attributed to the variance in sizes of the different models used.
 
-\begin{figure}
-\label{fig:FBAtimings}
-\centering
-<<echo=FALSE>>=
+<<FBAtimings,fig.cap='running times for FBA of metabolic models'>>=
 data('FBAtimings')
 plot(time ~ strain, data=FBAtimings,
         range=0,
-        xlab='Metabolic Model',
-        ylab='time (s)'
+        xlab='',
+        ylab='time per round of FBA (s)',
+     las=2
         )
 @
-\caption{running times for FBA of metabolic models}
-\end{figure}
 
 \subsection{GDMO}
 Since GDMO is an evolutionary algorithm, the number of objective function evaluations performed is proportional to the population size multiplied by the number of generations evaluated. 
@@ -201,33 +196,39 @@ GDMO.train = head(GDMO.timing,nrow(GDMO.timing)*0.9)
 GDMO.test = tail(GDMO.timing,nrow(GDMO.timing)*0.1)
 @
 
-<<methods_GDMO_timings2,fig.cap='predicted time taken using time for 1 FBA round',dependson='methods_GDMO_timings1'>>=
+<<methods_GDMO_timings2,fig.cap='predicted time taken using time for 1 FBA round',dependson='methods_GDMO_timings1',out.height='0.4\\textheight',fig.pos='t'>>=
 GDMO.fit = lm(cputime~pop:generation:FBAtime,GDMO.train)
 GDMO.test$prediction=predict(GDMO.fit,newdata=GDMO.test)
+colours=c('darkgreen','lightgreen','blue','red')
 plot(prediction~cputime,
      GDMO.test,
-     col=GDMO.test$strain,
+     col=colours[GDMO.test$strain],
      xlab='actual cputime (s)',
      ylab='predicted cputime (s)')
 legend('topright',
        legend=unique(GDMO.test$strain),
-       col=unique(GDMO.test$strain),pch='O')
+       col=colours[unique(GDMO.test$strain)],
+       pch='O'
+)
 @
 Figure~\ref{fig:methods_GDMO_timings2} shows the predictions produced by this linear model, which uses the time taken to conduct one round of FBA.
 Clearly, the prediction holds well within each strain, but there are big differences between strains.
 This indicates that time to conduct Flux Balance Analysis is not, in fact, a good predictor between strains, despite its consistency wihtin strains. Luckily, this in-silico data is available in abundance, so it was possible to get round this problem by simply fitting four separate models, as shown in figure~\ref{fig:methods_GDMO_timings3}.
 
-<<methods_GDMO_timings3,fig.cap='predicted time taken conditional on strain',dependson='methods_GDMO_timings1'>>=
+<<methods_GDMO_timings3,fig.cap='predicted time taken conditional on strain',dependson='methods_GDMO_timings1',out.height='0.4\\textheight',fig.pos='b'>>=
 GDMO.fit = lm(cputime~pop:generation:strain,GDMO.train)
 GDMO.test$prediction=predict(GDMO.fit,newdata=GDMO.test)
+colours=c('darkgreen','lightgreen','blue','red')
 plot(prediction~cputime,
      GDMO.test,
-     col=GDMO.test$strain,
+     col=colours[GDMO.test$strain],
      xlab='actual cputime (s)',
      ylab='predicted cputime (s)')
-legend('topleft',
+legend('topright',
        legend=unique(GDMO.test$strain),
-       col=unique(GDMO.test$strain),pch='O')
+       col=colours[unique(GDMO.test$strain)],
+       pch='O'
+)
 @
 
 \subsection{GDLS}
@@ -240,22 +241,9 @@ Four variables are used here to parametrize GDLS:
 \item \texttt{M}, the number of search paths to maintain at each stage; and
 \item \texttt{knockouts}, the maximum total number of knockouts (fixed at 40 for fair comparison with GDMO).
 \end{enumerate}
-Here we can see that the metabolic model used will have a very large effect, since not only does this effect the time to complete one FBA evaluation, but the space that much be searched around a given solution is \(\texttt{modelsize} ^ \texttt{neighbourhoodsize}\). This means that, total search time for one solution is roughly \(\texttt{modelsize}^{(3+\texttt{neighbourhoodsize})}\), once the time to conduct FBA is included. Overall, this gives a lower bound on running time of \(\texttt{M} * \texttt{modelsize} ^{ ( 3 + \texttt{neighbourhoodsize})}\).
+Here we can see that the metabolic model used will have a very large effect, since not only does this effect the time to complete one FBA evaluation, but the space that much be searched around a given solution is \(\texttt{modelsize} ^ \texttt{nbhdsz}\). This means that, total search time for one solution is roughly \(\texttt{modelsize}^{(3+\texttt{nbhdsz})}\), once the time to conduct FBA is included. Overall, this gives a lower bound on running time of \(\texttt{M} * \texttt{modelsize} ^{ ( 3 + \texttt{nbhdsz})}\).
 
-To find the relative effects of these parameters on execution time, the trials listed in table~\ref{tab:GDLSevals} were performed.
-<<GDLSevals,results='asis'>>=
-data(GDMO)
-data(GDLS)
-library(xtable,quietly=TRUE)
-GDLS.runs=unique(GDLS[,c('strain','nbhdsz','M')])
-print(xtable(
-  GDLS.runs[,c('strain','nbhdsz','M')],
-  caption='GDLS evaluations completed',
-  label='tab:GDLSevals',
-  display=c('d','s','d','d')
-  ),include.rownames=FALSE)
-@
-\todo{need to actually make a prediction}
+Although G. Sulfurreducens was used for performing the comparison of algorithms, other testing showed that model size did indeed have by far the largest effect on the execution time of GDLS.
 
 \section{Instrumentation}
 To facilitate comparison, the genetic design strategies were instrumented in order to record every candidate solution that they produced. This allows the improvement of the candidates over time to be seen. 

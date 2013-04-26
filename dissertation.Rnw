@@ -11,7 +11,7 @@
 opts_chunk$set(
   concordance=TRUE,
   split=TRUE,
-  size='scriptsize',
+  size='small',
   tidy=FALSE,
   autodep=TRUE,
   cache=TRUE
@@ -24,12 +24,16 @@ opts_knit$set(
 \author{Maxwell Conway\\ Supervisor: Pietro Lio'\\ Collaboration: Muktak Aklujkar and Derek Lovley (University of Massachusetts, Amherst)}
 \date{}
 
+\todo{Title page}
+%\maketitle
+
 \begin{abstract}
 \input{abstract.tex}
 \end{abstract}
 
 \listoftodos
 
+\setcounter{tocdepth}{3}
 \cleardoublepage
 \tableofcontents
 \listoffigures
@@ -53,10 +57,23 @@ opts_knit$set(
 \clearpage
 
 \todo{use knitr bibliography}
+\nocite{*}
 \bibliographystyle{plain}
 \bibliography{bibliography}
 
 \appendix
+\chapter{Supplementary tables}
+\section{Essential Genes and Reactions}
+<<GDMO_M_essential,dependson=c('GDMO_M_chromosomes2'),results='asis'>>=
+library(xtable,quietly=TRUE)
+temp_essential <- GDMO.M.chromosomes[,grep(pattern='Gmet_.*',colnames(GDMO.M.chromosomes))]
+temp_essential <- names(temp_essential[,colSums(temp_essential)==0])
+print(xtable(
+  GDMO.M.reactions[GDMO.M.reactions$GeneAssociation %in% temp_essential,c('OfficialName','Equation','GeneAssociation')],
+  caption='Geobacter Metallireducens essential reactions',
+  label='tab:GDMO_M_essential',
+  ),include.rownames=FALSE)
+@
 
 \chapter{Expenses}
 \begin{tabular}{l | r}
