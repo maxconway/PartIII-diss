@@ -71,14 +71,14 @@ opts_knit$set(
 \bibliography{bibliography,packages}
 
 \appendix
-\chapter{Supplimentary Materials}
-Supplimentary materials are available online, at \url{http://goto.maxwellconway.com/diss-sup}.
+\chapter{Supplementary Materials}
+Supplementary materials are available online, at \url{http://goto.maxwellconway.com/diss-sup}.
 
 \chapter{Materials and Expenses}
 \section{Computers}
 The primary computer used had an AMD Phenom II X4 810 processor and 9GB of RAM, also used was a Mac Pro with two 2.4GHz 6-Core Intel Xeon E5645 processors and 64GB of RAM.
 \section{Datasets}
-The metabolic models used are listed in table~\ref{tab:models}, followed by the relevant citations; copies are available in the supplimentary materials.
+The metabolic models used are listed in table~\ref{tab:models}, followed by the relevant citations; copies are available in the supplementary materials.
 \section{Languages}
 Matlab was the primary language for the genetic design algorithms, R was used for analysis.
 \section{Licences}

@@ -7,7 +7,7 @@
 \section{Geobacter}
 Geobacter~\cite{Lovley2011} is a genus of anaerobic proteobacteria with a number of possible industrial applications, stemming from their ability to utilize soluble and insoluble metal oxides as electron acceptors~\cite{Bond2003}. 
 The ability to perform these unusual redox reactions could be relevant to bioremediation, both by allowing clean up of hydrocarbon spills in anaerobic conditions, and by fixing oxides of toxic and radioactive metals, such as uranium. 
-Furthermore, the ability to utilize insoluble materials as electron acceptors make Geobacter interesting as a candidate for use in bacterial fuel cells with, and without, branes, and the pilli used to connect to transport electrons have applications in themselves, as nanowires.
+Furthermore, the ability to utilize insoluble materials as electron acceptors make Geobacter interesting as a candidate for use in bacterial fuel cells with, and without, membranes, and the pilli used to connect to transport electrons have applications in themselves, as nanowires.
 
 The first Geobacter species to be isolated was Geobacter Metallireducens, from sandy sediment in the Pontomac River, Washington D.C. in 1987, by Derek Lovley. 
 The most studied species is Geobacter Sulfurreducens.
@@ -113,7 +113,7 @@ This causes the algorithm to keep M solutions at each step, neighbourhood search
 \todo{need to expand this} 
 
 \subsection{Genetic Design by Branch and Bound (GDBB)}
-Genetic Design by Branch and Bound~\cite{Egen2012} is an enhancment on GDLS that can provide a large increase in speed by using a Branch and Bound strategy.
+Genetic Design by Branch and Bound~\cite{Egen2012} is an enhancement on GDLS that can provide a large increase in speed by using a Branch and Bound strategy.
 This means that when the performance from a branch \(A\) is strictly poorer than from another branch, \(B\), then \(A\) can be discarded.
 Strictly poorer in this context means that the best case performance of \(A\) is worse than the worst case performance of \(B\).
 
