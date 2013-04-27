@@ -69,7 +69,7 @@ library(xtable,quietly=TRUE)
 temp_essential <- GDMO.M.chromosomes[,grep(pattern='Gmet_.*',colnames(GDMO.M.chromosomes))]
 temp_essential <- names(temp_essential[,colSums(temp_essential)==0])
 print(xtable(
-  GDMO.M.reactions[GDMO.M.reactions$GeneAssociation %in% temp_essential,c('OfficialName','Equation','GeneAssociation')],
+  GDMO.M.reactions[GDMO.M.reactions$GeneAssociation %in% temp_essential,c('OfficialName','Abbreviation','GeneAssociation','SubSystem')],
   caption='Geobacter Metallireducens essential reactions',
   label='tab:GDMO_M_essential',
   ),include.rownames=FALSE)

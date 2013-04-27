@@ -269,7 +269,7 @@ heatmap(x=as.matrix(A[,grep(pattern='GSU.*',colnames(A))]*1),
 Of course, just seeing the genes that are knocked out is not as helpful as seeing the actual reactions affected. To find these, we can refer back to the original gene annotations of the metabolic network.
 <<dependson=c('GDMO_S'),echo=F,results='asis'>>=
 print(xtable(
-GDMO.S.reactions[GDMO.S.reactions$GeneAssociation %in% names(k1),c('OfficialName','Equation')],
+GDMO.S.reactions[GDMO.S.reactions$GeneAssociation %in% names(k1),c('Abbreviation','SubSystem')],
 label='tab:kinkanalysis',
 caption='reactions knocked out across jump in Sulfurreducens minimum synthesis front'
 ))
@@ -324,7 +324,7 @@ Figure~\ref{fig:commonmodifications} shows that 10 knockouts (to the left of the
 
 <<GDMO_S_overrepresented,echo=F,dependson=c('GDMO_S'),results='asis'>>= 
 print(xtable(
-  GDMO.S.reactions[GDMO.S.reactions$GeneAssociation %in% names(head(k2,10)),c('SubSystem','Equation')],
+  GDMO.S.reactions[GDMO.S.reactions$GeneAssociation %in% names(head(k2,10)),c('Abbreviation','SubSystem')],
   caption='Geobacter Sulfurreducens high knockout reactions',
   label='tab:GDMO_S_overrepresented',
   ),include.rownames=FALSE)
@@ -511,7 +511,7 @@ This figure is able to pick up on more complex behaviours than the linear model,
 Specifically, the orange box in figure~\ref{fig:geoMKOtrendsloess} shows a number of knockouts of particular interest. 
 <<GDMO_M_popular, echo=F ,dependson=c('GDMO_S','geoMKOtrendsloess'),results='asis'>>= 
 print(xtable(
-  GDMO.M.reactions[GDMO.M.reactions$GeneAssociation %in% as.character(interesting),c('SubSystem','Equation')],
+  GDMO.M.reactions[GDMO.M.reactions$GeneAssociation %in% as.character(interesting),c('OfficialName','Abbreviation','SubSystem')],
   caption='Geobacter Metallireducens reactions of interest',
   label='tab:GDMO_M_popular',
   ),include.rownames=FALSE)
