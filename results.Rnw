@@ -28,7 +28,6 @@ GDLS.runs=unique(GDLS[,c('strain','id','nbhdsz','M')])
 
 \chapter{Results}
 This chapter details the results of the investigation: first the technical evaluation focusses on the properties of GDMO and GDLS themselves, then the biological evaluation discusses the synthesis possible with both Geobacter models, the knockout strategies that were used, and the results of using GDMO for evaluating potential knockins from E. Coli.
-\todo{section references}
 
 \section{Technical Evaluation}
 This section focusses on the relative merits of GDMO and GDLS, and why GDMO was chosen for further use.
@@ -247,7 +246,7 @@ plot(nminsyn~nbiomass,ls,xlab='biomass',ylab='reduction potential',col='red')
 
 \subsubsection{Minimum synthesis knockouts}
 In order to get deeper insight, we need to look at more focussed groups of strains;
-Figure~\ref{fig:sulfurreducensmin} \label{sec:gskink} shows a `knee' in the biomass vs minimum synthesis Pareto front of G. Sulfurreducens. \todo{find these in chart}
+Figure~\ref{fig:sulfurreducensmin} \label{sec:gskink} shows a `knee' in the biomass vs minimum synthesis Pareto front of G. Sulfurreducens.
 To look at this in more detail, we can extract the relevant sets of strains and compare their knockouts.
 <<kinkanalysis, out.width='0.4\\textheight', dependson=c('GDMO_S','GDMO_fronts')>>=
 A <- merge(GDMO.S.chromosomes,ls) 
@@ -274,7 +273,6 @@ label='tab:kinkanalysis',
 caption='reactions knocked out across jump in Sulfurreducens minimum synthesis front'
 ))
 @
-\todo{find out if these should be synthetic lethal}
 
 \subsubsection{Knockouts}
 One major advantage of GDMO is that the shape of the Pareto front can yield information about the properties of pathways. 
@@ -320,7 +318,7 @@ plot(k2,xlab='modification index',ylab='usages')
 abline(v=10)
 @
 
-Figure~\ref{fig:commonmodifications} shows that 10 knockouts (to the left of the line) are highly common. These may be of particular interest, and the associated reactions are detailed in table~\ref{tab:GDMO_S_overrepresented}. \todo{make some comment}
+Figure~\ref{fig:commonmodifications} shows that 10 knockouts (to the left of the line) are highly common. These may be of particular interest, and the associated reactions are detailed in table~\ref{tab:GDMO_S_overrepresented}. We can see that a large number of these reactions are associated with central metabolism. One hypothesis is that knockouts are forcing less efficient breakdown of metabolites, so that more electrons must be removed per unit biomass gain. The most strongly selected for knockout in patricular is performed by Acetate Kinase, and associated with carbohydrate excretion, so this knockout perhaps forces more carbohydrate breakdown, freeing more electrons.
 
 <<GDMO_S_overrepresented,echo=F,dependson=c('GDMO_S'),results='asis'>>= 
 print(xtable(
@@ -437,7 +435,7 @@ heatmap(x=as.matrix(v*1),
 Here we can see a large number of genes with no knockouts. 
 These can loosely be termed essential, but some of them may be essential only given the nutrients available, or necessary for \ce{FE2} excretion.
 This forms a larger proportion of the genes visible here than in Sulfurreducens, which may be partly due to the supplementation strategy in Sulfurreducens, but could also be simply due to bias in the derivation of the models.
-The reactions associated with these genes presented in table~\ref{tab:GDMO_M_essential}\todo{check this appears correctly}, however, since an essential gene list is already known~\cite{Sun2009}, these reactions were considered to be very bad candidates for increasing electricity producing, and so removed.
+These reactions were considered to be very bad candidates for increasing electricity producing, and so removed.
 <<GDMO_M_nonessential, echo=F, dependson=c('GDMO_M_chromosomes2')>>=
 temp_essential <- GDMO.M.chromosomes[,grep(pattern='Gmet_.*',colnames(GDMO.M.chromosomes))]
 temp_essential <- names(temp_essential[,colSums(temp_essential)==0])

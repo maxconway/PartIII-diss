@@ -55,9 +55,9 @@ In order to increase execution speed and clarify the results, the model reductio
 \subsection{Optimization Libraries}
 Flux Balance Analysis is a linear optimization problem, and can therefore be solved by the techniques of Mathematical Programming; in addtion, exhaustive enumeration of knockout strategies when coupled with Flux Balance Analysis is a Mixed Integer Programming problem. 
 Various techniques exist to solve these problems, in particular the simplex algorithm for linear programming mentioned in section~\ref{sec:FBA}. These techniques are extremely compute intensive, so simple Matlab libraries would be far too slow.
-Instead, the common approach is to use Optimization Toolkits, which have a core of extremely high performance code in a low level language such as C\todo{cite}, with various wrappers to allow calls from more convenient languages like Matlab.
+Instead, the common approach is to use Optimization Toolkits, which have a core of extremely high performance code in a low level language such as C, with various wrappers to allow calls from more convenient languages like Matlab.
 
-A number of these toolkits exist, with various papers discussing their relative merits \todo{cite}. The two used here are GNU Linear Programming Kit (GLPK) and Gurobi. 
+A number of these toolkits exist, with various papers discussing their relative merits~\cite{Meindl2012a}. The two used here are GNU Linear Programming Kit (GLPK) and Gurobi. 
 \begin{description}
 \item[GLPK] is free and open source and one of the most widely available toolkits, with interfaces to many languages on many platforms.
 \item[Gurobi] is a commerical toolkit also with a good number of interfaces on all relevant platforms. The literature suggests that it is the fastest performing toolkit~\cite{Meindl2012}.

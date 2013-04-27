@@ -4,6 +4,17 @@
 \documentclass[a4paper,twoside,12pt]{report}
 
 \usepackage{mystyle}
+\hypersetup{
+    bookmarks=false,         % show bookmarks bar?
+    unicode=false,          % non-Latin characters in Acrobat’s bookmarks
+    pdftitle={Automated Genetic Design of Geobacter for Electricity Production},    % title
+    pdfauthor={Maxwell Conway},     % author
+    colorlinks=false,       % false: boxed links; true: colored links
+    linkcolor=red,          % color of internal links
+    citecolor=green,        % color of links to bibliography
+    filecolor=magenta,      % color of file links
+    urlcolor=cyan           % color of external links
+}
 
 \begin{document}
 
@@ -20,12 +31,11 @@ opts_knit$set(
   self.contained=FALSE
   )
 @
-\title{TBD}
-\author{Maxwell Conway\\ Supervisor: Pietro Lio'\\ Collaboration: Muktak Aklujkar and Derek Lovley (University of Massachusetts, Amherst)}
+\title{Automated Genetic Design of Geobacter for Electricity Production}
+\author{Maxwell Conway \\Supervisor: Pietro Lio'}
 \date{}
 
-\todo{Title page}
-%\maketitle
+\maketitle
 
 \begin{abstract}
 \input{abstract.tex}
@@ -61,30 +71,21 @@ opts_knit$set(
 \bibliography{bibliography,packages}
 
 \appendix
-\chapter{Online}
-Far more supplimentary materials are available online than is possible to list here, at \url{http://goto.maxwellconway.com/diss-sup}.
-\chapter{Supplementary tables}
-\section{Essential Genes and Reactions}
-This table can be fully interpreted using the reaction tables available in the supplimentary materials.
-<<GDMO_M_essential,dependson=c('GDMO_M_chromosomes2'),results='asis'>>=
-library(xtable,quietly=TRUE)
-temp_essential <- GDMO.M.chromosomes[,grep(pattern='Gmet_.*',colnames(GDMO.M.chromosomes))]
-temp_essential <- names(temp_essential[,colSums(temp_essential)==0])
-print(xtable(
-  GDMO.M.reactions[GDMO.M.reactions$GeneAssociation %in% temp_essential,c('OfficialName','Abbreviation','SubSystem')],
-  caption='Geobacter Metallireducens essential reactions',
-  label='tab:GDMO_M_essential',
-  ),include.rownames=FALSE,tabular.environment="longtable",floating=FALSE)
-@
+\chapter{Supplimentary Materials}
+Supplimentary materials are available online, at \url{http://goto.maxwellconway.com/diss-sup}.
 
-\chapter{Expenses}
-\begin{tabular}{l | r}
-Matlab Licence & university licence\\
-\end{tabular}
-
-\chapter{Materials}
-\todo{computers used}
-\todo{datasets used and citations}
-\todo{languages}
+\chapter{Materials and Expenses}
+\section{Computers}
+The primary computer used had an AMD Phenom II X4 810 processor and 9GB of RAM, also used was a Mac Pro with two 2.4GHz 6-Core Intel Xeon E5645 processors and 64GB of RAM.
+\section{Datasets}
+The metabolic models used are listed in table~\ref{tab:models}, followed by the relevant citations; copies are available in the supplimentary materials.
+\section{Languages}
+Matlab was the primary language for the genetic design algorithms, R was used for analysis.
+\section{Licences}
+Matlab and the Gurobi Optimization toolbox were the two peices of software that were non-free.
+\begin{description}
+\item[Matlab] was obtained via the Cambridge University site licence.
+\item[Gurobi] offered a free academic licence.
+\end{description}
 
 \end{document}

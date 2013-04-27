@@ -14,7 +14,7 @@ This document is split into five chapters:
 \end{description}
 
 \section{Supplimentary Materials}
-Supplimentary materials are available at \url{http://goto.maxwellconway.com/diss-sup}.
+Supplimentary materials are available at \url{goto.maxwellconway.com/diss-sup}.
 In particular, this includes reaction tables, since reactions cannot be fully documented here in the interests of space.
 
 \section{Colours}
