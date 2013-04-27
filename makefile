@@ -4,7 +4,7 @@ otherRfiles = ./data/BindChromosomes.R ./data/hypervolumeMonteCarlo.R ./data/dom
 
 datasets = ./data/FBAtimings.csv ./data/geo_m_react_plus.txt ./data/iaf1260-ac.txt ./data/geo_m_react.txt ./data/iJO1366_Ecoli_suc_aerobic.txt ./data/geo_s_react.txt
 
-supplimentary = $(mainRfiles) $(otherRfiles) $(datasets) dissertation_nocode.pdf dissertation.pdf
+supplimentary = $(mainRfiles) $(otherRfiles) $(datasets) dissertation_nocode.pdf dissertation.pdf COPY.txt
 
 knitrsource = dissertation.Rnw introduction.Rnw methods.Rnw results.Rnw conclusion.Rnw background.Rnw
 

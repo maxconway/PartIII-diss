@@ -172,14 +172,16 @@ Here, FBA is done via the Simplex linear programming algorithm, which takes \(O(
 %solvers vary in code speed by around 100-fold
 In order to characterize the differences between running times for different models, FBA was performed 100 times with each or a number of models. The results, shown in figure~\ref{fig:FBAtimings}, show that times can vary by 35-fold. This can be attributed to the variance in sizes of the different models used.
 
-<<FBAtimings,fig.cap='running times for FBA of metabolic models'>>=
+<<FBAtimings,fig.height=10,fig.cap='running times for FBA of metabolic models'>>=
 data('FBAtimings')
+default=par(mar=c(10,6,6,2)+0.1)
 plot(time ~ strain, data=FBAtimings,
-        range=0,
-        xlab='',
-        ylab='time per round of FBA (s)',
+     range=0,
+     xlab='',
+     ylab='time per round of FBA (s)',
      las=2
-        )
+)
+par(default)
 @
 
 \subsection{GDMO}

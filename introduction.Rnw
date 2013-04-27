@@ -13,9 +13,11 @@ This document is split into five chapters:
 \item{Conclusion} summarizes the results.
 \end{description}
 
-\section{Conventions}
-\todo{see if there are any other conventions}
-\subsection{Colours}
+\section{Supplimentary Materials}
+Supplimentary materials are available at \url{http://goto.maxwellconway.com/diss-sup}.
+In particular, this includes reaction tables, since reactions cannot be fully documented here in the interests of space.
+
+\section{Colours}
 Colours have been used to highlight which species strains belong to:
 \begin{itemize}
 \item Geobacter Sulfurreducens is represented by {\color{red} red}.
@@ -26,5 +28,5 @@ Colours have been used to highlight which species strains belong to:
 \section{Embedded code}
 The Knitr~\cite{Xie2011} dynamic report generation packages has been used to embed chunks of R code into this document, which shows the analysis conducted, and generates the graphs and tables that are included.
 This means that everything is consistently up to date, and enables the reader to follow the reasoning used, and to understand in more detail any areas that interest them.
-Obviously data files cannot be contained here, and some of the more mundane data handling scripts are also omitted. These can be found at \todo{put stuff online}.
-The code chunks inserted are by no means necessary to understanding this document, they can be ignored or alternatively, a version with them removed is available at \todo{insert url}.
+The code chunks inserted are by no means necessary to understanding this document, they can be ignored or alternatively, a version with them removed is available online in the supplimentary materials.
+Obviously data files cannot be contained here, and some of the more mundane data handling scripts are also omitted. These can be found among supplimentary materials.

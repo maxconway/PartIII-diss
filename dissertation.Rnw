@@ -56,23 +56,25 @@ opts_knit$set(
 @
 \clearpage
 
-\todo{use knitr bibliography}
-%\nocite{*}
+\nocite{R-base,R-gdata,R-knitr,R-lattice,R-RColorBrewer,R-scatterplot3d,R-xtable}
 \bibliographystyle{plain}
-\bibliography{bibliography}
+\bibliography{bibliography,packages}
 
 \appendix
+\chapter{Online}
+Far more supplimentary materials are available online than is possible to list here, at \url{http://goto.maxwellconway.com/diss-sup}.
 \chapter{Supplementary tables}
 \section{Essential Genes and Reactions}
+This table can be fully interpreted using the reaction tables available in the supplimentary materials.
 <<GDMO_M_essential,dependson=c('GDMO_M_chromosomes2'),results='asis'>>=
 library(xtable,quietly=TRUE)
 temp_essential <- GDMO.M.chromosomes[,grep(pattern='Gmet_.*',colnames(GDMO.M.chromosomes))]
 temp_essential <- names(temp_essential[,colSums(temp_essential)==0])
 print(xtable(
-  GDMO.M.reactions[GDMO.M.reactions$GeneAssociation %in% temp_essential,c('OfficialName','Abbreviation','GeneAssociation','SubSystem')],
+  GDMO.M.reactions[GDMO.M.reactions$GeneAssociation %in% temp_essential,c('OfficialName','Abbreviation','SubSystem')],
   caption='Geobacter Metallireducens essential reactions',
   label='tab:GDMO_M_essential',
-  ),include.rownames=FALSE)
+  ),include.rownames=FALSE,tabular.environment="longtable",floating=FALSE)
 @
 
 \chapter{Expenses}
