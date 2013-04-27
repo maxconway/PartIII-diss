@@ -1,3 +1,13 @@
+mainRfiles = background.R dissertation.R methods.R conclusion.R introduction.R results.R
+
+otherRfiles = ./data/BindChromosomes.R ./data/hypervolumeMonteCarlo.R ./data/dominated.R ./data/import-GDMO.R ./data/eval_timings_GDMO.R ./data/NameLookup.R ./data/GDLS.R ./data/natural.R ./data/getChromosomes.R ./data/timing-prediction.R ./data/getNames.R 
+
+datasets = ./data/FBAtimings.csv ./data/geo_m_react_plus.txt ./data/iaf1260-ac.txt ./data/geo_m_react.txt ./data/iJO1366_Ecoli_suc_aerobic.txt ./data/geo_s_react.txt
+
+supplimentary = $(mainRfiles) $(otherRfiles) $(datasets)
+
+knitrsource = dissertation.Rnw introduction.Rnw methods.Rnw results.Rnw conclusion.Rnw background.Rnw
+
 dissertation.pdf : dissertation.tex bibliography.bib abstract.tex mystyle.sty
 	pdflatex dissertation.tex
 	bibtex dissertation.aux
@@ -7,13 +17,13 @@ dissertation.pdf : dissertation.tex bibliography.bib abstract.tex mystyle.sty
 #dissertation.tex : dissertation.Rnw abstract.tex introduction.tex methods.tex results.tex conclusion.tex
 #	R CMD Sweave dissertation.Rnw
 
-dissertation.tex introduction.tex methods.tex results.tex conclusion.tex backgorund.tex: dissertation.Rnw introduction.Rnw methods.Rnw results.Rnw conclusion.Rnw background.Rnw
+dissertation.tex introduction.tex methods.tex results.tex conclusion.tex backgorund.tex: $(knitrsource)
 #	R CMD Sweave $<
-	Rscript -e "library(knitr); knit('dissertation.Rnw')"
+	Rscript -e "require(knitr); knit('dissertation.Rnw')"
 
 %.tex : %.Rnw
 #	R CMD Sweave $<
-	Rscript -e "library(knitr); knit('$<')"
+	Rscript -e "require(knitr); knit('$<')"
 
 clean :
 	rm -f dissertation.aux
@@ -42,9 +52,21 @@ bibliography.bib : ../../Documents/bibtex/Part\ III\ project.bib
 wordcount :
 	texcount -total *.tex
 
+$(mainRfiles) : $(knitrsource)
+	Rscript -e "require(knitr); purl('$<',documentation=2)"
+
+supplimentary.zip : $(supplimentary)
+	zip $@ $?
+
+supplimentary.tar : $(supplimentary)
+	tar -uf supplimentary.tar $?
+
+%.gz : %
+	gzip $?
+
 data : ./data/FBAtimings.csv ./data/geo_m_react.txt ./data/geo_s_react.txt ./data/iaf1260-ac.txt
 	rm ./data/*.RData
-  
+
 ./data/FBAtimings.csv : ./experiments/FBAtimings.csv
 	rsync ./experiments/FBAtimings.csv ./data/
 

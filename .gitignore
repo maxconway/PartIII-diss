@@ -19,3 +19,12 @@ knitr.sty
 texcount.pl
 *.png
 cache/*
+background.R
+dissertation.R
+methods.R
+conclusion.R
+introduction.R
+results.R
+*.zip
+*.tar
+*.gz
