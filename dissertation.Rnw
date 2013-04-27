@@ -57,7 +57,7 @@ opts_knit$set(
 \clearpage
 
 \todo{use knitr bibliography}
-\nocite{*}
+%\nocite{*}
 \bibliographystyle{plain}
 \bibliography{bibliography}
 
