@@ -71,13 +71,10 @@ opts_knit$set(
 @
 \clearpage
 
-\nocite{R-base,R-gdata,R-knitr,R-lattice,R-RColorBrewer,R-scatterplot3d,R-xtable}
-\bibliographystyle{plain}
-\bibliography{bibliography,packages}
-
 \appendix
 \chapter{Supplementary Materials}
 Supplementary materials are available online, at \url{http://goto.maxwellconway.com/diss-sup}.
+\todo{list}
 
 \chapter{Materials and Expenses}
 \section{Computers}
@@ -85,12 +82,17 @@ The primary computer used had an AMD Phenom II X4 810 processor and 9GB of RAM, 
 \section{Datasets}
 The metabolic models used are listed in table~\ref{tab:models}, followed by the relevant citations; copies are available in the supplementary materials.
 \section{Languages}
-Matlab was the primary language for the genetic design algorithms, R was used for analysis.
+Matlab was the primary language for the genetic design algorithms. 
+R was used for analysis.
 \section{Licences}
-Matlab and the Gurobi Optimization toolbox were the two peices of software that were non-free.
+Matlab and the Gurobi Optimization toolbox were the two pieces of software that were non-free.
 \begin{description}
 \item[Matlab] was obtained via the Cambridge University site licence.
 \item[Gurobi] offered a free academic licence.
 \end{description}
+
+\nocite{R-base,R-gdata,R-knitr,R-lattice,R-RColorBrewer,R-scatterplot3d,R-xtable}
+\bibliographystyle{plain}
+\bibliography{bibliography,packages}
 
 \end{document}

@@ -335,6 +335,9 @@ print(xtable(
   ),include.rownames=FALSE)
 @
 
+\subsubsection{Position of Knockouts on Genome}
+Another 
+
 \subsection{Geobacter Metallireducens}
 Section~\ref{sec:geoMfronts} describes how, despite some initial concerns, the Metallireducens metabolic model appears to be superior to the Sulfurreducens model, so the knockout strategies found in this model are discussed more thoroughly.
 
@@ -525,3 +528,4 @@ print(xtable(
   label='tab:GDMO_M_popular',
   ),include.rownames=FALSE)
 @
+
