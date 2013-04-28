@@ -197,7 +197,9 @@ cloud(nmaxsyn~nbhdsz+M,
       zlab=list('normalized maximum synthesis',rot=90),
       xlab='neighbourhood size',
       ylab='Branches',
-      par.box=list(col="white"))
+      scales = list(arrows=FALSE, col = "black"),
+      par.settings=list(axis.line = list(col = "transparent"))
+)
 @
 
 \subsection{Comparison}
@@ -339,7 +341,11 @@ Section~\ref{sec:geoMfronts} describes how, despite some initial concerns, the M
 The general shape of the Pareto front in G. Metallireducens is shown in figure~\ref{fig:m_fronts}.
 <<m_fronts,echo=F,fig.cap='Geobacter Metallireducens Pareto Front'>>=
 require('lattice',quietly=TRUE)
-cloud(GDMO.M$nbiomass~GDMO.M$nmaxsyn*GDMO.M$nminsyn,par.box=list(col="white"))
+cloud(nbiomass~nmaxsyn*nminsyn,GDMO.M,
+      par.settings=list(axis.line = list(col = "transparent")),
+      col='blue',
+      scales = list(arrows=FALSE, col = "black")
+)
 @
 The Pareto front for G. Metallireducens electricity production shown in figure~\ref{fig:m_fronts} appears to be almost completely linear, which was to start with extremely surprising, and suggested that some error had been made---one does not expect that random knockouts would be able to achieve such a precise tradeoff. To verify this shape, a number of comparisons were made with the G. Sulfurreducens model.
 <<straight_line_verification1,fig.pos='p',fig.cap='Verification of Geobacter Metallireducens Pareto Front',fig.pos='p',dependson=c('GDMO_M','GDMO_S')>>=
