@@ -1,16 +1,17 @@
 % !TeX root = dissertation.Rnw   
 \chapter{Introduction}
 This project investigates the use of genetic design algorithms on metabolic models of two species in the genus Geobacter.
-These bacteria have a number of interesting properties, here the aim is to create engineered strains with a larger ability to produce electricity than in the wild type, and examine the modifications that allow this.
+These bacteria have a number of interesting properties (see section~\ref{sec:geobacter}), here the aim is to create engineered strains with a larger ability to produce electricity than the wild type, and examine the modifications that allow this.
 A secondary goal is to compare the genetic design algorithms themselves.
 
 This document is split into five chapters:
+
 \begin{description}
-\item{Introduction} this chapter is a brief overview of the document as a whole,
-\item{Background} introduces the subject matter itself in more depth,
-\item{Methods} covers the data and techniques that formed the basis of the investigation,
-\item{Results} presents the technical and biological findings, and
-\item{Conclusion} summarizes the results.
+\item[Introduction] this chapter is a brief overview of the document as a whole;
+\item[Background] introduces the subject matter itself in more depth;
+\item[Methods] covers the data and techniques that formed the basis of the investigation;
+\item[Results] presents the technical and biological findings; and
+\item[Conclusions] summarizes the results and possible further work.
 \end{description}
 
 \section{Supplementary Materials}
@@ -25,8 +26,12 @@ Colours have been used to highlight which species strains belong to:
 \item Escherichia Coli is represented by {\color{green} green}.
 \end{itemize}
 
-\section{Embedded code}
-The Knitr~\cite{Xie2011} dynamic report generation packages has been used to embed chunks of R code into this document, which shows the analysis conducted, and generates the graphs and tables that are included.
+\section{Embedded Code}
+\label{sec:embeddedcode}
+The Knitr~\cite{Xie2011} dynamic report generation package has been used to embed chunks of R code into this document, which shows the analysis conducted, and generates the graphs and tables that are included.
 This means that everything is consistently up to date, and enables the reader to follow the reasoning used, and to understand in more detail any areas that interest them.
+
 The code chunks inserted are by no means necessary to understanding this document, they can be ignored or alternatively, a version with them removed is available online in the supplementary materials.
+
 Obviously data files cannot be contained here, and some of the more mundane data handling scripts are also omitted. These can be found among supplementary materials.
+\todo{like this}

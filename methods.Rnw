@@ -3,16 +3,16 @@
 The Methods chapter describes the Biological models used, some of the more technical decisions made, and presents the analysis performed in order to predict the impact of parameter selections on execution time.
 
 \section{Metabolic Models}
-To conduct flux balance analysis, one needs a model of the metabolism of the organism in question. A number of exchange formats exist for these models and there are many more formats internal to tools, however after some investigation it was clear that the de facto standard format is the use of tab-separated value tables, with the reactions specified in a space-separated format. 
+To conduct flux balance analysis, one needs a model of the metabolism of the organism in question. A number of exchange formats exist for these models and there are many more formats internal to tools. However, after some investigation it was clear that the de facto standard format is the use of tab-separated value tables, with the reactions specified in a space-separated format. 
 
-Unfortunately, the order and names of columns in these tables is not standardized, and the two Geobacter models that I used were supplied in an ad-hoc format, which was a problem given the inflexible import facilities of Matlab, and the fact that these tables could have cells with >250 characters. 
-To fix this, I rewrote the import facilities in GDMO and GDLS in order to give them greater flexibility in the file formats that they could read.
+Unfortunately, the order and names of columns in these tables is not standardized, and the two Geobacter models used were supplied in an ad-hoc format, which was a problem given the inflexible import facilities of Matlab, and the fact that these tables could have cells with >250 characters. 
+To fix this, the import facilities were rewritten in GDMO and GDLS in order to give them greater flexibility in the file formats that they could read.
 
 The metabolic models used are listed in table~\ref{tab:models}. The columns used are as follows:
 \begin{description}
-\item[Species] The species which this metabolic model represents
-\item[Shorthand] The shorthand text string used to represent this model in code, graphs and elsewhere
-\item[Size] The number of reactions in the model
+\item[Species] The species which this metabolic model represents.
+\item[Shorthand] The shorthand text string used to represent this model in code, graphs and elsewhere.
+\item[Size] The number of reactions in the model.
 \item[Synthetic Objective] The material that we seek to overproduce.
 \end{description}
 
@@ -26,6 +26,7 @@ The metabolic models used are listed in table~\ref{tab:models}. The columns used
     Escherichia Coli          & iJO1366-aerobic        & 2583 & Acetate             \\
     Escherichia Coli          & iJO1366-anaerobic        & 2583 & Acetate             \\ \hline
     \end{tabular}
+    \caption{Metabolic Models}
     \label{tab:models}
 \end{table}
 
@@ -46,7 +47,7 @@ This reconstruction of E. Coli has been used extensively\footnote{218 citations 
 
 \subsection{iJO1366}
 iJO1366~\cite{Orth2011} is newer and somewhat more comprehensive than iAF1260.
-Since iJO1366 contains more reactions and more comprehensive gene-protein-reaction annotations, subsystems from this were used for knock-in investigations.
+Since iJO1366 contains more reactions and more comprehensive gene-protein-reaction annotations, sub-systems from this were used for knock-in investigations.
 
 \subsection{Model Reduction}
 In order to increase execution speed and clarify the results, the model reduction technique designed for use with the GDLS~\cite{Lun2009} procedure was used. This iteratively removed dead end reactions and merged reactions that uniquely shared a metabolite until no more simplifications were possible, resulting in final models with sizes \SIrange{44}{80}{\percent} of the original, without loss of descriptive power.
@@ -54,7 +55,7 @@ In order to increase execution speed and clarify the results, the model reductio
 \section{Computational Decisions}
 \subsection{Optimization Libraries}
 Flux Balance Analysis is a linear optimization problem, and can therefore be solved by the techniques of Mathematical Programming; in addition, exhaustive enumeration of knockout strategies when coupled with Flux Balance Analysis is a Mixed Integer Programming problem. 
-Various techniques exist to solve these problems, in particular the simplex algorithm for linear programming mentioned in section~\ref{sec:FBA}. These techniques are extremely compute intensive, so simple Matlab libraries would be far too slow.
+Various techniques exist to solve these problems, in particular the Simplex algorithm for linear programming mentioned in section~\ref{sec:FBA}. These techniques are extremely compute intensive, so simple Matlab libraries would be far too slow.
 Instead, the common approach is to use Optimization Toolkits, which have a core of extremely high performance code in a low level language such as C, with various wrappers to allow calls from more convenient languages like Matlab.
 
 A number of these toolkits exist, with various papers discussing their relative merits~\cite{Meindl2012a}. The two used here are GNU Linear Programming Kit (GLPK) and Gurobi. 
@@ -64,11 +65,11 @@ A number of these toolkits exist, with various papers discussing their relative 
 \end{description}
 The timing section~\ref{sec:complexity} is entirely based on GLPK. This is because initial experiments found it to perform faster for smaller problem sizes, despite the evidence that Gurobi is faster for large problems. Assuming that this is due to higher overheads in Gurobi, we can expect that measurements from small cases for GLPK will scale to large cases in a manner that is closer to theoretical predictions, allowing a more accurate model.
 
-\subsection{Languages and programs}
+\subsection{Languages and Programs}
 The genetic design algorithms used were written in Matlab, while analysis was conducted in R to take advantage of the safety and reproducibility provided by its stricter type system.
 Git was used for version control, while the parsing and reduction of metabolic models was automated using the Make build system.
 
-\subsection{Hypervolume computation}
+\subsection{Hypervolume Computation}
 \label{hypervolume}
 Techniques to compare the output of multi-objective optimization algorithms are an area of active research~\cite{Okabe2003}. 
 Ultimately, one cannot definitively say that Pareto front A is better than Pareto front B unless every point in B is dominated by a point in A. 
@@ -76,7 +77,7 @@ One relatively common metric for comparison of Pareto fronts is the hypervolume 
 This can be defined as the volume of the space for which points \(p\) obey \(\exists s . (s \in \mathrm{Front} \land s \succ p)\).
 This has the properties of providing some measure of both spread and optimality of solutions, and reducing to the product of the objectives with only one solution. 
 
-Since hypervolume increases with density of solutions, and with their magnitude, it only makes sense to use when we aim to maximize all objectives; this is already the case with this research, but nevertheless all objectives will still be normalized against the wild-type phenotype, to avoid undue influence from their relative absolute magnitudes.
+Since hypervolume increases with density of solutions, and with their magnitude, it only makes sense to use hypervolume when we aim to maximize all objectives; this is already the case with this research, but nevertheless all objectives will still be normalized against the wild-type phenotype, to avoid undue influence from their relative absolute magnitudes.
 
 While libraries exist that can find the volume of a point cloud efficiently, the volume that they find is generally not the dominated volume that we desire, but instead the volume of a mesh, or of the convex hull. 
 While the difference between the volume of a mesh fitted to the points and the dominated volume may potentially be small, it is this small difference that provides a measurement of solution density, and so these approximations cannot be tolerated.
@@ -84,11 +85,13 @@ While the difference between the volume of a mesh fitted to the points and the d
 For this reason, I wrote a custom Monte Carlo integration function, which could calculate the hypervolume to any desired degree of accuracy. This was further optimized by a deterministic bounding box---this quickly partitions the objective space into sections:
 \begin{enumerate}
 \item the volume dominated by all solutions\label{enum:alldom},
-\item the volume dominated by some of the solutions and\label{enum:somedom}
+\item the volume dominated by some of the solutions, and\label{enum:somedom}
 \item the volume that dominates all the solutions.\label{enum:nodom}
 \end{enumerate}
 We know that volume~\ref{enum:alldom} should be included in the hypervolume and that volume~\ref{enum:nodom} should not, so the search space can be narrowed down to just volume~\ref{enum:somedom}.
-The domination calculation itself was optimized by a short circuit evaluation: the majority of samples taken in the Monte Carlo simulation either dominate many solutions or very few, so many can be found to be inside the dominated volume by comparison to only a small number of Pareto-optimal points.
+The domination calculation itself was optimized by a short circuit evaluation: the majority of samples taken in the Monte Carlo~\cite{Metropolis1949} simulation either dominate many solutions or very few, so many can be found to be inside the dominated volume by comparison to only a small number of Pareto-optimal points.
+
+The following code chunks show how this algorithm works (see Section~\ref{sec:embeddedcode}).
 
 <<dominated,cache=TRUE>>=
 dominates <- function(a,b){
@@ -157,7 +160,7 @@ hypervolumeMonteCarlo <- function(x,num){
 }
 @
 
-\section{Computational Complexity analysis}
+\section{Computational Complexity Analysis}
 \label{sec:complexity}
 The core problem of this kind of genetic design (which does not use network structure information) is 0-1 integer linear programming~\cite{Karp1972}---indeed GDLS works by repeatedly solving small cases of this problem.
 This means that this problem is NP-complete, and assuming \( \P \neq \NP \), these algorithms have running times that are not bounded by any polynomial.
@@ -172,7 +175,7 @@ Here, FBA is done via the Simplex linear programming algorithm, which takes \(O(
 %solvers vary in code speed by around 100-fold
 In order to characterize the differences between running times for different models, FBA was performed 100 times with each or a number of models. The results, shown in figure~\ref{fig:FBAtimings}, show that times can vary by 35-fold. This can be attributed to the variance in sizes of the different models used.
 
-<<FBAtimings,fig.height=10,fig.cap='running times for FBA of metabolic models'>>=
+<<FBAtimings,fig.height=10,fig.cap='Running times for FBA of metabolic models',echo=FALSE>>=
 data('FBAtimings')
 default=par(mar=c(10,6,6,2)+0.1)
 plot(time ~ strain, data=FBAtimings,
@@ -198,7 +201,7 @@ GDMO.train = head(GDMO.timing,nrow(GDMO.timing)*0.9)
 GDMO.test = tail(GDMO.timing,nrow(GDMO.timing)*0.1)
 @
 
-<<methods_GDMO_timings2,fig.cap='predicted time taken using time for 1 FBA round',dependson='methods_GDMO_timings1',out.height='0.4\\textheight',fig.pos='t'>>=
+<<methods_GDMO_timings2,fig.cap='Predicted runtime, using time for 1 FBA round',dependson='methods_GDMO_timings1',out.height='0.4\\textheight',fig.pos='h'>>=
 GDMO.fit = lm(cputime~pop:generation:FBAtime,GDMO.train)
 GDMO.test$prediction=predict(GDMO.fit,newdata=GDMO.test)
 colours=c('darkgreen','lightgreen','blue','red')
@@ -217,7 +220,7 @@ Figure~\ref{fig:methods_GDMO_timings2} shows the predictions produced by this li
 Clearly, the prediction holds well within each strain, but there are big differences between strains.
 This indicates that time to conduct Flux Balance Analysis is not, in fact, a good predictor between strains, despite its consistency within strains. Luckily, this in-silico data is available in abundance, so it was possible to get round this problem by simply fitting four separate models, as shown in figure~\ref{fig:methods_GDMO_timings3}.
 
-<<methods_GDMO_timings3,fig.cap='predicted time taken conditional on strain',dependson='methods_GDMO_timings1',out.height='0.4\\textheight',fig.pos='b'>>=
+<<methods_GDMO_timings3,fig.cap='predicted runtime, conditional on strain',dependson='methods_GDMO_timings1',out.height='0.4\\textheight',fig.pos='h'>>=
 GDMO.fit = lm(cputime~pop:generation:strain,GDMO.train)
 GDMO.test$prediction=predict(GDMO.fit,newdata=GDMO.test)
 colours=c('darkgreen','lightgreen','blue','red')

@@ -1,22 +1,22 @@
 % !TeX root = dissertation.Rnw   
 \chapter{Background}
 
-
-\todo{add more biology}
-
 \section{Geobacter}
+\label{sec:geobacter}
 Geobacter~\cite{Lovley2011} is a genus of anaerobic proteobacteria with a number of possible industrial applications, stemming from their ability to utilize soluble and insoluble metal oxides as electron acceptors~\cite{Bond2003}. 
+
 The ability to perform these unusual redox reactions could be relevant to bioremediation, both by allowing clean up of hydrocarbon spills in anaerobic conditions, and by fixing oxides of toxic and radioactive metals, such as uranium. 
-Furthermore, the ability to utilize insoluble materials as electron acceptors make Geobacter interesting as a candidate for use in bacterial fuel cells with, and without, membranes, and the pilli used to connect to transport electrons have applications in themselves, as nanowires.
+Furthermore, the ability to utilize insoluble materials as electron acceptors make Geobacter interesting as a candidate for use in bacterial fuel cells with, and without, membranes; and the pilli used to transport electrons have applications in themselves, as nanowires.
 
 The first Geobacter species to be isolated was Geobacter Metallireducens, from sandy sediment in the Pontomac River, Washington D.C. in 1987, by Derek Lovley. 
 The most studied species is Geobacter Sulfurreducens.
 These two species are the ones studied here, via reaction lists with Gene-Protein-Reaction annotations, described in table~\ref{tab:models}.
 
-\section{Metabolic networks and Flux Balance Analysis (FBA)}
+\section{Metabolic Networks and Flux Balance Analysis (FBA)}
 \label{sec:FBA}
-The metabolic network of an organism is comprised of the metabolites (small molecules processed in large quantities) of the organism and the enzymes that control the reactions consuming and producing the metabolites. 
+The metabolic network of an organism is comprised of the metabolites (small molecules processed in large quantities) of the organism, and the enzymes that interact with these metabolites. 
 The production of these enzymes is not considered part of the metabolome, though their activation or inhibition by metabolites is. 
+
 The metabolome can be characterized at a steady state by the stoichiometric matrix, which is the known ratio of reactants and products, and a flux vector, which is the unknown flux through each reaction. 
 While some fluxes in the flux vector can be determined simply by the organism's inability to produce the relevant enzyme, the abundance and activity of those enzymes that the organism can produce are difficult to determine. 
 
@@ -29,8 +29,8 @@ It relies on two assumptions:
 \end{enumerate}
 Assumption \ref{itm:steadystate} allows the system of simultaneous differential equations describing the metabolism to be reduced to a set of simultaneous algebraic equations, since in steady state,
 \[\mathrm{uptake} + \mathrm{production} = \mathrm{consumption} + \mathrm{excretion}\]
-
 This limits possible rates to the interior of a convex polytope. 
+
 To predict the actual position within this polytope, assumption \ref{itm:maxgrowth} is used, and an optimization technique, typically a linear programming method, such as the Simplex Algorithm~\cite{Dantzig1951}, is used to find the point, or space, representing highest growth.
 
 Of course, many adaptations and extensions to this basic approach are possible. 
@@ -41,24 +41,25 @@ In the case of genetic design for overproduction of industrially useful metaboli
 Optimization problems generally consist of a multidimensional decision space, a scalar objective and an objective function which maps each position in decision space to a position in objective space. 
 Optimization algorithms then search decision space for a position that maximizes or minimizes the objective. 
 
-\subsection{Multi-objective optimization}
+\subsection{Multi-objective Optimization}
 \label{subsec:moo}
 
 Many objective functions naturally map to a multidimensional objective space, rather than to a scalar value, as is used in classic optimization. 
 One method to deal with this is to use, for instance, a linear sum to map to a scalar objective, but this requires coefficients that are often difficult to find. 
+
 Utilizing multi-objective optimization~\cite{Gen2008} instead allows us to maximize directly in objective space, and thus avoid making value judgements between different objective dimensions. 
 This requires a different notion of superiority, called Pareto dominance. 
-A solution \(A\) Pareto dominates \(B\) if \(A\) is better than \(B\) in terms of every objective ways. 
-\(A\) is Pareto optimal if no solution Pareto dominates it. 
+A solution \(X\) Pareto dominates \(Y\) if \(X\) is better than \(Y\) in terms of every objective. 
+\(X\) is Pareto optimal if no solution Pareto dominates it. 
 
-The notation \(A \succ B\) will be used to mean \(A\) Pareto dominates \(B\).
+The notation \[X \succ Y\] will be used to mean \(X\) Pareto dominates \(Y\).
 
 However, Pareto dominance does not provide a total order: it cannot necessarily provide a single best solution, only a non-dominated set; this makes evolutionary algorithms particularly appropriate, since they inherently involve keeping a population of solutions.
-The non-dominated set is termed the Pareto Front, or Pareto Surface, and describes the shape of the tradeoff between multiple objectives, which can provide insight over and above what could be provided by a single solution. 
-In the context of Genetic design, as used in Genetic Design by Multi-objective Optimization~\ref{sec:GDMO}, multiple solutions allow us to investigate how knckouts interact with each other, in a way which is not possible with a single solution.
+The non-dominated set is termed the Pareto Front, or Pareto Surface, and describes the shape of the trade-off between multiple objectives, which can provide insight over and above what could be provided by a single solution. 
+In the context of genetic design, as used in Genetic Design by Multi-objective Optimization (see Section~\ref{sec:GDMO}), multiple solutions allow us to investigate how knockouts interact with each other, in a way which is not possible with a single solution.
 
 
-\subsection{Evolutionary algorithms}
+\subsection{Evolutionary Algorithms}
 \label{subsec:ea}
 
 Evolutionary algorithms are one class of optimization algorithm. Characteristics which they share include:
@@ -75,17 +76,18 @@ It is important to note that while evolutionary optimization algorithms are biol
 \label{sec:NSGA}
 NSGA-II~\cite{Deb2002a} is a multi-objective evolutionary algorithm that provides a Pareto front by using two criteria to decide the quality of a solution:
 \begin{description}
-\item[Rank] Solutions are split in to groups by rank. The familiar, nondominated Pareto front is assigned rank 1, while for all other solutions p, \(\mathrm{rank}(p) = 1 + \max( \mathrm{rank}(q) | q \succ p) )\), where \( a \succ b \) means a dominates b.
+\item[Rank] Solutions are split in to groups by rank. The familiar, nondominated Pareto front is assigned rank 1. For all other solutions \(p\), \[\mathrm{rank}(p) = 1 + \max( \mathrm{rank}(q) | q \succ p) )\].
 \item[Crowding Distance] is a measure of the local density of solutions, based on the perimeter of the cuboid with the two nearest solutions as corners.
 \end{description}
 
-\section{Genetic design algorithms}
+\section{Genetic Design Algorithms}
 Genetic engineering is very much a fledgling field, with a large amount of trial and error, largely because much of our knowledge in this area is descriptive, via techniques such as knockout studies, rather than predictive. 
 This means that while we can try a set of knockouts (or knockins) and find out the result in a real organism, knowing what sets are likely to yield a desired result is difficult, especially since useful results sometimes require several simultaneous alterations to the genome, presenting a very large search space.
 
 Simpler effects, such as overproduction of a particular metabolite, require simpler engineering strategies than the more complex effects desired in synthetic biology. 
-The search space is still far too large to manually characterize, but fortunately, and these metabolome level effects can fortunately also be well modelled by FBA, which works well for large scale, steady state effects such as overproduction, but cannot model dynamic, reactive systems. 
-Since FBA presents a useful computational metabolic model, especially when annotated with gene-protein-reaction data, it allows the development of algorithms that can search part of the huge space of possible knockout strategies (for instance around \num{5.3e210} in the E. Coli models used here), in order to draft strategies for in-vitro evaluation.
+The search space is still far too large to manually characterize, but these metabolome level effects can fortunately also be well modelled by FBA, which works well for large scale, steady state effects such as overproduction, but cannot model dynamic, reactive systems. 
+
+Since FBA presents a useful computational metabolic model, especially when annotated with gene-protein-reaction data, it allows the development of algorithms that can search part of the huge space of possible knockout strategies---for instance around \num{5.3e210} (\emph{sic}) in the E. Coli models used here---in order to draft strategies for in-vitro evaluation.
 
 In order to design knockout strategies for Geobacter, several genetic design algorithms were considered.
 
@@ -94,7 +96,8 @@ Genetic Design through Local Search~\cite{Lun2009}, or GDLS is an algorithm that
 Given an FBA model with gene-protein reaction annotations, it produces a knockout strategy which will alter the metabolic network to overproduce the compound required.
 
 GDLS is a local search algorithm, which means that it starts with a solution and recursively improves upon it. 
-This is a sensible decision in metabolic engineering, due to the natural starting point of no knockouts. Algorithm~\ref{alg:GDLS} outlines the procedure: at each iteration, the algorithm starts with a candidate genome, or genomes. For each of these, it evaluates every genome that differs by at most neighbourhoodsize knockouts or knockins, and selects the best from these. The search then starts again from these best solutions, and this is repeated until no better solutions are found.
+This is a sensible decision in metabolic engineering, due to the natural starting point of no knockouts. 
+Algorithm~\ref{alg:GDLS} outlines the procedure: at each iteration, the algorithm starts with a candidate genome, or genomes. For each of these, it evaluates every genome that differs by at most neighbourhood-size knockouts or knockins, and selects the best from these. The search then starts again from these best solutions, and this is repeated until no better solutions are found.
 
 \begin{algorithm}
 \caption{Pseudocode of Genetic Design by Local Search}
@@ -107,10 +110,10 @@ This is a sensible decision in metabolic engineering, due to the natural startin
 \EndWhile
 \end{algorithmic}
 \end{algorithm}
+\todo{correct this} 
 
 A branching factor, M, can also be used. 
 This causes the algorithm to keep M solutions at each step, neighbourhood search is then conducted around each of these solutions, and the best M results become the basis for the next round.
-\todo{need to expand this} 
 
 \subsection{Genetic Design by Branch and Bound (GDBB)}
 Genetic Design by Branch and Bound~\cite{Egen2012} is an enhancement on GDLS that can provide a large increase in speed by using a Branch and Bound strategy.
@@ -118,7 +121,8 @@ This means that when the performance from a branch \(A\) is strictly poorer than
 Strictly poorer in this context means that the best case performance of \(A\) is worse than the worst case performance of \(B\).
 
 Although GDBB offers a huge speedup over GDLS---sometimes several orders of magnitude---it is still a deterministic local search algorithm, and so for a given area searched, it finds the same result as GDLS. 
-For this reason, GDLS was used as a proxy for GDBB in comparing between algorithms, and ultimately solution quality, rather than the time taken, was found to be the deciding factor.
+For this reason, GDLS was used as a proxy for GDBB when comparing between algorithms. 
+Ultimately solution quality, rather than the time taken, was found to be the deciding factor, making GDBB's advnatages useless.
 
 \subsection{Genetic Design by Multi-objective Optimization(GDMO)} 
 \label{sec:GDMO}
@@ -126,6 +130,6 @@ Genetic Design by Multi-objective Optimization~\cite{Costanza2012} is a genetic 
 Using a multi-objective optimization algorithm in this context has a number of advantages.
 \begin{itemize}
 \item A trade-off between different objectives does not need to be selected before use. This avoids the issue of having to guess the properties of a system that has not yet been designed.
-\item The Pareto front can be used to visualize the space of possibilities. This can provide insight into the different structures created by different pathways, and help to design an organism that will not suffer from reduced production due to evolution once in use.
-\item Crucially, this approach does not have to sacrifice performance for these advantages, since maintaining a population of solutions that occupies a wide range of good phenotypes in fact helps the evolutionary process.
+\item The Pareto front can be used to visualize the space of possibilities. This can provide insight into the different structures created by different pathways, and can help to design an organism that will not suffer from reduced production due to evolution once in use.
+\item Crucially, this approach does not have to sacrifice performance for these advantages, since maintaining a population of solutions which occupies a wide range of good phenotypes in fact helps the evolutionary process.
 \end{itemize}

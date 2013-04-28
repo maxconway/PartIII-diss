@@ -27,7 +27,7 @@ dissertation.tex introduction.tex methods.tex results.tex conclusion.tex backgro
 	Rscript -e "require(knitr); knit('dissertation.Rnw')"
 
 dissertation_nocode.tex introduction_nocode.tex methods_nocode.tex results_nocode.tex conclusion_nocode.tex background_nocode.tex: $(knitrsource)
-	Rscript -e "require(knitr); opts_knit\$$set(echo=FALSE); knit('dissertation.Rnw','dissertation_nocode.tex')"
+	Rscript -e "require(knitr); opts_knit\$$set(include=FALSE); knit('dissertation.Rnw','dissertation_nocode.tex')"
 
 %.tex : %.Rnw
 #	R CMD Sweave $<

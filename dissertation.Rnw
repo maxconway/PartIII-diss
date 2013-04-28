@@ -25,7 +25,11 @@ opts_chunk$set(
   size='small',
   tidy=FALSE,
   autodep=TRUE,
-  cache=TRUE
+  cache=TRUE,
+  fig.align='centre',
+  fig.pos='h',
+  fig.width=8,
+  fig.height=6
   )
 opts_knit$set(
   self.contained=FALSE
@@ -39,6 +43,7 @@ opts_knit$set(
 
 \begin{abstract}
 \input{abstract.tex}
+\todo{abstract}
 \end{abstract}
 
 \listoftodos
