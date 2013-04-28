@@ -336,7 +336,30 @@ print(xtable(
 @
 
 \subsubsection{Position of Knockouts on Genome}
-Another 
+Dr. Loveley, who discovered Geobacter, and Dr. Aklujkar, both of the University of Massachusetts Amherst,  were able to provide the latest annotations of the Geobacter Sulfurreducens genome.
+Using these annotations, the knockouts found could be plotted against their position on the genome, to find out if modifications associated with high synthesis were biased towards any particular area of the G. Sulfurreducens genome.
+
+<<genomeposition,dependson=c('GDMO_S'),fig.cap='Geobacter Sulfurreducens Knockouts along genome. Red is number of times knocked out. Dark Red is smoothed.'>>=
+PCA<-read.delim('./data/PCA_Reannotation_02_20_13.csv')
+PCA$Locus_tag<-as.character(PCA$Locus_tag)
+PCA$centres<-(PCA$Corrected.Start+PCA$Corrected.Stop)/2
+PCA$width<-PCA$Corrected.Stop-PCA$Corrected.Start
+
+sums=colSums(GDMO.S.chromosomes[,grepl('GSU.*',colnames(GDMO.S.chromosomes))])
+names=strsplit(names(sums),'_OR_')
+names=setNames(names,names(sums))
+PCA$KOs<-0
+for(name in names(sums)){
+   PCA[PCA$Locus_tag %in% unlist(names[name]),'KOs']<-(sums[name]/length(names[name]))+PCA[PCA$Locus_tag %in% unlist(names[name]),'KOs']
+}
+
+plot(KOs~centres,PCA[PCA$KOs>0,],log='y',type='p',col='red',xlab='genome position',ylab='log(KOs)')
+lines(predict(loess(PCA$KOs~PCA$centres))~PCA$centres,col='darkred')
+@
+
+In Figure~\ref{genomeposition}, we can see that the smoothed line across the genome exhibits a 5 fold increase from end to end, and that this is mainly due to an increase in density of knocked out genes, rather than due to any outlying highly knocked out genes.
+
+This grouping is likely to be due to similarities in functionality between nearby genes.
 
 \subsection{Geobacter Metallireducens}
 Section~\ref{sec:geoMfronts} describes how, despite some initial concerns, the Metallireducens metabolic model appears to be superior to the Sulfurreducens model, so the knockout strategies found in this model are discussed more thoroughly.
