@@ -11,7 +11,12 @@ for(file in list.files(path = './experiments/', pattern = '.*GDLS.*.log',full.na
   if(startsWith(file,'iJO1366_Ecoli_suc_aerobic')) data$strain<-'iJO1366-aerobic'
   if(startsWith(file,'iJO1366_Ecoli_suc_anaerobic')) data$strain<-'iJO1366-anaerobic'
   if(startsWith(file,'geo_m_react')) data$strain<-'metallireducens'
+  if(startsWith(file,'geo_m_react_glucose')) data$strain<-'metallireducens_glucose'
+  if(startsWith(file,'geo_m_react_plus')) data$strain<-'metallireducens_plus'
   if(startsWith(file,'geo_s_react')) data$strain<-'sulfurreducens'
+  if(all(is.null(data$strain))){
+    data$strain<-regmatches(file,regexpr('-GDMO.*',file),invert=F)
+  }
   #normalization
   data<-merge(data,natural,by=c('strain'))
   data$nbiomass <- data$biomass/data$natbiomass
@@ -26,7 +31,7 @@ GDLS$M<-as.integer(GDLS$M)
 FBAtimings<-read.csv('./FBAtimings.csv')
 FBAtimings$FBAtime=FBAtimings$time
 FBAtime=aggregate(FBAtime~strain,FBAtimings[,c('strain','FBAtime')],mean)
-GDLS=merge(GDLS,FBAtime)
+GDLS=merge(GDLS,FBAtime,all.x=T)
 
 GDLS<-GDLS[GDLS$nmaxsyn<10,]
 

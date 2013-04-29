@@ -67,7 +67,16 @@ The timing section~\ref{sec:complexity} is entirely based on GLPK. This is becau
 
 \subsection{Languages and Programs}
 The genetic design algorithms used were written in Matlab, while analysis was conducted in R to take advantage of the safety and reproducibility provided by its stricter type system.
-Git was used for version control, while the parsing and reduction of metabolic models was automated using the Make build system.
+
+\subsection{Pipeline}
+The Make build system was used to automate a pipeline that went from the human readable metabolic model description files right through to the final analysis.
+This pipeline is shown in figure~\ref{fig:pipeline}.
+
+\begin{figure}[h]
+\includegraphics[width=\linewidth]{pipeline.pdf}
+\caption{The pipeline used in this project, with the associated file suffixes}
+\label{fig:pipeline}
+\end{figure}
 
 \subsection{Hypervolume Computation}
 \label{hypervolume}
@@ -194,7 +203,9 @@ This means that the total runtime can be modelled  as the interaction of the thr
 
 <<methods_GDMO_timings1,cache=TRUE>>=
 data('GDMO')
-GDMO.timing = GDMO[,c('strain','generation','pop','id','FBAtime','walltime','cputime')]
+GDMO.timing = GDMO[,c('strain','generation','pop','id',
+                      'FBAtime','walltime','cputime'
+                      )]
 GDMO.timing = unique(GDMO.timing)
 GDMO.timing = GDMO.timing[sample(nrow(GDMO.timing)),]
 GDMO.train = head(GDMO.timing,nrow(GDMO.timing)*0.9)
@@ -221,8 +232,8 @@ Clearly, the prediction holds well within each strain, but there are big differe
 This indicates that time to conduct Flux Balance Analysis is not, in fact, a good predictor between strains, despite its consistency within strains. Luckily, this in-silico data is available in abundance, so it was possible to get round this problem by simply fitting four separate models, as shown in figure~\ref{fig:methods_GDMO_timings3}.
 
 <<methods_GDMO_timings3,fig.cap='predicted runtime, conditional on strain',dependson='methods_GDMO_timings1',out.height='0.4\\textheight',fig.pos='h'>>=
-GDMO.fit = lm(cputime~pop:generation:strain,GDMO.train)
-GDMO.test$prediction=predict(GDMO.fit,newdata=GDMO.test)
+GDMO.fit<-lm(cputime~pop:generation:strain,GDMO.train)
+GDMO.test$prediction<-predict(GDMO.fit,newdata=GDMO.test)
 colours=c('darkgreen','lightgreen','blue','red')
 plot(prediction~cputime,
      GDMO.test,

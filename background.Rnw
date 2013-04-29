@@ -20,7 +20,7 @@ The production of these enzymes is not considered part of the metabolome, though
 The metabolome can be characterized at a steady state by the stoichiometric matrix, which is the known ratio of reactants and products, and a flux vector, which is the unknown flux through each reaction. 
 While some fluxes in the flux vector can be determined simply by the organism's inability to produce the relevant enzyme, the abundance and activity of those enzymes that the organism can produce are difficult to determine. 
 
-FBA~\cite{Orth2010} seeks to determine the flux vector at a given time by using the stoichiometric matrix to define a network, with the fluxes forming the edges which must be determined. 
+Flux Balance Analysis~\cite{Orth2010} seeks to determine the flux vector at a given time by using the stoichiometric matrix to define a network, with the fluxes forming the edges which must be determined. 
 This creates a cone of feasible solutions in flux space, which must be selected from. 
 It relies on two assumptions:
 \begin{enumerate}

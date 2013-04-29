@@ -36,7 +36,8 @@ dissertation_nocode.tex introduction_nocode.tex methods_nocode.tex results_nocod
 clean :
 	rm -f dissertation.aux
 	rm -f dissertation.log
-	rm -f *.pdf
+	rm -f dissertation.pdf
+	rm -f dissertation_nocode.pdf
 	rm -f dissertation.tex
 	rm -f dissertation-concordance.tex
 	rm -f *.aux

@@ -1,7 +1,7 @@
 %TC:macro \todo [0]
 %TC:group algorithm 0 0
 %TC:group knitrout 0 -2
-\documentclass[a4paper,twoside,12pt]{report}
+\documentclass[a4paper,twoside,12pt,notitlepage]{report}
 
 \usepackage{mystyle}
 \hypersetup{
@@ -95,6 +95,7 @@ Matlab and the Gurobi Optimization toolbox were the two pieces of software that 
 \end{description}
 
 \nocite{R-base,R-gdata,R-knitr,R-lattice,R-RColorBrewer,R-scatterplot3d,R-xtable}
+\nocite{*}
 \bibliographystyle{plain}
 \bibliography{bibliography,packages}
 

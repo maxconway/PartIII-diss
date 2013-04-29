@@ -7,15 +7,6 @@ require(stats,quietly=TRUE)
 #GDMO
 data(GDMO)
 
-GDMO<-GDMO[GDMO$strain!='iJO1366-anaerobic',] #experiment seems to have failed
-GDMO<-GDMO[!(
-  (GDMO$id==2005735200&GDMO$generation>740)|
-    (GDMO$id==1003985200)|
-    (GDMO$id==1727016800)|
-    (GDMO$id==1961459700) 
-),]#part written generation
-
-
 GDMO.runs=aggregate(cbind(pop,generation)~strain+id,GDMO,max)
 GDMO.runs$population=GDMO.runs$pop
 
@@ -71,8 +62,6 @@ library('RColorBrewer',quietly=TRUE)
 colours=c(
   brewer.pal(n=nrow(GDMO.runs[GDMO.runs$strain=='iaf1260-ac',]),name='Greens'),
   brewer.pal(n=nrow(GDMO.runs[GDMO.runs$strain=='metallireducens',]),name='Blues'),
-  brewer.pal(n=nrow(GDMO.runs[GDMO.runs$strain=='metallireducens_glucose',]),name='Purples'),
-  brewer.pal(n=nrow(GDMO.runs[GDMO.runs$strain=='metallireducens_plus',]),name='Purples'),
   brewer.pal(n=nrow(GDMO.runs[GDMO.runs$strain=='sulfurreducens',]),name='Reds') 
 )
 legend('bottomright',
@@ -83,13 +72,13 @@ legend('bottomright',
 natvol<-1  #due to normalization
 for(j in 1:nrow(GDMO.runs)){
   w=GDMO[GDMO$id==GDMO.runs[j,'id'],]
-  measureat = seq(1,max(w$generation),max(w$generation)%/%5)
+  measureat = seq(1,max(w$generation),max(w$generation)%/%1)
   volume=sapply(measureat,function(i){
     hypervolumeMonteCarlo(
       w[w$generation==i,
         c('nbiomass','nmaxsyn','nminsyn')
         ],
-      100 # must be > 1
+      50 # must be > 1
     ) 
   })
   lines(measureat,volume*100,col=colours[j])
@@ -219,8 +208,8 @@ legend(
 @
 We can see that the solutions produced by GDLS are in the Pareto front, and that both algorithms found an optimal solution in terms of maximum synthesis, though GDMO found several solutions with this maximum synthesis value, and some had a higher minimum synthesis value.
 
-GDMO took large amounts of time to find some solutions, up to a maximum of \Sexpr{signif(max(GDMO[GDMO$strain=='sulfurreducens','cputime'],3)/3600)}~\si{\hour} of CPU time in one case, compared to a maximum of \Sexpr{max(GDLS[GDLS$strain=='sulfurreducens','cputime'])/60}~\si{minute} for GDLS\footnote{both used the same computer and optimization package, and this comparison is restricted to G. Sulfurreducens}.
-However, GDMO took only \Sexpr{min(GDMO[GDMO$strain=='sulfurreducens'&GDMO$nmaxsyn>1.014673,'cputime'])}~\si{\second} of (amortized) CPU time to find a solution that was as good as the best provided by GDLS.
+GDMO took large amounts of time to find some solutions, up to a maximum of \Sexpr{signif(max(GDMO[GDMO$strain=='sulfurreducens','cputime'],3)/3600)}~\si{\hour} of CPU time in one case, compared to a maximum of \Sexpr{signif(max(GDLS[GDLS$strain=='sulfurreducens','cputime'])/60,3)}~\si{minute} for GDLS\footnote{both used the same computer and optimization package, and this comparison is restricted to G. Sulfurreducens}.
+However, GDMO took only \Sexpr{signif(min(GDMO[GDMO$strain=='sulfurreducens'&GDMO$nmaxsyn>1.014673,'cputime']),3)}~\si{\second} of (amortized) CPU time to find a solution that was as good as the best provided by GDLS.
 
 The fact that both solutions fairly quickly found good solutions, but could not easily surpass them, indicates that this may be a global optimum.
 
@@ -233,11 +222,11 @@ To avoid repetition the G. Metallireducens section focuses more strongly on knoc
 \subsection{Geobacter Sulfurreducens}
 
 \subsubsection{Fronts}
-Figure~\ref{fig:sulfurreducensfronts} (Maximum) shows that a roughly linear tradeoff between maximum reduction potential and biomass generation is possible, up to a maximum of a \Sexpr{(max(hs$nmaxsyn))*100}~\si{\percent} of wild type yield, at the expense of \Sexpr{min(hs$nbiomass)}~\si{\percent} biomass production.
+Figure~\ref{fig:sulfurreducensfronts} (Maximum) shows that a roughly linear tradeoff between maximum reduction potential and biomass generation is possible, up to a maximum of a \Sexpr{signif(max(hs$nmaxsyn)*100),3}~\si{\percent} of wild type yield, at the expense of \Sexpr{signif(min(hs$nbiomass)*100,3)}~\si{\percent} biomass production.
 This is as expected, as the organism has a constant amount of energy available for either growth or electron exchange.
 
 In figure~\ref{fig:sulfurreducensfronts} (Minimum), we again see an expected general negative gradient. 
-However, only a small increase over wild type of \Sexpr{(max(ls$nminsyn))*100}~\si{\percent} was possible while maintaining viability.
+However, only a small increase over wild type of \Sexpr{signif(max(ls$nminsyn)*100),3}~\si{\percent} was possible while maintaining viability.
 This is likely to be because, while there are likely to be many knockouts that limit the energy that can be used in biomass generation, and so leave a surplus reduction potential, knockout strategies that actually force higher reduction require much more extensive modifications.
 Figure~\ref{fig:sulfurreducensfronts} (Minimum) shows a pronounced jump at around 0.935 in the biomass axis, discussed further in the next section.
 
@@ -378,7 +367,7 @@ cloud(nbiomass~nmaxsyn*nminsyn,GDMO.M,
 )
 @
 The Pareto front for G. Metallireducens electricity production shown in figure~\ref{fig:m_fronts} appears to be almost completely linear, which was to start with extremely surprising, and suggested that some error had been made---one does not expect that random knockouts would be able to achieve such a precise tradeoff. To verify this shape, a number of comparisons were made with the G. Sulfurreducens model.
-<<straight_line_verification1,fig.pos='p',fig.cap='Verification of Geobacter Metallireducens Pareto Front',fig.pos='p',dependson=c('GDMO_M','GDMO_S')>>=
+<<straight_line_verification1,fig.pos='p',out.width='\\textwidth', out.height='\\textheight', fig.cap='Verification of Geobacter Metallireducens Pareto Front', fig.height=10, fig.width=5, fig.pos='p',dependson=c('GDMO_M','GDMO_S')>>=
 layout(matrix(1:8,4,2,byrow=F))
 for(a in list(GDMO[GDMO$strain=='metallireducens',],
               GDMO[GDMO$strain=='sulfurreducens',]
@@ -548,7 +537,7 @@ This figure is able to pick up on more complex behaviours than the linear model,
 Specifically, the orange box in figure~\ref{fig:geoMKOtrendsloess} shows a number of knockouts of particular interest. These are listed in table~\ref{tab:GDMO_M_popular}
 <<GDMO_M_popular, echo=F ,dependson=c('GDMO_M','geoMKOtrendsloess'),results='asis'>>= 
 print(xtable(
-  GDMO.M.reactions[GDMO.M.reactions$GeneAssociation %in% as.character(interesting),c('OfficialName','SubSystem')],
+  GDMO.M.reactions[GDMO.M.reactions$GeneAssociation %in% as.character(interesting),c('Abbreviation','SubSystem')],
   caption='Geobacter Metallireducens reactions of interest',
   label='tab:GDMO_M_popular',
   ),include.rownames=FALSE)

@@ -20,7 +20,6 @@ for(file in list.files(path = './experiments/', pattern = '.*GDMO.*.log',full.na
   data$gentime=data$cputime-c(rep(0,data$pop[1]),head(data$cputime,-data$pop[1]))
   data$soltime=data$gentime/data$pop
   #negate
-  data[,c('maxsyn','minsyn','biomass')]<--data[,c('maxsyn','minsyn','biomass')]
   #normalization
   natural<-unique(data[data$knockouts==0,c('strain','biomass','maxsyn','minsyn')])
   colnames(natural)<-c('strain','natbiomass','natmaxsyn','natminsyn')
@@ -36,4 +35,15 @@ FBAtimings<-read.csv('./FBAtimings.csv')
 FBAtimings$FBAtime=FBAtimings$time
 FBAtime=aggregate(FBAtime~strain,FBAtimings[,c('strain','FBAtime')],mean)
 GDMO=merge(GDMO,FBAtime,all.x=T)
+
+#remove unwanted
+GDMO<-GDMO[!GDMO$strain %in% c('metallireducens_glucose','metallireducens_plus'),]
+GDMO<-GDMO[GDMO$strain!='iJO1366-anaerobic',] #experiment seems to have failed
+GDMO<-GDMO[!(
+  (GDMO$id==2005735200&GDMO$generation>740)|
+    (GDMO$id==1003985200)|
+    (GDMO$id==1727016800)|
+    (GDMO$id==1961459700) 
+),]#part written generation
+
 save(GDMO,file='GDMO.RData')
