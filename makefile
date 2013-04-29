@@ -63,8 +63,6 @@ wordcount :
 $(mainRfiles) : $(knitrsource)
 	Rscript -e "require(knitr); purl('$<',documentation=2)"
 
-
-
 supplimentary.zip : $(supplimentary)
 	zip $@ $?
 
@@ -74,7 +72,11 @@ supplimentary.tar : $(supplimentary)
 %.gz : %
 	gzip $?
 
-data : ./data/FBAtimings.csv ./data/geo_m_react.txt ./data/geo_s_react.txt ./data/iaf1260-ac.txt
+checks : dissertation.pdf supplimentary.zip $(knitrsource)
+	pdftotext dissertation.pdf - | grep '??'
+	grep "todo" $(knitrsource)
+
+data : ./data/FBAtimings.csv ./data/geo_m_react.txt ./data/geo_s_react.txt ./data/iaf1260-ac.txt ./data/geo_m_react_plus.txt ./data/iJO1366_Ecoli_suc_aerobic.txt ./data/iJO1366_Ecoli_suc_anaerobic.txt
 	rm ./data/*.RData
 
 ./data/FBAtimings.csv : ./experiments/FBAtimings.csv
@@ -88,3 +90,12 @@ data : ./data/FBAtimings.csv ./data/geo_m_react.txt ./data/geo_s_react.txt ./dat
 
 ./data/iaf1260-ac.txt : ./experiments/iaf1260-ac.txt
 	rsync ./experiments/geo_s_react.txt ./data/
+
+./data/iJO1366_Ecoli_suc_aerobic.txt : ./experiments/iJO1366_Ecoli_suc_aerobic.txt
+	rsync ./experiments/iJO1366_Ecoli_suc_aerobic.txt ./data/
+
+./data/iJO1366_Ecoli_suc_anaerobic.txt : ./experiments/iJO1366_Ecoli_suc_anaerobic.txt
+	rsync ./experiments/iJO1366_Ecoli_suc_anaerobic.txt ./data/
+
+./data/geo_m_react_plus.txt : ./experiments/geo_m_react_plus.txt
+	rsync ./experiments/geo_m_react_plus.txt ./data/

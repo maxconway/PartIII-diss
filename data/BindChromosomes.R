@@ -1,7 +1,9 @@
 BindChromosomes <- function(x){
   genepattern<-switch(as.character(unique(x$strain)),
                       sulfurreducens='GSU.*',
-                      metallireducens='Gmet_.*')#check
+                      metallireducens='Gmet_.*',
+                      metallireducens_plus='Gmet_.*|[[:punct:]]?b[0-9]{4}.*'
+                      )
   names=getNames(paste0(NameLookup(unique(x$strain)),'.reduced'))
   x.chromosomes<-NULL
   

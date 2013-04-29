@@ -10,7 +10,11 @@ for(file in list.files(path = './experiments/', pattern = '.*GDMO.*.log',full.na
   if(startsWith(file,'iJO1366_Ecoli_suc_aerobic')) data$strain<-'iJO1366-aerobic'
   if(startsWith(file,'iJO1366_Ecoli_suc_anaerobic')) data$strain<-'iJO1366-anaerobic'
   if(startsWith(file,'geo_m_react')) data$strain<-'metallireducens'
+  if(startsWith(file,'geo_m_react_plus')) data$strain<-'metallireducens_plus'
   if(startsWith(file,'geo_s_react')) data$strain<-'sulfurreducens'
+  if(all(data$strain==NULL){
+    data$strain<-regmatches(file,regexpr('-GDMO.*',file),invert=F)
+  }
   #timings
   data$gentime=data$cputime-c(rep(0,data$pop[1]),head(data$cputime,-data$pop[1]))
   data$soltime=data$gentime/data$pop
@@ -27,8 +31,8 @@ for(file in list.files(path = './experiments/', pattern = '.*GDMO.*.log',full.na
   GDMO=rbind(GDMO,data)
 }
 GDMO$strain=as.factor(GDMO$strain)
-FBAtimings<-read.csv('./data/FBAtimings.csv')
+FBAtimings<-read.csv('./FBAtimings.csv')
 FBAtimings$FBAtime=FBAtimings$time
 FBAtime=aggregate(FBAtime~strain,FBAtimings[,c('strain','FBAtime')],mean)
-GDMO=merge(GDMO,FBAtime)
+GDMO=merge(GDMO,FBAtime,all.x=T)
 save(GDMO,file='GDMO.RData')

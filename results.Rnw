@@ -544,7 +544,7 @@ Figure~\ref{fig:geoMKOtrendsloess} shows a similar plot, but with smoothing prov
 This figure is able to pick up on more complex behaviours than the linear model, and some lines represent reactions which, when removed, clearly have a large effect on electricity synthesis.
 
 Specifically, the orange box in figure~\ref{fig:geoMKOtrendsloess} shows a number of knockouts of particular interest. These are listed in table~\ref{GDMO_M_popular}
-<<GDMO_M_popular, echo=F ,dependson=c('GDMO_S','geoMKOtrendsloess'),results='asis'>>= 
+<<GDMO_M_popular, echo=F ,dependson=c('GDMO_M','geoMKOtrendsloess'),results='asis'>>= 
 print(xtable(
   GDMO.M.reactions[GDMO.M.reactions$GeneAssociation %in% as.character(interesting),c('OfficialName','SubSystem')],
   caption='Geobacter Metallireducens reactions of interest',
@@ -552,3 +552,19 @@ print(xtable(
   ),include.rownames=FALSE)
 @
 
+\subsection{Geobacter Metallireducens Knockins}
+Finally, having studied knockouts in Geobacter Sulfurreducens and Metallireducens, potential knockins were studied.
+
+This was achieved by adding to the G. Metallireducens metabolic model a number of reactions from the iJO1366 E. Coli model. These started off turned off, so that the algorithm would turn them on if they were useful.
+
+The reactions from E. Coli were those in three subsystems:
+\begin{itemize}
+\item Inorganic Ion Transport and Metabolism,
+\item Glycolysis and Gluconeogenesis, and
+\item Glutamate Metabolism.
+\end{itemize}
+
+The resulting set of strains had a Pareto front between their objectives that displayed no significant difference from pure Geobacter Metalirreducens. 
+This is not hugely surprising, and shows that knockin studies require a much more targeted approach.
+This is likely to be because Geobacter already has the capability to efficiently produce biomass from the resources available, so that E. Coli genes cannot help with that, and E. Coli does not specialize in reduction of inorganic ions, so Geobacter is likely to be more thoroughly equipped for this task.
+\todo{engineer in Glucose metabolism?}

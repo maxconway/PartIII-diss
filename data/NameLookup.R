@@ -1,5 +1,5 @@
-to<-c('iaf1260-ac','iJO1366-aerobic','iJO1366-anaerobic','metallireducens','sulfurreducens')
-from<-c('iaf1260-ac','iJO1366_Ecoli_suc_aerobic','iJO1366_Ecoli_suc_anaerobic','geo_m_react','geo_s_react')
+to<-c('iaf1260-ac','iJO1366-aerobic','iJO1366-anaerobic','metallireducens','sulfurreducens','metallireducens-plus')
+from<-c('iaf1260-ac','iJO1366_Ecoli_suc_aerobic','iJO1366_Ecoli_suc_anaerobic','geo_m_react','geo_s_react','geo_m_react_plus')
 glossary<-data.frame(to,from)
 
 NameLookup <- function(string){
@@ -10,4 +10,5 @@ if(string %in% glossary$to){
 if(string %in% glossary$from){
   return(glossary[glossary$from==string,'t0'])
 }
+return(string)
 }
