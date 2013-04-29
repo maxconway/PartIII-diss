@@ -110,7 +110,6 @@ Algorithm~\ref{alg:GDLS} outlines the procedure: at each iteration, the algorith
 \EndWhile
 \end{algorithmic}
 \end{algorithm}
-\todo{correct this} 
 
 A branching factor, M, can also be used. 
 This causes the algorithm to keep M solutions at each step, neighbourhood search is then conducted around each of these solutions, and the best M results become the basis for the next round.

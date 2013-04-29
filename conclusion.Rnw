@@ -1,3 +1,14 @@
 % !TeX root = dissertations.Rnw   
 \chapter{Conclusions}
-\todo{summarise each section}
+\section{Performance Improvement}
+In this project, I have used genetic design algorithms to create strains of Geobacter Metallireducens and Sulfurreducens with at least \SI{102}{\percent}, and potentially up to \SI{104}{\percent} of the electrical current production capapcity of their respective wild types.
+
+This may not sound like much, but these microbes have obvious potential in biological fuel cells that could compete with electrochemical cells such as the Lithium ion batteries used in mobile phones, where huge amounts of money are spent for even the slightest performance gains.
+
+\section{Comparison of Algorithms}
+In order to achieve these results I compared state of the art genetic design algorithms, both in terms of their theoretical speed and their actual performance on various species of Geobacter, tackling a model and problem that has quite different characteristics to those that they were originally used with. 
+
+Doing this required a thorough understanding of their internal operation and code, including rewriting significant portions of GDMO, GDLS and GDBB to allow them to use more general model formats, and to utilize the latest version of the Gurobi linear programming toolbox.
+
+\section{Biology}
+Finding high electricity production strains of Geobacter also highlighted which genes are related to the electricity producing capacity of Geobacter, and, with the help of the Lovley Lab, who discovered Geobacter, I was able to identify these genes as clustered preferentially in certain areas of the genome.

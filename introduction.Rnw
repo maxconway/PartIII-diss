@@ -23,15 +23,10 @@ Colours have been used to highlight which species strains belong to:
 \begin{itemize}
 \item Geobacter Sulfurreducens is represented by {\color{red} red}.
 \item Geobacter Metallireducens is represented by {\color{blue} blue}.
+\item Modified forms of Geobacter Metallireducens are represented by {\color{purple} purple}.
 \item Escherichia Coli is represented by {\color{green} green}.
 \end{itemize}
 
 \section{Embedded Code}
 \label{sec:embeddedcode}
-The Knitr~\cite{Xie2011} dynamic report generation package has been used to embed chunks of R code into this document, which shows the analysis conducted, and generates the graphs and tables that are included.
-This means that everything is consistently up to date, and enables the reader to follow the reasoning used, and to understand in more detail any areas that interest them.
-
-The code chunks inserted are by no means necessary to understanding this document, they can be ignored or alternatively, a version with them removed is available online in the supplementary materials.
-
-Obviously data files cannot be contained here, and some of the more mundane data handling scripts are also omitted. These can be found among supplementary materials.
-\todo{like this}
+The Knitr~\cite{Xie2011} dynamic report generation package has been used to embed chunks of R code into this document, which shows some of the analysis conducted, and generates the graphs and tables that are included.

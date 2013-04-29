@@ -36,17 +36,14 @@ opts_knit$set(
   )
 @
 \title{Automated Genetic Design of Geobacter for Electricity Production}
-\author{Maxwell Conway \\Supervisor: Pietro Lio'}
+\author{Maxwell Conway, University of Cambridge \\Supervisor: Pietro Lio', University of Cambridge \\Data: Muktak Aklujkar, University of Massachusetts}
 \date{}
 
 \maketitle
 
 \begin{abstract}
 \input{abstract.tex}
-\todo{abstract}
 \end{abstract}
-
-\listoftodos
 
 \setcounter{tocdepth}{3}
 \cleardoublepage
@@ -74,7 +71,13 @@ opts_knit$set(
 \appendix
 \chapter{Supplementary Materials}
 Supplementary materials are available online, at \url{http://goto.maxwellconway.com/diss-sup}.
-\todo{list}
+These include:
+\begin{itemize}
+\item The full R files showing the analysis in this document.
+\item R functions and scripts supporting the analysis in this document.
+\item The datasets used (see table~\ref{tab:models} and the associated explanation for more information, and citations and copyright details).
+\item The PDF of this document, with and without embedded code.
+\end{itemize}
 
 \chapter{Materials and Expenses}
 \section{Computers}

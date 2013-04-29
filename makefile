@@ -58,7 +58,7 @@ bibliography.bib : ../../Documents/bibtex/Part\ III\ project.bib
 	cp ../../Documents/bibtex/Part\ III\ project.bib bibliography.bib
 
 wordcount :
-	texcount -total *.tex
+	texcount -total introduction.tex background.tex methods.tex results.tex conclusion.tex
 
 $(mainRfiles) : $(knitrsource)
 	Rscript -e "require(knitr); purl('$<',documentation=2)"
@@ -73,8 +73,8 @@ supplimentary.tar : $(supplimentary)
 	gzip $?
 
 checks : dissertation.pdf supplimentary.zip $(knitrsource)
-	pdftotext dissertation.pdf - | grep '??'
 	grep "todo" $(knitrsource)
+	pdftotext dissertation.pdf - | grep '??'
 
 data : ./data/FBAtimings.csv ./data/geo_m_react.txt ./data/geo_s_react.txt ./data/iaf1260-ac.txt ./data/geo_m_react_plus.txt ./data/iJO1366_Ecoli_suc_aerobic.txt ./data/iJO1366_Ecoli_suc_anaerobic.txt
 	rm ./data/*.RData

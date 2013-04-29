@@ -53,12 +53,13 @@ Measurement of convergence is difficult for multi-objective optimization, since 
 A number of techniques have been proposed for comparison, but as discussed in section~\ref{hypervolume}, the heuristic used here is hypervolume, calculated by Monte-Carlo integration.
 
 Figure~\ref{fig:convergence} shows hypervolume against generation for a number of runs of GDMO. This shows that convergence occurred quickly---within \num{200} generations. 
-This works out at around \Sexpr{signif(mean(GDMO[GDMO$generation==200&GDMO$strain=='sulfurreducens','walltime'])/3600,2)}~\si{\hour}.
+This works out at around \Sexpr{signif(mean(GDMO[GDMO$generation==200&GDMO$strain=='sulfurreducens','walltime'])/3600,2)} hours.
+Note that much larger increases in hypervolume were possible for E. Coli in Acetate production, so that this could be not presented on the same scale.
 
 This result was verified by looking at each objective in turn.
 Minimum synthesis converged far slower than maximum synthesis, but both had converged by \numrange{200}{250} generations, lending support to the use of hypervolume as a measure of convergence, and providing reassurance that the numbers of generations chosen were sufficient.
 
-<<convergence,echo=F,fig.pos='p',fig.cap='Convergence of evolution runs',cache=TRUE,dependson=c('hypervolume','ResultsSetup')>>=
+<<convergence,echo=F,fig.pos='p',fig.cap='Convergence of GDMO runs. Plot of the hypervolume (normalized against wild type) against the generation.',cache=TRUE,dependson=c('hypervolume','ResultsSetup')>>=
 GDMO.runs=GDMO.runs[order(GDMO.runs$strain,GDMO.runs$generation,GDMO.runs$pop),]
 plot(NULL,NULL,
      xlab='generation',
@@ -70,6 +71,8 @@ library('RColorBrewer',quietly=TRUE)
 colours=c(
   brewer.pal(n=nrow(GDMO.runs[GDMO.runs$strain=='iaf1260-ac',]),name='Greens'),
   brewer.pal(n=nrow(GDMO.runs[GDMO.runs$strain=='metallireducens',]),name='Blues'),
+  brewer.pal(n=nrow(GDMO.runs[GDMO.runs$strain=='metallireducens_glucose',]),name='Purples'),
+  brewer.pal(n=nrow(GDMO.runs[GDMO.runs$strain=='metallireducens_plus',]),name='Purples'),
   brewer.pal(n=nrow(GDMO.runs[GDMO.runs$strain=='sulfurreducens',]),name='Reds') 
 )
 legend('bottomright',
@@ -92,9 +95,8 @@ for(j in 1:nrow(GDMO.runs)){
   lines(measureat,volume*100,col=colours[j])
 }
 @
-\nocite{Harrower2003}
 
-The investigation of G. Sulfurreducens with \num{1000} generations in particular shows one of the disadvantages of an evolutionary algorithm, and many other global optimization algorithms: since the algorithm is constantly searching for a better solution, if we stop it at an arbitrary point then there is no guarantee that the solution at this point is the best available. 
+Figure~\ref{fig:convergence} also shows one of the disadvantages of an evolutionary algorithm, and many other global optimization algorithms: since the algorithm is constantly searching for a better solution, if we stop it at an arbitrary point then there is no guarantee that the solution at this point is the best available. 
 
 To ensure that the final front is the best possible, three approaches are possible:
 \begin{enumerate}
@@ -188,7 +190,7 @@ print(xtable(
   ),include.rownames=FALSE)
 @
 
-<<GDLS_solutionquality,echo=F,fig.cap='Solutions found by GDLS',dependson=c('ResultsSetup')>>=
+<<GDLS_solutionquality,echo=F,fig.cap='Solutions found by GDLS. Maximum synthesis achieved (normalized against wildtype) against the two parameters tested.',dependson=c('ResultsSetup')>>=
 data(GDLS)
 cloud(nmaxsyn~nbhdsz+M,
       GDLS,
@@ -268,7 +270,7 @@ heatmap(x=as.matrix(A[,grep(pattern='GSU.*',colnames(A))]*1),
         distfun=function(x){dist(x,'manhattan')}
 )
 @
-Heatmap~\ref{kinkanalysis} shows that there are two clearly different patterns of gene activation on either side of the jump.
+Heatmap~\ref{fig:kinkanalysis} shows that there are two clearly different patterns of gene activation on either side of the jump.
 Of course, just seeing the genes that are knocked out is not as helpful as seeing the actual reactions affected. To find these, we can refer back to the original gene annotations of the metabolic network: table~\ref{tab:kinkanalysis} shows the reactions affected. 
 There is not room here to detail the reactions fully in this table, but we can see that knockouts in the Amino Acid Metabolism sub-system are selected for here. 
 This is as expected: while general disruption to biomass creation can free energy for \ce{FE2} production and increase maximum synthesis, increases in minimum synthesis must occur by actually coupling \ce{FE2} synthesis and biomass production, as seen here.
@@ -357,7 +359,7 @@ plot(KOs~centres,PCA[PCA$KOs>0,],log='y',type='p',col='red',xlab='genome positio
 lines(predict(loess(PCA$KOs~PCA$centres))~PCA$centres,col='darkred')
 @
 
-In Figure~\ref{genomeposition}, we can see that the smoothed line across the genome exhibits a 5 fold increase from end to end, and that this is mainly due to an increase in density of knocked out genes, rather than due to any outlying highly knocked out genes.
+In Figure~\ref{fig:genomeposition}, we can see that the smoothed line across the genome exhibits a 5 fold increase from end to end, and that this is mainly due to an increase in density of knocked out genes, rather than due to any outlying highly knocked out genes.
 
 This grouping is likely to be due to similarities in functionality between nearby genes.
 
@@ -543,7 +545,7 @@ lines(y=c(2,0.65,0.65),x=c(0,0,3),type='l',col='orange')
 Figure~\ref{fig:geoMKOtrendsloess} shows a similar plot, but with smoothing provided by local regression~\cite{Cleveland1979}.
 This figure is able to pick up on more complex behaviours than the linear model, and some lines represent reactions which, when removed, clearly have a large effect on electricity synthesis.
 
-Specifically, the orange box in figure~\ref{fig:geoMKOtrendsloess} shows a number of knockouts of particular interest. These are listed in table~\ref{GDMO_M_popular}
+Specifically, the orange box in figure~\ref{fig:geoMKOtrendsloess} shows a number of knockouts of particular interest. These are listed in table~\ref{tab:GDMO_M_popular}
 <<GDMO_M_popular, echo=F ,dependson=c('GDMO_M','geoMKOtrendsloess'),results='asis'>>= 
 print(xtable(
   GDMO.M.reactions[GDMO.M.reactions$GeneAssociation %in% as.character(interesting),c('OfficialName','SubSystem')],
@@ -567,4 +569,3 @@ The reactions from E. Coli were those in three subsystems:
 The resulting set of strains had a Pareto front between their objectives that displayed no significant difference from pure Geobacter Metalirreducens. 
 This is not hugely surprising, and shows that knockin studies require a much more targeted approach.
 This is likely to be because Geobacter already has the capability to efficiently produce biomass from the resources available, so that E. Coli genes cannot help with that, and E. Coli does not specialize in reduction of inorganic ions, so Geobacter is likely to be more thoroughly equipped for this task.
-\todo{engineer in Glucose metabolism?}

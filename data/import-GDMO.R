@@ -10,9 +10,10 @@ for(file in list.files(path = './experiments/', pattern = '.*GDMO.*.log',full.na
   if(startsWith(file,'iJO1366_Ecoli_suc_aerobic')) data$strain<-'iJO1366-aerobic'
   if(startsWith(file,'iJO1366_Ecoli_suc_anaerobic')) data$strain<-'iJO1366-anaerobic'
   if(startsWith(file,'geo_m_react')) data$strain<-'metallireducens'
+  if(startsWith(file,'geo_m_react_glucose')) data$strain<-'metallireducens_glucose'
   if(startsWith(file,'geo_m_react_plus')) data$strain<-'metallireducens_plus'
   if(startsWith(file,'geo_s_react')) data$strain<-'sulfurreducens'
-  if(all(data$strain==NULL){
+  if(all(is.null(data$strain))){
     data$strain<-regmatches(file,regexpr('-GDMO.*',file),invert=F)
   }
   #timings
