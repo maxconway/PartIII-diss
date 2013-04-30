@@ -1,7 +1,7 @@
 %TC:macro \todo [0]
 %TC:group algorithm 0 0
 %TC:group knitrout 0 -2
-\documentclass[a4paper,twoside,12pt,notitlepage]{report}
+\documentclass[a4paper,twoside,11pt,notitlepage]{report}
 
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 
@@ -37,9 +37,6 @@ opts_knit$set(
   self.contained=FALSE
   )
 @
-\title{Automated Genetic Design of Geobacter for Electricity Production}
-\author{\emph{Author:}Maxwell Conway, University of Cambridge \\ \emph{Supervisor:} Dr. Pietro Lio', University of Cambridge \\ \emph{Data:} Dr. Muktak Aklujkar, Lovley Lab, University of Massachusetts}
-\date{}
 
 \input{./title.tex}
 
@@ -76,6 +73,10 @@ These include:
 \item The datasets used (see table~\ref{tab:models} and the associated explanation for more information, and citations and copyright details).
 \item The PDF of this document, with and without embedded code.
 \end{itemize}
+
+\section{Further Reading}
+A number of papers are referenced in the bibliography that formed useful, but general, background material.
+In addition references\cite{R-base,R-gdata,R-knitr,R-lattice,R-RColorBrewer,R-scatterplot3d,R-xtable} cover the packages used in R. 
 
 \chapter{Materials and Expenses}
 \section{Computers}

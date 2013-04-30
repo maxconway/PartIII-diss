@@ -8,8 +8,8 @@ Geobacter~\cite{Lovley2011} is a genus of anaerobic proteobacteria with a number
 The ability to perform these unusual redox reactions could be relevant to bioremediation, both by allowing clean up of hydrocarbon spills in anaerobic conditions, and by fixing oxides of toxic and radioactive metals, such as uranium. 
 Furthermore, the ability to utilize insoluble materials as electron acceptors make Geobacter interesting as a candidate for use in bacterial fuel cells with, and without, membranes; and the pilli used to transport electrons have applications in themselves, as nanowires.
 
-The first Geobacter species to be isolated was Geobacter Metallireducens, from sandy sediment in the Pontomac River, Washington D.C. in 1987, by Dr.~Derek Lovley. 
-The most studied species is Geobacter Sulfurreducens.
+The first Geobacter species to be isolated was \textit{Geobacter metallireducens}, from sandy sediment in the Pontomac River, Washington D.C. in 1987, by Dr.~Derek Lovley. 
+The most studied species is \textit{Geobacter sulfurreducens}.
 These two species are the ones studied here, via reaction lists with Gene-Protein-Reaction annotations, described in table~\ref{tab:models}.
 
 \section{Metabolic Networks and Flux Balance Analysis (FBA)}
@@ -58,6 +58,24 @@ However, Pareto dominance does not provide a total order: it cannot necessarily 
 The non-dominated set is termed the Pareto Front, or Pareto Surface, and describes the shape of the trade-off between multiple objectives, which can provide insight over and above what could be provided by a single solution. 
 In the context of genetic design, as used in Genetic Design by Multi-objective Optimization (see Section~\ref{sec:GDMO}), multiple solutions allow us to investigate how knockouts interact with each other, in a way which is not possible with a single solution.
 
+Figure~\ref{fig:paretodemo} shows an example of a Pareto front. A blue line is used to connect together solutions in the Pareto front, and a red box shows a dominated point: for the purposes of this argument, roast potatoes are not on the pareto front since they are pareto dominated by chips and mashed potato.
+
+<<paretodemo,fig.cap='A demonstration of Pareto fronts with potato based foods. The blue line connects the pareto front. The red box highlights a dominated point: roast potatoes.',dev='png',fig.pos='h'>>=
+potatoes=data.frame(
+  row.names=c('chips','mashed','crisps','boiled','roast'),
+  healthy  =c(     3 ,      5 ,      1 ,      5 ,     3 ),
+  tasty    =c(     6 ,      3 ,      8 ,      1 ,     3 )
+)
+potatoes=potatoes[order(potatoes$healthy),]
+plot(potatoes,col='black',bg='brown',pch=21) #all the potatoes
+lines(potatoes[rownames(potatoes)!='roast',],col='blue') #pareto front
+points(potatoes['roast',],pch=0,cex=3,col='red') #dominated point
+legend('topright',
+       legend=c('Pareto front','Dominated point'),
+       col=c('blue','red'),
+       pch='l'
+)
+@
 
 \subsection{Evolutionary Algorithms}
 \label{subsec:ea}
@@ -87,7 +105,7 @@ This means that while we can try a set of knockouts (or knockins) and find out t
 Simpler effects, such as overproduction of a particular metabolite, require simpler engineering strategies than the more complex effects desired in synthetic biology. 
 The search space is still far too large to manually characterize, but these metabolome level effects can fortunately also be well modelled by FBA, which works well for large scale, steady state effects such as overproduction, but cannot model dynamic, reactive systems. 
 
-Since FBA presents a useful computational metabolic model, especially when annotated with gene-protein-reaction data, it allows the development of algorithms that can search part of the huge space of possible knockout strategies---for instance around \num{5.3e210} (\emph{sic}) in the E. Coli models used here---in order to draft strategies for in-vitro evaluation.
+Since FBA presents a useful computational metabolic model, especially when annotated with gene-protein-reaction data, it allows the development of algorithms that can search part of the huge space of possible knockout strategies---for instance around \num{5.3e210} (\emph{sic}) in the \textit{E. coli} models used here---in order to draft strategies for in-vitro evaluation.
 
 In order to design knockout strategies for Geobacter, several genetic design algorithms were considered.
 
@@ -123,7 +141,7 @@ Although GDBB offers a huge speedup over GDLS---sometimes several orders of magn
 For this reason, GDLS was used as a proxy for GDBB when comparing between algorithms. 
 Ultimately solution quality, rather than the time taken, was found to be the deciding factor, making GDBB's advantages useless.
 
-\subsection{Genetic Design by Multi-objective Optimization(GDMO)} 
+\subsection{Genetic Design by Multi-objective Optimization (GDMO)} 
 \label{sec:GDMO}
 Genetic Design by Multi-objective Optimization~\cite{Costanza2012} is a genetic design algorithm based on the multi-objective evolutionary optimization algorithm NSGA-II, as described in Section~\ref{sec:NSGA}.
 Using a multi-objective optimization algorithm in this context has a number of advantages.

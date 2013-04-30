@@ -23,13 +23,13 @@ GDLS.runs=unique(GDLS[,c('strain','id','nbhdsz','M')])
 
 
 \chapter{Results}
-This chapter details the results of the investigation. First the technical evaluation focuses on the properties of GDMO and GDLS themselves. Then the biological evaluation discusses the synthesis possible with both Geobacter models, the knockout strategies that were used, and the results of using GDMO for evaluating potential knockins from E. Coli.
+This chapter details the results of the investigation. First the technical evaluation focuses on the properties of GDMO and GDLS themselves. Then the biological evaluation discusses the synthesis possible with both \textit{Geobacter} models, the knockout strategies that were used, and the results of using GDMO for evaluating potential knockins from \textit{E. coli}.
 
 \section{Technical Evaluation}
 This section focuses on the relative merits of GDMO and GDLS, and why GDMO was chosen for further use.
 First the convergence behaviour of both algorithms is evaluated, to ensure that the comparison is as fair as possible; secondly the solutions from both techniques are compared.
-The comparisons performed here are based on G. Sulfurreducens.
-It was confirmed that the results remained valid with G. Metallireducens and the iAF1260 E. Coli model.
+The comparisons performed here are based on \textit{G. sulfurreducens}.
+It was confirmed that the results remained valid with \textit{G. metallireducens} and the iAF1260 \textit{E. coli} model.
 
 \subsection{GDMO}
 A number of different evolution runs were completed for each strain, summarised in table~\ref{tab:GDMOevals}. As can be seen, more evaluations were done for smaller population and generation sizes, since these gave far shorter running times.
@@ -50,7 +50,7 @@ A number of techniques have been proposed for comparison, but as discussed in se
 
 Figure~\ref{fig:convergence,} shows hypervolume against generation for a number of runs of GDMO. This shows that convergence occurred quickly---within \num{200} generations. 
 This works out at around \Sexpr{signif(mean(GDMO[GDMO$generation==200&GDMO$strain=='sulfurreducens','walltime'])/3600,2)} hours.
-Note that much larger increases in hypervolume were possible for E. Coli in Acetate production, so that this could be not presented on the same scale.
+Note that much larger increases in hypervolume were possible for \textit{E. coli} in Acetate production, so that this could be not presented on the same scale.
 
 This result was verified by looking at each objective in turn.
 Minimum synthesis converged far slower than maximum synthesis, but both had converged by \numrange{200}{250} generations, lending support to the use of hypervolume as a measure of convergence, and providing reassurance that the numbers of generations chosen were sufficient.
@@ -201,11 +201,11 @@ cloud(nmaxsyn~nbhdsz+M,
 \subsection{Comparison}
 Figure~\ref{fig:comparison} shows the results of the algorithms on one plot. 
 The axes chosen are just maximum synthesis and biomass production, since these are what GDLs optimizes.
-<<comparison,echo=F,fig.cap='Geobacter Sulfurreducens Pareto front, overlaid with GDLS results',dependson='GDMO_fronts',fig.pos='htb'>>=
+<<comparison,echo=F,fig.cap='\\textit{Geobacter sulfurreducens} Pareto front, overlaid with GDLS results',dependson='GDMO_fronts',fig.pos='htb'>>=
 plot(nbiomass~nmaxsyn,hs,col='pink',pch='o')
 points(nbiomass~nmaxsyn,GDLS[GDLS$strain=='sulfurreducens',],col='darkred',pch='x')
 legend(
-  'topright',
+  'topright', 
   legend=c('GDMO: pareto front','GDLS: all solutions'),
   pch=c('o','x'),
   col=c('pink','darkred')
@@ -213,7 +213,7 @@ legend(
 @
 We can see that the solutions produced by GDLS are in the Pareto front, and that both algorithms found an optimal solution in terms of maximum synthesis, though GDMO found several solutions with this maximum synthesis value, and some had a higher minimum synthesis value.
 
-GDMO took large amounts of time to find some solutions, up to a maximum of \Sexpr{signif(max(GDMO[GDMO$strain=='sulfurreducens','cputime'])/3600,3)}~\si{\hour} of CPU time in one case, compared to a maximum of \Sexpr{signif(max(GDLS[GDLS$strain=='sulfurreducens','cputime'])/60,3)}~\si{\minute} for GDLS\footnote{both used the same computer and optimization package, and this comparison is restricted to G. Sulfurreducens}.
+GDMO took large amounts of time to find some solutions, up to a maximum of \Sexpr{signif(max(GDMO[GDMO$strain=='sulfurreducens','cputime'])/3600,3)}~\si{\hour} of CPU time in one case, compared to a maximum of \Sexpr{signif(max(GDLS[GDLS$strain=='sulfurreducens','cputime'])/60,3)}~\si{\minute} for GDLS\footnote{both used the same computer and optimization package, and this comparison is restricted to \textit{G. sulfurreducens}}.
 However, GDMO took only \Sexpr{signif(min(GDMO[GDMO$strain=='sulfurreducens'&GDMO$nmaxsyn>1.014673,'cputime',]),3)}~\si{\second} of (amortized) CPU time to find a solution that was as good as the best provided by GDLS.
 
 The fact that both solutions fairly quickly found good solutions, but could not easily surpass them, indicates that this may be a global optimum.
@@ -222,9 +222,9 @@ Since GDMO provided benefit of describing the whole Pareto front, and time scale
 
 \section{Biological Evaluation}
 The biological component of the evaluation discusses the shapes of the Pareto fronts obtained using GDMO, and the knockouts used to create them.
-To avoid repetition the G. Metallireducens section focuses more strongly on knockout patterns since although the patterns in both species were investigated extensively, these patterns may be more biologically relevant.
+To avoid repetition the \textit{G. metallireducens} section focuses more strongly on knockout patterns since although the patterns in both species were investigated extensively, these patterns may be more biologically relevant.
 
-\subsection{Geobacter Sulfurreducens}
+\subsection{\textit{Geobacter sulfurreducens}}
 
 \subsubsection{Fronts}
 Figure~\ref{fig:sulfurreducensfronts} (Maximum) shows that a roughly linear tradeoff between maximum reduction potential and biomass generation is possible, up to a maximum of a \Sexpr{signif(max(hs$nmaxsyn)*100,3)}~\si{\percent} of wild type yield, at the expense of \Sexpr{signif(min(hs$nbiomass)*100,3)}~\si{\percent} biomass production.
@@ -235,7 +235,7 @@ However, only a small increase over wild type of \Sexpr{signif(max(ls$nminsyn)*1
 This is likely to be because, while there are likely to be many knockouts that limit the energy that can be used in biomass generation, and so leave a surplus reduction potential, knockout strategies that actually force higher reduction require much more extensive modifications.
 Figure~\ref{fig:sulfurreducensfronts} (Minimum) shows a pronounced jump at around 0.935 in the biomass axis, discussed further in the next section.
 
-<<sulfurreducensfronts,fig.width=8,fig.height=4,echo=F,dependson='GDMO_fronts',fig.cap='Pareto fronts of reduction capacity for Geobacter Sulfurreducens, normalized against wild type. Note scales not equal'>>=
+<<sulfurreducensfronts,fig.width=8,fig.height=4,echo=F,dependson='GDMO_fronts',fig.cap='Pareto fronts of reduction capacity for \\textit{Geobacter sulfurreducens}, normalized against wild type. Note scales not equal',dev='png'>>=
 layout(matrix(1:2,1,2,byrow=F))
 plot(nmaxsyn~nbiomass,hs,xlab='biomass',ylab='Iron(II) excretion',col='red',main='(Maximum)')
 plot(nminsyn~nbiomass,ls,xlab='biomass',ylab='Iron(II) excretion',col='red',main='(Miniumum)')
@@ -243,9 +243,9 @@ plot(nminsyn~nbiomass,ls,xlab='biomass',ylab='Iron(II) excretion',col='red',main
 
 \subsubsection{Minimum Synthesis Knockouts}
 In order to get deeper insight, we need to look at more focused groups of strains.
-Figure~\ref{fig:sulfurreducensfronts} (Minimum) shows a `knee' in the biomass vs minimum synthesis Pareto front of G. Sulfurreducens.
+Figure~\ref{fig:sulfurreducensfronts} (Minimum) shows a `knee' in the biomass vs minimum synthesis Pareto front of \textit{G. sulfurreducens}.
 To look at this in more detail, we can extract the relevant sets of strains and compare their knockouts.
-<<kinkanalysis, echo=c(1:8,16:17), dependson=c('GDMO_S','GDMO_fronts'),fig.cap='Knockouts across jump in Geobacter Sulfurreducens minimum synthesis Pareto front'>>=
+<<kinkanalysis, echo=c(1:8,16:17), dependson=c('GDMO_S','GDMO_fronts'),fig.cap='Knockouts (red) across jump in \\textit{Geobacter sulfurreducens} minimum synthesis Pareto front'>>=
 A <- merge(GDMO.S.chromosomes,ls) 
 A <- A[0.92<A$nbiomass & A$nbiomass<0.94, ]
 low <- A[A$nminsyn<1.003,grepl('GSU.*',colnames(A))]
@@ -282,7 +282,7 @@ One major advantage of GDMO is that the shape of the Pareto front can yield info
 Figure~\ref{fig:geoSknockouts} shows the knockouts in each member of the final population. 
 Knockout vectors are ordered by the first principle component of their objectives, which lies along the Pareto front, while genes are heirachically clustered using Manhattan distance.
 
-<<geoSknockouts, echo=F,  fig.cap='knockouts in Geobacter Sulfurreducens',dependson=c('GDMO_S')>>=
+<<geoSknockouts, echo=F,  fig.cap='Knockouts in \\textit{Geobacter sulfurreducens}',dependson=c('GDMO_S')>>=
 v=GDMO.S.chromosomes[order(GDMO.S.chromosomes$pos),
                      grep(pattern='GSU.*',
                           colnames(GDMO.S.chromosomes)
@@ -316,8 +316,8 @@ diff <- colSums(engineered)
 k2 = diff[order(-abs(diff))]
 @
 
-<<commonmodifications, echo=F,  fig.cap='Common knockouts in Geobacter Sulfurreducens',dependson=c('k2')>>=
-plot(k2,xlab='modification index',ylab='usages') 
+<<commonmodifications, echo=F,  fig.cap='Common knockouts in \\textit{Geobacter sulfurreducens}',dependson=c('k2'),dev='png'>>=
+plot(k2,xlab='modification index',ylab='usages',col='red') 
 abline(v=10)
 @
 
@@ -332,10 +332,10 @@ print(xtable(
 @
 
 \subsubsection{Position of Knockouts on Genome}
-Dr. Loveley, who discovered Geobacter, and Dr. Aklujkar, both of the University of Massachusetts Amherst,  were able to provide the latest annotations of the Geobacter Sulfurreducens genome.
-Using these annotations, the knockouts found could be plotted against their position on the genome, to find out if modifications associated with high synthesis were biased towards any particular area of the G. Sulfurreducens genome.
+Dr. Derek Lovley, who discovered \textit{Geobacter}, and Dr. Muktak Aklujkar, both of the University of Massachusetts Amherst \href{http://www.geobacter.org/}{Lovley Lab},  were able to provide the latest annotations of the \textit{Geobacter sulfurreducens} genome.
+Using these annotations, the knockouts found could be plotted against their position on the genome, to find out if modifications associated with high synthesis were biased towards any particular area of the \textit{G. sulfurreducens} genome.
 
-<<genomeposition,dependson=c('GDMO_S'),fig.cap='Geobacter Sulfurreducens Knockouts along genome. Red is number of times knocked out. Dark Red is smoothed.'>>=
+<<genomeposition,dependson=c('GDMO_S'),fig.cap='\\textit{Geobacter sulfurreducens} Knockouts along genome. Red circles are number of times knocked out. The dark red line shows a LOESS smoothing.',dev='png'>>=
 PCA<-read.delim('./data/PCA_Reannotation_02_20_13.csv')
 PCA$Locus_tag<-as.character(PCA$Locus_tag)
 PCA$centres<-(PCA$Corrected.Start+PCA$Corrected.Stop)/2
@@ -357,22 +357,26 @@ In Figure~\ref{fig:genomeposition}, we can see that the smoothed line across the
 
 This grouping is likely to be due to similarities in functionality between nearby genes.
 
-\subsection{Geobacter Metallireducens}
-Section~\ref{sec:geoMfronts} describes how, despite some initial concerns, the Metallireducens metabolic model appears to be superior to the Sulfurreducens model, so the knockout strategies found in this model are discussed more thoroughly.
+\subsection{\textit{Geobacter metallireducens}}
+Section~\ref{sec:geoMfronts} describes how, despite some initial concerns, the \textit{G. metallireducens} metabolic model appears to be superior to the \textit{G. sulfurreducens} model, so the knockout strategies found in this model are discussed more thoroughly.
 
 \subsubsection{Fronts}
 \label{sec:geoMfronts}
-The general shape of the Pareto front in G. Metallireducens is shown in figure~\ref{fig:m_fronts}.
-<<m_fronts,echo=F,fig.cap='Geobacter Metallireducens Pareto Front'>>=
+The general shape of the Pareto front in \textit{G. metallireducens} is shown in figure~\ref{fig:m_fronts}.
+<<m_fronts,echo=F,fig.cap='\\textit{Geobacter metallireducens} Pareto Front. All axes normalized'>>=
 require('lattice',quietly=TRUE)
 cloud(nbiomass~nmaxsyn*nminsyn,GDMO.M,
       par.settings=list(axis.line = list(col = "transparent")),
       col='blue',
-      scales = list(arrows=FALSE, col = "black")
+      ylab='minimum synthesis',
+      xlab='maximum synthesis',
+      zlab=list('biomass',rot=90),
+      scales = list(arrows=FALSE, col = "black"),
+      screen=list(x=75,y=-40,z=-171)
 )
 @
-The Pareto front for G. Metallireducens electricity production shown in figure~\ref{fig:m_fronts} appears to be almost completely linear, which was to start with extremely surprising, and suggested that some error had been made---one does not expect that random knockouts would be able to achieve such a precise tradeoff. To verify this shape, a number of comparisons were made with the G. Sulfurreducens model.
-<<straight_line_verification1,fig.pos='p',out.width='\\textwidth', out.height='0.95\\textheight', fig.cap='Verification of Geobacter Metallireducens Pareto Front', fig.height=10, fig.width=5, fig.pos='p',dependson=c('GDMO_M','GDMO_S')>>=
+The Pareto front for \textit{G. metallireducens} electricity production shown in figure~\ref{fig:m_fronts} appears to be almost completely linear, which was to start with extremely surprising, and suggested that some error had been made---one does not expect that random knockouts would be able to achieve such a precise tradeoff. To verify this shape, a number of comparisons were made with the \textit{G. sulfurreducens} model.
+<<straight_line_verification1,fig.pos='p',out.width='\\textwidth', out.height='0.95\\textheight', fig.cap='Verification of \\textit{Geobacter metallireducens} Pareto Front', fig.height=10, fig.width=5, fig.pos='p',dependson=c('GDMO_M','GDMO_S')>>=
 layout(matrix(1:8,4,2,byrow=F))
 for(a in list(GDMO[GDMO$strain=='metallireducens',],
               GDMO[GDMO$strain=='sulfurreducens',]
@@ -393,30 +397,30 @@ for(a in list(GDMO[GDMO$strain=='metallireducens',],
 @
 
 <<straight_line_verification2,fig.cap='PCA of Pareto Fronts: proportion of variance explained by each component. Log scale'>>=
-layout(matrix(1:2,1,2,byrow=F))
-for(c in list(GDMO.S, GDMO.M)){
-  colour <- switch(unique(as.character(c$strain)),
-                   sulfurreducens='red',
-                   metallireducens='blue')
-  pc<-princomp(c[,c('nbiomass','nminsyn','nmaxsyn')])
-  pov<-(pc$sdev)^2 / sum(pc$sdev^2) 
-  barplot(pov,
-          sub='principle components',
-          main=unique(c$strain),
-          col=colour,
-          ylim=c(1e-20,1),
-          log='y'
-  )
-}
+GDMO.M.pc<-princomp(GDMO.M[,c('nbiomass','nminsyn','nmaxsyn')])
+GDMO.S.pc<-princomp(GDMO.S[,c('nbiomass','nminsyn','nmaxsyn')])
+GDMO.M.pov<-(GDMO.M.pc$sdev)^2 / sum(GDMO.M.pc$sdev^2) 
+GDMO.S.pov<-(GDMO.S.pc$sdev)^2 / sum(GDMO.S.pc$sdev^2) 
+components<-rbind(GDMO.S.pov,GDMO.M.pov)
+suppressWarnings(
+barplot(as.matrix(components),
+        beside=T,
+        col=c('red','blue'),
+        ylab='log proportion of variance',
+        log='y',
+        ylim=c(1e-20,100),
+        legend.text=c('sulfurreducens','metallireducens'),
+)
+)
 @
-Figures~\ref{fig:straight_line_verification1} and~\ref{fig:straight_line_verification2} show a number of graphs that all suggest that there is no bug in the G. Metallireducens model. 
-Figure~\ref{fig:straight_line_verification1} shows that the noise levels over time are similar. While there are some differences in minimum synthesis, closer inspection reveals that there is still some variation for G. Metallireducens; and that the difference is not particularly large, considering that only small improvements are at all possible in this objective.
+Figures~\ref{fig:straight_line_verification1} and~\ref{fig:straight_line_verification2} show a number of graphs that all suggest that there is no bug in the \textit{G. metallireducens} model. 
+Figure~\ref{fig:straight_line_verification1} shows that the noise levels over time are similar. While there are some differences in minimum synthesis, closer inspection reveals that there is still some variation for \textit{G. metallireducens}; and that the difference is not particularly large, considering that only small improvements are at all possible in this objective.
 Figure~\ref{fig:straight_line_verification2} shows the principle components of both fronts. 
-Both fronts are roughly linear, so the first principle components explain much of the variation, but it in fact explains a slightly smaller proportion of variance in the G. Metallireducens Pareto front.
+Both fronts are roughly linear, so the first principle components explain much of the variation, but it in fact explains a slightly smaller proportion of variance in the \textit{G. metallireducens} Pareto front.
 
-With further investigation, the reasons behind these differences actually indicate a problem with the G. Sulfurreducens model. 
+With further investigation, the reasons behind these differences actually indicate a problem with the \textit{G. sulfurreducens} model. 
 In both species, we see a tradeoff between use of resources in biomass generation and in electricity production.
-However, the G. Sulfurreducens model required the addition of a small number of `vitamins': trace materials in the substrate that were not produced in the metabolism.
+However, the \textit{G. sulfurreducens} model required the addition of a small number of `vitamins': trace materials in the substrate that were not produced in the metabolism.
 These extra resources cannot necessarily be used outside of specific pathways, and so they produce extraneous local features in the Pareto front where they can, or cannot, be used.
 
 % Figures~\ref{fig:metallireducensmax} and~\ref{fig:metallireducensmin} show the Pareto fronts for maximum and minimum synthesis respectively.
@@ -435,7 +439,7 @@ These extra resources cannot necessarily be used outside of specific pathways, a
 Figure~\ref{fig:minsynMpattern} demonstrates that in the final G.Metallireducens Pareto front, maximum and minimum synthesis are for the most part correlated. However, pushing the maximum synthesis above around \SI{102.5}{\percent} of the wild type value produces a large drop in minimum synthesis. Since reducing minimum synthesis by \SI{20}{\percent} seems an unreasonable sacrifice for an increase in maximum synthesis of only \SI{4}{percent}, these strains are removed from the pareto front from here on.
 
 The ability to understand this kind of tradeoff, and to make this decision after seeing the results, is one of the major advantages of using multi-objective optimization.
-<<minsynMpattern, echo=F, dependson=c('GDMO_M'),fig.cap='Minimum synthesis vs maximum synthesis for Geobacter Metallireducens'>>=
+<<minsynMpattern, echo=F, dependson=c('GDMO_M'),fig.cap='Minimum synthesis vs maximum synthesis for \\textit{Geobacter metallireducens}',dev='png'>>=
 plot(nminsyn~nmaxsyn,GDMO.M,ylab='normalized minimum synthesis',xlab='normalized maximum synthesis',col='blue',type='p')
 @
 
@@ -451,7 +455,7 @@ GDMO.M.chromosomes$pos<-pc$scores[,1]
 
 \subsubsection{Knockout Patterns}
 Figure~\ref{fig:geoMknockouts} shows the global knockout pattern in G.Metallireducens at the Pareto front. Strains are ordered by their distance along the first principle component of the objective values (which covers \SI{96}{\percent} of variance), while genes are hierachically clustered, using Manhattan distance. Axis labels are absent for the sake of readability and because neither is individually useful.
-<<geoMknockouts, echo=F,  fig.pos='h', dependson=c('GDMO_M_chromosomes2'), fig.cap='Knockouts (blue) in Geobacter Metallireducens'>>=
+<<geoMknockouts, echo=F,  fig.pos='h', dependson=c('GDMO_M_chromosomes2'), fig.cap='Knockouts (blue) in \\textit{Geobacter metallireducens}'>>=
 v=GDMO.M.chromosomes[order(GDMO.M.chromosomes$pos),grep(pattern='Gmet_.*',colnames(GDMO.M.chromosomes))]
 heatmap(x=as.matrix(v*1),
         Rowv=NA,
@@ -476,7 +480,7 @@ GDMO.M.nonessential<-GDMO.M.chromosomes[,!names(GDMO.M.chromosomes) %in% temp_es
 GDMO.M.nonessential<-GDMO.M.nonessential[sort.list(GDMO.M.nonessential$pos),]
 @
 With the essential genes removed, a far stronger pattern can be seen in the genes knocked out (Figure~\ref{fig:geoMknockoutsnonessential}): among the noise, certain knockouts are only present in high biomass strains
-<<geoMknockoutsnonessential, echo=F,  fig.pos='h', dependson=c('GDMO_M_nonessential'), fig.cap='Knockouts (blue) in Geobacter Metallireducens, nonessential reactions only'>>=
+<<geoMknockoutsnonessential, echo=F,  fig.pos='h', dependson=c('GDMO_M_nonessential'), fig.cap='Knockouts (blue) in \\textit{Geobacter metallireducens}, nonessential reactions only'>>=
 v=GDMO.M.nonessential[order(GDMO.M.nonessential$pos),grep(pattern='Gmet_.*',colnames(GDMO.M.nonessential))]
 heatmap(x=as.matrix(v*1),
         Rowv=NA,
@@ -492,7 +496,7 @@ heatmap(x=as.matrix(v*1),
 @
 
 These were taken to be those whose presence in a strain is strongly related to the position of that strain in the first principle component of its objectives.
-<<geoMKOtrendslinear, fig.pos='h', dependson=c('GDMO_M_nonessential'),fig.scap='Linearly smoothed knockouts',fig.cap='Knockouts for each gene set in the Pareto front for Geobacter Metallireducens, smoothed by a linear model. Larger x-axis numbers have larger biomass production'>>=
+<<geoMKOtrendslinear, fig.pos='h', dependson=c('GDMO_M_nonessential'),fig.scap='Linearly smoothed knockouts',fig.cap='Knockouts for each gene set in the Pareto front for \\textit{Geobacter metallireducens}, smoothed by a linear model. Larger x-axis numbers have larger biomass production'>>=
 plot(NULL,NULL,
      xlab='1st principle component of objectives',
      ylab='knockouts',
@@ -507,10 +511,10 @@ for(k in grep('Gmet_.*',names(GDMO.M.nonessential),value=TRUE)){
 }
 @
 
-Figure~\ref{fig:geoMKOtrendslinear} shows how the presence of gene sets varies with their position in the G. Metallireducens Pareto front. 
+Figure~\ref{fig:geoMKOtrendslinear} shows how the presence of gene sets varies with their position in the \textit{G. metallireducens} Pareto front. 
 The linear model used for smoothing shows that a number of knockouts are common in highly engineered strains (towards the right), but are much less common in high biomass strains. Furthermore, as expected, we can see a general trend towards more knockouts with higher synthesis.
 
-<<geoMKOtrendsloess, fig.pos='h', dependson=c('GDMO_M_nonessential'),fig.scap='Polynomialy smoothed knockouts',fig.cap='Knockouts for each geneset in the Pareto front for Geobacter Metallireducens, smoothed by a polynomial model'>>=
+<<geoMKOtrendsloess, fig.pos='h', dependson=c('GDMO_M_nonessential'),fig.scap='Polynomialy smoothed knockouts',fig.cap='Knockouts for each geneset in the Pareto front for \\textit{Geobacter metallireducens}, smoothed by a polynomial model'>>=
 plot(NULL,NULL,
      xlab='1st principle component of objectives',
      ylab='knockouts',
@@ -543,23 +547,23 @@ Specifically, the orange box in figure~\ref{fig:geoMKOtrendsloess} shows a numbe
 <<GDMO_M_popular, echo=F ,dependson=c('GDMO_M','geoMKOtrendsloess'),results='asis'>>= 
 print(xtable(
   GDMO.M.reactions[GDMO.M.reactions$GeneAssociation %in% as.character(interesting),c('Abbreviation','SubSystem')],
-  caption='Geobacter Metallireducens reactions of interest',
+  caption='Geobacter metallireducens reactions of interest',
   label='tab:GDMO_M_popular',
   ),include.rownames=FALSE)
 @
 
-\subsection{Geobacter Metallireducens Knockins}
-Finally, having studied knockouts in Geobacter Sulfurreducens and Metallireducens, potential knockins were studied.
+\subsection{\textit{Geobacter metallireducens} Knockins}
+Finally, having studied knockouts in \textit{Geobacter sulfurreducens} and \textit{metallireducens}, potential knockins were studied.
 
-This was achieved by adding to the G. Metallireducens metabolic model a number of reactions from the iJO1366 E. Coli model. These started off turned off, so that the algorithm would turn them on if they were useful.
+This was achieved by adding to the \textit{G. metallireducens} metabolic model a number of reactions from the iJO1366 \textit{E. coli} model. These started off turned off, so that the algorithm would turn them on if they were useful.
 
-The reactions from E. Coli were those in three subsystems:
+The reactions from \textit{E. coli} were those in three subsystems:
 \begin{itemize}
 \item Inorganic Ion Transport and Metabolism,
 \item Glycolysis and Gluconeogenesis, and
 \item Glutamate Metabolism.
 \end{itemize}
 
-The resulting set of strains had a Pareto front between their objectives that displayed no significant difference from pure Geobacter Metalirreducens. 
+The resulting set of strains had a Pareto front between their objectives that displayed no significant difference from pure \textit{Geobacter metalirreducens}. 
 This is not hugely surprising, and shows that knockin studies require a much more targeted approach.
-This is likely to be because Geobacter already has the capability to efficiently produce biomass from the resources available, so that E. Coli genes cannot help with that, and E. Coli does not specialize in reduction of inorganic ions, so Geobacter is likely to be more thoroughly equipped for this task.
+This is likely to be because \textit{Geobacter} already has the capability to efficiently produce biomass from the resources available, so that \textit{E. coli} genes cannot help with that, and \textit{E. coli} does not specialize in reduction of inorganic ions, so \textit{Geobacter} is likely to be more thoroughly equipped for this task.

@@ -5,8 +5,7 @@ The Methods chapter describes the Biological models used, some of the more techn
 \section{Metabolic Models}
 To conduct flux balance analysis, one needs a model of the metabolism of the organism in question. A number of exchange formats exist for these models and there are many more formats internal to tools. However, after some investigation it was clear that the de facto standard format is the use of tab-separated value tables, with the reactions specified in a space-separated format. 
 
-Unfortunately, the order and names of columns in these tables is not standardized, and the two Geobacter models used were supplied in an ad-hoc format, which was a problem given the inflexible import facilities of Matlab, and the fact that these tables could have cells with \(>250\) characters. 
-To fix this, the import facilities were rewritten in GDMO and GDLS in order to give them greater flexibility in the file formats that they could read.
+Unfortunately, the order and names of columns in these tables is not standardized, and the two \textit{Geobacter} models used were supplied in an ad-hoc format, which was a problem given the inflexible import facilities of Matlab, and the fact that these tables could have cells with \(>250\) characters. To fix this, the import facilities were rewritten in GDMO and GDLS in order to give them greater flexibility in the file formats that they could read.
 
 The metabolic models used are listed in table~\ref{tab:models}. The columns used are as follows:
 \begin{description}
@@ -20,30 +19,30 @@ The metabolic models used are listed in table~\ref{tab:models}. The columns used
     \begin{tabular}{ l l l l l}
     \hline
     Species         & Shorthand       & Size & Synthetic Objective \\ \hline
-    Geobacter Sulfurreducens  & sulfurreducens  & 609  & \ce{FE2}            \\ 
-    Geobacter Metallireducens & metallireducens & 788  & \ce{FE2}            \\ 
-    Escherichia Coli          & iaf1260        & 2383 & Acetate             \\ 
-    Escherichia Coli          & iJO1366-aerobic        & 2583 & Acetate             \\
-    Escherichia Coli          & iJO1366-anaerobic        & 2583 & Acetate             \\ \hline
+    \textit{Geobacter sulfurreducens}  & sulfurreducens  & 609  & \ce{FE2}            \\ 
+    \textit{Geobacter metallireducens} & metallireducens & 788  & \ce{FE2}            \\ 
+    \textit{Escherichia coli}          & iaf1260        & 2383 & Acetate             \\ 
+    \textit{Escherichia coli}         & iJO1366-aerobic        & 2583 & Acetate             \\
+    \textit{Escherichia coli}          & iJO1366-anaerobic        & 2583 & Acetate             \\ \hline
     \end{tabular}
     \caption{Metabolic Models}
     \label{tab:models}
 \end{table}
 
 \subsection{Sulfurreducens}
-Described in 2009 in~\cite{Mahadevan2006}, this model focuses on the \ce{FE3} reducing capabilities of Geobacter Sulfurreducens. 
-Its primary energy source is chosen as Acetate, with traces of a number of other necessary compounds. 
-\ce{FE2} is chosen as the target since due to the pilli that Geobacter possess, production of \ce{FE2}, can be considered to be biologically equivalent to electron transfer via an electrode.
+Described in 2009 in~\cite{Mahadevan2006}, this model focuses on the \ce{FE3} reducing capabilities of \textit{Geobacter sulfurreducens}. 
+Its primary energy source is chosen as acetate, with traces of a number of other necessary compounds. 
+\ce{FE2} is chosen as the target since due to the pilli that \textit{Geobacter} possess, production of \ce{FE2}, can be considered to be biologically equivalent to electron transfer via an electrode.
 \ce{FE2} overproduction is chosen instead of \ce{FE3} overconsumption simply for uniformity---the two are equivalent, since Flux Balance Analysis rules out the organism having any net accumulation of Iron.
 
 \subsection{Metallireducens}
-This model~\cite{Sun2009} is based on a model of G. Sulfurreducens, but with the addition of a number of reactions that are present in G. Metallireducens but not G. Sulfurreducens. 
+This model~\cite{Sun2009} is based on a model of \textit{G. sulfurreducens}, but with the addition of a number of reactions that are present in G. Metallireducens but not \textit{G. sulfurreducens}. 
 
 \subsection{iaf1260}
-iAF1260~\cite{Feist2007} is a widely used reconstruction of the E. Coli metabolism.
-Due to the extensive use of E. coli as a model organism, it is far better characterized than Geobacter, and hence 3-4 times as many reactions are known. 
+iAF1260~\cite{Feist2007} is a widely used reconstruction of the \textit{Escherichia coli} metabolism.
+Due to the extensive use of \textit{E. coli} as a model organism, it is far better characterized than \textit{Geobacter}, and hence 3-4 times as many reactions are known. 
 As discussed in section~\ref{sec:complexity}, this results in much slower analysis of these networks.
-This reconstruction of E. Coli has been used extensively\footnote{218 citations for iAF1260 are listed by Google Scholar, versus 28 for iJO1366}, and so it was used in this project for testing and validation; specifically it allowed problems to be narrowed down to being either with the optimization algorithm, or the model being optimized.
+This reconstruction of \textit{E. coli} has been used extensively\footnote{218 citations for iAF1260 are listed by Google Scholar, versus 28 for iJO1366}, and so it was used in this project for testing and validation; specifically it allowed problems to be narrowed down to being either with the optimization algorithm, or the model being optimized.
 
 \subsection{iJO1366}
 iJO1366~\cite{Orth2011} is newer and somewhat more comprehensive than iAF1260.
@@ -221,7 +220,7 @@ colourize=function(v){
 }
 @
 
-<<methods_GDMO_timings2,fig.cap='Predicted runtime, using time for 1 FBA round',dependson='methods_GDMO_timings1',out.height='0.4\\textheight',fig.pos='h'>>=
+<<methods_GDMO_timings2,fig.cap='Predicted runtime, using time for 1 FBA round',dependson='methods_GDMO_timings1',out.height='0.4\\textheight',fig.pos='h',dev='png'>>=
 GDMO.fit = lm(cputime~pop:generation:FBAtime,GDMO.train)
 GDMO.test$prediction=predict(GDMO.fit,newdata=GDMO.test)
 plot(prediction~cputime,
@@ -239,7 +238,7 @@ Figure~\ref{fig:methods_GDMO_timings2} shows the predictions produced by this li
 Clearly, the prediction holds well within each strain, but there are big differences between strains.
 This indicates that time to conduct Flux Balance Analysis is not, in fact, a good predictor between strains, despite its consistency within strains. Luckily, this in-silico data is available in abundance, so it was possible to get round this problem by simply fitting four separate models, as shown in figure~\ref{fig:methods_GDMO_timings3}.
 
-<<methods_GDMO_timings3,fig.cap='predicted runtime, conditional on strain',dependson='methods_GDMO_timings1',out.height='0.4\\textheight',fig.pos='h'>>=
+<<methods_GDMO_timings3,fig.cap='Predicted runtime, conditional on strain',dependson='methods_GDMO_timings1',out.height='0.4\\textheight',fig.pos='h',dev='png'>>=
 GDMO.fit<-lm(cputime~pop:generation:strain,GDMO.train) 
 GDMO.test$prediction<-predict(GDMO.fit,newdata=GDMO.test)
 plot(prediction~cputime,

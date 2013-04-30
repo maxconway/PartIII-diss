@@ -1,7 +1,7 @@
 % !TeX root = dissertation.Rnw   
 \chapter{Introduction}
 This project investigates the use of genetic design algorithms on metabolic models of two species in the genus Geobacter.
-These bacteria have a number of interesting properties (see section~\ref{sec:geobacter}), here the aim is to create engineered strains with a larger ability to produce electricity than the wild type, and examine the modifications that allow this.
+These bacteria have a number of interesting properties (see section~\ref{sec:geobacter}). Here the aim is to engineer strains with a larger ability to produce electricity than the wild type, and examine the modifications that allow this.
 A secondary goal is to compare the genetic design algorithms themselves.
 
 This document is split into five chapters:
@@ -21,11 +21,26 @@ In particular, this includes reaction tables, since reactions cannot be fully do
 \section{Colours}
 Colours have been used to highlight which species strains belong to:
 \begin{itemize}
-\item Geobacter Sulfurreducens is represented by {\color{red} red}.
-\item Geobacter Metallireducens is represented by {\color{blue} blue}.
-\item Escherichia Coli is represented by {\color{green} green}.
+\item Geobacter sulfurreducens is represented by {\color{red} red}.
+\item Geobacter metallireducens is represented by {\color{blue} blue}.
+\item Escherichia coli is represented by {\color{green} green}.
 \end{itemize}
 
-\section{Embedded Code}
+\section{Knitr Embedded Code}
 \label{sec:embeddedcode}
-The Knitr~\cite{Xie2011} dynamic report generation package has been used to embed chunks of R code into this document, which shows some of the analysis conducted, and generates the graphs and tables that are included.
+The Knitr~\cite{Xie2011} package has been used to embed chunks of R code into the body text of this document.
+This shows some of the analysis conducted, and generates the graphs and tables that are included.
+This will help readers who are familiar with R to follow the analysis, and guarantees reproducibility.
+An example follows.
+<<example>>=
+# This is an example of some embedded R code
+
+# Here is a 'hello world' code demonstration:
+helloWorld <- function(){
+  print('Hello, world!')
+}
+helloWorld()
+# A version without these code chunks is available 
+# in the supplementary materials
+
+@

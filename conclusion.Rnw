@@ -1,21 +1,24 @@
 % !TeX root = dissertations.Rnw   
-\chapter{Conclusions}
+\chapter{Conclusions and Further Work}
 \section{Performance Improvement}
-In this project, I have used genetic design algorithms to create strains of Geobacter Metallireducens and Sulfurreducens with at least \SI{102}{\percent}, and potentially up to \SI{104}{\percent} of the electrical current production capapcity of their respective wild types.
-
-This may not sound like much, but these microbes have obvious potential in biological fuel cells that could compete with electrochemical cells such as the Lithium ion batteries used in mobile phones, where huge amounts of money are spent for even the slightest performance gains.
+In this project, I have used genetic design algorithms to create strains of \textit{Geobacter metallireducens} and \textit{sulfurreducens} with at least \SI{102}{\percent}, and potentially up to \SI{104}{\percent} of the electrical current production capacity of their respective wild types. In addition, the same techniques were able to produce strains of \textit{E. coli} with an Acetate production capacity of up to \SI{260}{\percent} of their wild type abilities.
 
 \section{Comparison of Algorithms}
-In order to achieve these results I compared state of the art genetic design algorithms, both in terms of their theoretical speed and their actual performance on various species of Geobacter, tackling a model and problem that has quite different characteristics to those that they were originally used with. 
+In order to achieve these results I compared state of the art genetic design algorithms, both in terms of their theoretical speed and their actual performance on various species of \textit{Geobacter}, tackling a model and problem that has quite different characteristics to those that they were originally used with. 
 
 Doing this required a thorough understanding of their internal operation and code, including rewriting significant portions of GDMO, GDLS and GDBB to allow them to use more general model formats, and to utilize the latest version of the Gurobi linear programming toolbox.
 
-\section{Biology}
-Finding high electricity production strains of Geobacter also highlighted which genes are related to the electricity producing capacity of Geobacter, and, with the help of the Lovley Lab, who discovered Geobacter, I was able to identify these genes as clustered preferentially in certain areas of the genome.
+\section{Systems Biology}
+This research discovered and evaluated \num{1029480} strains of \textit{Geobacter}: a massive amount of biological data.
+
+From this, it was possible to infer large amounts of information about the relative effects of reactions, genes and subsystems on \textit{Geobacter}'s inorganic ion reduction capacity.
+
+In particular, it was found that genes related to metal reduction form a massive (20-fold) peak at certain points in the chromosome.
+
+\section{Collaboration}
+All the \textit{Geobacter} data used here is courtesy of collaboration with Dr. Derek Lovley, who discovered \textit{Geobacter} and is world renowned in its study, and Dr. Muktak Aklujkar, both of the \href{http://www.geobacter.org/}{Lovley Lab} at the University of Massachusetts Amherst. The models and data are the very latest available.
 
 \section{Further Work}
-This work could be extended in a number of potential directions.
-
 \subsection{Further Knockout Analysis}
 Possible approaches to understanding the knockout strategies found could be based on analysis of the metabolic network itself as a network structure, to perhaps identify reactions that are clustered not only in terms of their locality in the metabolic network, but also in their effects on the objectives. This approach could be pursued further to understand more about how biological tradeoffs relate to network structure.
 
@@ -26,3 +29,10 @@ In particular, this tool could judge for itself a correct stopping point, and it
 \subsection{Implementation}
 Finally, the knockouts suggested here could be implemented and tested in vivo.
 The results of this could then potentially inform further design efforts. 
+
+\section{Vision}
+Improvments in the electrical properties of \textit{Geobacter} have massive potential impact.
+
+\textit{Geobacter} has the potential to be used in bacterial fuel cells that could not only work on waste materials, but have many qualities that support their use over the ubiquitous Lithium Ion cell: they would require no scarce resources, be non-toxic and non-flammable, and be lighter and cheaper both in terms of unit cost and overhead.
+
+Furthermore, the pilli that \textit{Geobacter} produces has applications for use as nanowires in electronics, which have the potential to be used as an interface in devices such as biological sensors, to connect silicon and living components, while leveraging the ability of \textit{Geobacter} to form resilient, conductive biofilms to obtain a high level of durability.
