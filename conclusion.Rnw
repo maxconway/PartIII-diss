@@ -12,3 +12,17 @@ Doing this required a thorough understanding of their internal operation and cod
 
 \section{Biology}
 Finding high electricity production strains of Geobacter also highlighted which genes are related to the electricity producing capacity of Geobacter, and, with the help of the Lovley Lab, who discovered Geobacter, I was able to identify these genes as clustered preferentially in certain areas of the genome.
+
+\section{Further Work}
+This work could be extended in a number of potential directions.
+
+\subsection{Further Knockout Analysis}
+Possible approaches to understanding the knockout strategies found could be based on analysis of the metabolic network itself as a network structure, to perhaps identify reactions that are clustered not only in terms of their locality in the metabolic network, but also in their effects on the objectives. This approach could be pursued further to understand more about how biological tradeoffs relate to network structure.
+
+\subsection{Tool}
+While I have largely automated the pipeline from the wild type metabolic model to the analysis of engineered strains, further work could fully integrate this pipeline into a tool for `black box' genetic design.
+In particular, this tool could judge for itself a correct stopping point, and it might be advantageous in terms of both speed and final performance to integrate the algorithms studied, perhaps by using GDLS to quickly identify multiple starting points for GDMO.
+
+\subsection{Implementation}
+Finally, the knockouts suggested here could be implemented and tested in vivo.
+The results of this could then potentially inform further design efforts. 

@@ -1,11 +1,16 @@
 % !TeX root = dissertation.Rnw 
 
+<<concacheresultssetup,cache=FALSE,include=FALSE>>=
+data(GDMO)
+data(GDLS)
+@
+
 <<ResultsSetup,autodep=TRUE,echo=FALSE,cache=TRUE>>=
 #sources
 require(stats,quietly=TRUE)
 
 #GDMO
-data(GDMO)
+data(GDMO) 
 
 GDMO.runs=aggregate(cbind(pop,generation)~strain+id,GDMO,max)
 GDMO.runs$population=GDMO.runs$pop
@@ -43,7 +48,7 @@ print(xtable(
 Measurement of convergence is difficult for multi-objective optimization, since Pareto fronts are not generally comparable.
 A number of techniques have been proposed for comparison, but as discussed in section~\ref{hypervolume}, the heuristic used here is hypervolume, calculated by Monte-Carlo integration.
 
-Figure~\ref{fig:convergence} shows hypervolume against generation for a number of runs of GDMO. This shows that convergence occurred quickly---within \num{200} generations. 
+Figure~\ref{fig:convergence,} shows hypervolume against generation for a number of runs of GDMO. This shows that convergence occurred quickly---within \num{200} generations. 
 This works out at around \Sexpr{signif(mean(GDMO[GDMO$generation==200&GDMO$strain=='sulfurreducens','walltime'])/3600,2)} hours.
 Note that much larger increases in hypervolume were possible for E. Coli in Acetate production, so that this could be not presented on the same scale.
 
@@ -85,7 +90,7 @@ for(j in 1:nrow(GDMO.runs)){
 }
 @
 
-Figure~\ref{fig:convergence} also shows one of the disadvantages of an evolutionary algorithm, and many other global optimization algorithms: since the algorithm is constantly searching for a better solution, if we stop it at an arbitrary point then there is no guarantee that the solution at this point is the best available. 
+Figure~\ref{fig:convergence,} also shows one of the disadvantages of an evolutionary algorithm, and many other global optimization algorithms: since the algorithm is constantly searching for a better solution, if we stop it at an arbitrary point then there is no guarantee that the solution at this point is the best available. 
 
 To ensure that the final front is the best possible, three approaches are possible:
 \begin{enumerate}
@@ -179,7 +184,7 @@ print(xtable(
   ),include.rownames=FALSE)
 @
 
-<<GDLS_solutionquality,echo=F,fig.cap='Solutions found by GDLS. Maximum synthesis achieved (normalized against wildtype) against the two parameters tested.',dependson=c('ResultsSetup')>>=
+<<GDLS_solutionquality,echo=F,fig.cap='Solutions found by GDLS. Maximum synthesis achieved (normalized against wildtype) against the two parameters tested.',dependson=c('ResultsSetup'),fig.pos='htb'>>=
 data(GDLS)
 cloud(nmaxsyn~nbhdsz+M,
       GDLS,
@@ -196,20 +201,20 @@ cloud(nmaxsyn~nbhdsz+M,
 \subsection{Comparison}
 Figure~\ref{fig:comparison} shows the results of the algorithms on one plot. 
 The axes chosen are just maximum synthesis and biomass production, since these are what GDLs optimizes.
-<<comparison,echo=F,fig.cap='Geobacter Sulfurreducens Pareto front, overlaid with GDLS results',dependson='GDMO_fronts'>>=
+<<comparison,echo=F,fig.cap='Geobacter Sulfurreducens Pareto front, overlaid with GDLS results',dependson='GDMO_fronts',fig.pos='htb'>>=
 plot(nbiomass~nmaxsyn,hs,col='pink',pch='o')
 points(nbiomass~nmaxsyn,GDLS[GDLS$strain=='sulfurreducens',],col='darkred',pch='x')
 legend(
   'topright',
-  legend=c('GDMO','GDLS'),
+  legend=c('GDMO: pareto front','GDLS: all solutions'),
   pch=c('o','x'),
   col=c('pink','darkred')
 )
 @
 We can see that the solutions produced by GDLS are in the Pareto front, and that both algorithms found an optimal solution in terms of maximum synthesis, though GDMO found several solutions with this maximum synthesis value, and some had a higher minimum synthesis value.
 
-GDMO took large amounts of time to find some solutions, up to a maximum of \Sexpr{signif(max(GDMO[GDMO$strain=='sulfurreducens','cputime'],3)/3600)}~\si{\hour} of CPU time in one case, compared to a maximum of \Sexpr{signif(max(GDLS[GDLS$strain=='sulfurreducens','cputime'])/60,3)}~\si{minute} for GDLS\footnote{both used the same computer and optimization package, and this comparison is restricted to G. Sulfurreducens}.
-However, GDMO took only \Sexpr{signif(min(GDMO[GDMO$strain=='sulfurreducens'&GDMO$nmaxsyn>1.014673,'cputime']),3)}~\si{\second} of (amortized) CPU time to find a solution that was as good as the best provided by GDLS.
+GDMO took large amounts of time to find some solutions, up to a maximum of \Sexpr{signif(max(GDMO[GDMO$strain=='sulfurreducens','cputime'])/3600,3)}~\si{\hour} of CPU time in one case, compared to a maximum of \Sexpr{signif(max(GDLS[GDLS$strain=='sulfurreducens','cputime'])/60,3)}~\si{\minute} for GDLS\footnote{both used the same computer and optimization package, and this comparison is restricted to G. Sulfurreducens}.
+However, GDMO took only \Sexpr{signif(min(GDMO[GDMO$strain=='sulfurreducens'&GDMO$nmaxsyn>1.014673,'cputime',]),3)}~\si{\second} of (amortized) CPU time to find a solution that was as good as the best provided by GDLS.
 
 The fact that both solutions fairly quickly found good solutions, but could not easily surpass them, indicates that this may be a global optimum.
 
@@ -222,11 +227,11 @@ To avoid repetition the G. Metallireducens section focuses more strongly on knoc
 \subsection{Geobacter Sulfurreducens}
 
 \subsubsection{Fronts}
-Figure~\ref{fig:sulfurreducensfronts} (Maximum) shows that a roughly linear tradeoff between maximum reduction potential and biomass generation is possible, up to a maximum of a \Sexpr{signif(max(hs$nmaxsyn)*100),3}~\si{\percent} of wild type yield, at the expense of \Sexpr{signif(min(hs$nbiomass)*100,3)}~\si{\percent} biomass production.
+Figure~\ref{fig:sulfurreducensfronts} (Maximum) shows that a roughly linear tradeoff between maximum reduction potential and biomass generation is possible, up to a maximum of a \Sexpr{signif(max(hs$nmaxsyn)*100,3)}~\si{\percent} of wild type yield, at the expense of \Sexpr{signif(min(hs$nbiomass)*100,3)}~\si{\percent} biomass production.
 This is as expected, as the organism has a constant amount of energy available for either growth or electron exchange.
 
 In figure~\ref{fig:sulfurreducensfronts} (Minimum), we again see an expected general negative gradient. 
-However, only a small increase over wild type of \Sexpr{signif(max(ls$nminsyn)*100),3}~\si{\percent} was possible while maintaining viability.
+However, only a small increase over wild type of \Sexpr{signif(max(ls$nminsyn)*100,3)}~\si{\percent} was possible while maintaining viability.
 This is likely to be because, while there are likely to be many knockouts that limit the energy that can be used in biomass generation, and so leave a surplus reduction potential, knockout strategies that actually force higher reduction require much more extensive modifications.
 Figure~\ref{fig:sulfurreducensfronts} (Minimum) shows a pronounced jump at around 0.935 in the biomass axis, discussed further in the next section.
 
@@ -367,7 +372,7 @@ cloud(nbiomass~nmaxsyn*nminsyn,GDMO.M,
 )
 @
 The Pareto front for G. Metallireducens electricity production shown in figure~\ref{fig:m_fronts} appears to be almost completely linear, which was to start with extremely surprising, and suggested that some error had been made---one does not expect that random knockouts would be able to achieve such a precise tradeoff. To verify this shape, a number of comparisons were made with the G. Sulfurreducens model.
-<<straight_line_verification1,fig.pos='p',out.width='\\textwidth', out.height='\\textheight', fig.cap='Verification of Geobacter Metallireducens Pareto Front', fig.height=10, fig.width=5, fig.pos='p',dependson=c('GDMO_M','GDMO_S')>>=
+<<straight_line_verification1,fig.pos='p',out.width='\\textwidth', out.height='0.95\\textheight', fig.cap='Verification of Geobacter Metallireducens Pareto Front', fig.height=10, fig.width=5, fig.pos='p',dependson=c('GDMO_M','GDMO_S')>>=
 layout(matrix(1:8,4,2,byrow=F))
 for(a in list(GDMO[GDMO$strain=='metallireducens',],
               GDMO[GDMO$strain=='sulfurreducens',]

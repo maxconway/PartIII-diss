@@ -8,13 +8,13 @@ supplimentary = $(mainRfiles) $(otherRfiles) $(datasets) dissertation_nocode.pdf
 
 knitrsource = dissertation.Rnw introduction.Rnw methods.Rnw results.Rnw conclusion.Rnw background.Rnw
 
-dissertation.pdf : dissertation.tex bibliography.bib abstract.tex mystyle.sty
+dissertation.pdf : dissertation.tex bibliography.bib abstract.tex mystyle.sty logo.eps title.tex
 	pdflatex dissertation.tex
 	bibtex dissertation.aux
 	pdflatex dissertation.tex
 	pdflatex dissertation.tex
 
-dissertation_nocode.pdf : dissertation_nocode.tex bibliography.bib abstract.tex mystyle.sty
+dissertation_nocode.pdf : dissertation_nocode.tex bibliography.bib abstract.tex mystyle.sty logo.eps title.tex
 	pdflatex dissertation_nocode.tex
 	bibtex dissertation_nocode.aux
 	pdflatex dissertation_nocode.tex

@@ -3,6 +3,8 @@
 %TC:group knitrout 0 -2
 \documentclass[a4paper,twoside,12pt,notitlepage]{report}
 
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
 \usepackage{mystyle}
 \hypersetup{
     bookmarks=false,         % show bookmarks bar?
@@ -36,14 +38,10 @@ opts_knit$set(
   )
 @
 \title{Automated Genetic Design of Geobacter for Electricity Production}
-\author{Maxwell Conway, University of Cambridge \\Supervisor: Pietro Lio', University of Cambridge \\Data: Muktak Aklujkar, University of Massachusetts}
+\author{\emph{Author:}Maxwell Conway, University of Cambridge \\ \emph{Supervisor:} Dr. Pietro Lio', University of Cambridge \\ \emph{Data:} Dr. Muktak Aklujkar, Lovley Lab, University of Massachusetts}
 \date{}
 
-\maketitle
-
-\begin{abstract}
-\input{abstract.tex}
-\end{abstract}
+\input{./title.tex}
 
 \setcounter{tocdepth}{3}
 \cleardoublepage

@@ -5,7 +5,7 @@ The Methods chapter describes the Biological models used, some of the more techn
 \section{Metabolic Models}
 To conduct flux balance analysis, one needs a model of the metabolism of the organism in question. A number of exchange formats exist for these models and there are many more formats internal to tools. However, after some investigation it was clear that the de facto standard format is the use of tab-separated value tables, with the reactions specified in a space-separated format. 
 
-Unfortunately, the order and names of columns in these tables is not standardized, and the two Geobacter models used were supplied in an ad-hoc format, which was a problem given the inflexible import facilities of Matlab, and the fact that these tables could have cells with >250 characters. 
+Unfortunately, the order and names of columns in these tables is not standardized, and the two Geobacter models used were supplied in an ad-hoc format, which was a problem given the inflexible import facilities of Matlab, and the fact that these tables could have cells with \(>250\) characters. 
 To fix this, the import facilities were rewritten in GDMO and GDLS in order to give them greater flexibility in the file formats that they could read.
 
 The metabolic models used are listed in table~\ref{tab:models}. The columns used are as follows:
@@ -202,7 +202,7 @@ Each objective evaluation requires that Flux Balance Analysis is conducted a con
 This means that the total runtime can be modelled  as the interaction of the three quantities of iterations, population and time to conduct one round of FBA.
 
 <<methods_GDMO_timings1,cache=TRUE>>=
-data('GDMO')
+data('GDMO') 
 GDMO.timing = GDMO[,c('strain','generation','pop','id',
                       'FBAtime','walltime','cputime'
                       )]
@@ -210,20 +210,28 @@ GDMO.timing = unique(GDMO.timing)
 GDMO.timing = GDMO.timing[sample(nrow(GDMO.timing)),]
 GDMO.train = head(GDMO.timing,nrow(GDMO.timing)*0.9)
 GDMO.test = tail(GDMO.timing,nrow(GDMO.timing)*0.1)
+colourize=function(v){
+  as.character(
+  sapply(v,function(x){
+    if(x=='sulfurreducens'){return('red')}
+    if(x=='metallireducens'){return('blue')}
+    if(x=='iaf1260-ac'){return('green')}
+  })
+  )
+}
 @
 
 <<methods_GDMO_timings2,fig.cap='Predicted runtime, using time for 1 FBA round',dependson='methods_GDMO_timings1',out.height='0.4\\textheight',fig.pos='h'>>=
 GDMO.fit = lm(cputime~pop:generation:FBAtime,GDMO.train)
 GDMO.test$prediction=predict(GDMO.fit,newdata=GDMO.test)
-colours=c('darkgreen','lightgreen','blue','red')
 plot(prediction~cputime,
-     GDMO.test,
-     col=colours[GDMO.test$strain],
+     GDMO.test, 
+     col=colourize(GDMO.test$strain),
      xlab='actual cputime (s)',
      ylab='predicted cputime (s)')
 legend('topright',
        legend=unique(GDMO.test$strain),
-       col=colours[unique(GDMO.test$strain)],
+       col=colourize(unique(GDMO.test$strain)),
        pch='O'
 )
 @
@@ -232,17 +240,16 @@ Clearly, the prediction holds well within each strain, but there are big differe
 This indicates that time to conduct Flux Balance Analysis is not, in fact, a good predictor between strains, despite its consistency within strains. Luckily, this in-silico data is available in abundance, so it was possible to get round this problem by simply fitting four separate models, as shown in figure~\ref{fig:methods_GDMO_timings3}.
 
 <<methods_GDMO_timings3,fig.cap='predicted runtime, conditional on strain',dependson='methods_GDMO_timings1',out.height='0.4\\textheight',fig.pos='h'>>=
-GDMO.fit<-lm(cputime~pop:generation:strain,GDMO.train)
+GDMO.fit<-lm(cputime~pop:generation:strain,GDMO.train) 
 GDMO.test$prediction<-predict(GDMO.fit,newdata=GDMO.test)
-colours=c('darkgreen','lightgreen','blue','red')
 plot(prediction~cputime,
      GDMO.test,
-     col=colours[GDMO.test$strain],
+     col=colourize(GDMO.test$strain),
      xlab='actual cputime (s)',
      ylab='predicted cputime (s)')
 legend('topright',
        legend=unique(GDMO.test$strain),
-       col=colours[unique(GDMO.test$strain)],
+       col=colourize(unique(GDMO.test$strain)),
        pch='O'
 )
 @
