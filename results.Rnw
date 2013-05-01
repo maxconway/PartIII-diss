@@ -27,7 +27,6 @@ This chapter details the results of the investigation. First the technical evalu
 
 \section{Technical Evaluation}
 This section focuses on the relative merits of GDMO and GDLS, and why GDMO was chosen for further use.
-First the convergence behaviour of both algorithms is evaluated, to ensure that the comparison is as fair as possible; secondly the solutions from both techniques are compared.
 The comparisons performed here are based on \textit{G. sulfurreducens}.
 It was confirmed that the results remained valid with \textit{G. metallireducens} and the iAF1260 \textit{E. coli} model.
 
@@ -99,7 +98,7 @@ To ensure that the final front is the best possible, three approaches are possib
 \item A simulated annealing style approach where mutation rate decreases over time. I trialed this approach by obtaining an open-source version of the NSGA-II algorithm, the core of GDMO, and modifying it to use an exponentially dropping mutation rate.
 \end{enumerate}
 
-Ultimately approach~\ref{enum:approachtaken} was taken, since this is effective without requiring modification to the core algorithm. At this stage this was used to select fronts for further analysis---for each strain the Pareto front was found for the union of:
+Ultimately approach~\ref{enum:approachtaken} was taken, since this is effective without requiring modification to the core algorithm. This approach was used to select fronts for further analysis---for each strain the Pareto front was found for the union of:
 \begin{enumerate}
 \item The front at generation 250 for a population of 1000, and
 \item The front at generation 500 for a population of 500.
@@ -341,15 +340,20 @@ PCA$Locus_tag<-as.character(PCA$Locus_tag)
 PCA$centres<-(PCA$Corrected.Start+PCA$Corrected.Stop)/2
 PCA$width<-PCA$Corrected.Stop-PCA$Corrected.Start
 
-sums=colSums(GDMO.S.chromosomes[,grepl('GSU.*',colnames(GDMO.S.chromosomes))])
+sums=colSums(GDMO.S.chromosomes[,grepl('GSU.*',
+                                       colnames(GDMO.S.chromosomes))])
 names=strsplit(names(sums),'_OR_')
 names=setNames(names,names(sums))
 PCA$KOs<-0
 for(name in names(sums)){
-   PCA[PCA$Locus_tag %in% unlist(names[name]),'KOs']<-(sums[name]/length(names[name]))+PCA[PCA$Locus_tag %in% unlist(names[name]),'KOs']
+  PCA[PCA$Locus_tag %in% unlist(names[name]),'KOs']<-(
+    (sums[name]/length(names[name]))
+    +PCA[PCA$Locus_tag %in% unlist(names[name]),'KOs'])
 }
 
-plot(KOs~centres,PCA[PCA$KOs>0,],log='y',type='p',col='red',xlab='genome position',ylab='log(KOs)')
+plot(KOs~centres,PCA[PCA$KOs>0,],log='y',type='p',col='red',
+     xlab='genome position',
+     ylab='log(KOs)')
 lines(predict(loess(PCA$KOs~PCA$centres))~PCA$centres,col='darkred')
 @
 
@@ -396,13 +400,12 @@ for(a in list(GDMO[GDMO$strain=='metallireducens',],
 }
 @
 
-<<straight_line_verification2,fig.cap='PCA of Pareto Fronts: proportion of variance explained by each component. Log scale'>>=
+<<straight_line_verification2,fig.cap='PCA of Pareto Fronts: proportion of variance explained by each component. Log scale',warning=F>>=
 GDMO.M.pc<-princomp(GDMO.M[,c('nbiomass','nminsyn','nmaxsyn')])
 GDMO.S.pc<-princomp(GDMO.S[,c('nbiomass','nminsyn','nmaxsyn')])
 GDMO.M.pov<-(GDMO.M.pc$sdev)^2 / sum(GDMO.M.pc$sdev^2) 
 GDMO.S.pov<-(GDMO.S.pc$sdev)^2 / sum(GDMO.S.pc$sdev^2) 
 components<-rbind(GDMO.S.pov,GDMO.M.pov)
-suppressWarnings(
 barplot(as.matrix(components),
         beside=T,
         col=c('red','blue'),
@@ -410,7 +413,6 @@ barplot(as.matrix(components),
         log='y',
         ylim=c(1e-20,100),
         legend.text=c('sulfurreducens','metallireducens'),
-)
 )
 @
 Figures~\ref{fig:straight_line_verification1} and~\ref{fig:straight_line_verification2} show a number of graphs that all suggest that there is no bug in the \textit{G. metallireducens} model. 

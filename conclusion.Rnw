@@ -30,6 +30,8 @@ In particular, this tool could judge for itself a correct stopping point, and it
 Finally, the knockouts suggested here could be implemented and tested in vivo.
 The results of this could then potentially inform further design efforts. 
 
+These could include examining other \textit{Geobacter} species, and possibly looking at systems of multiple bacteria species living together.
+
 \section{Vision}
 Improvments in the electrical properties of \textit{Geobacter} have massive potential impact.
 

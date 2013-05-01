@@ -9,7 +9,7 @@
 \hypersetup{
     bookmarks=false,         % show bookmarks bar?
     unicode=false,          % non-Latin characters in Acrobat’s bookmarks
-    pdftitle={Automated Genetic Design of Geobacter for Electricity Production},    % title
+    pdftitle={Automated Genetic Design of the Geobacter Metabolome for Electricity Production},    % title
     pdfauthor={Maxwell Conway},     % author
     colorlinks=false,       % false: boxed links; true: colored links
     linkcolor=red,          % color of internal links
