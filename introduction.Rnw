@@ -1,34 +1,35 @@
 % !TeX root = dissertation.Rnw   
 \chapter{Introduction}
-This project investigates the use of genetic design algorithms on metabolic models of two species in the genus Geobacter.
-These bacteria have a number of interesting properties (see section~\ref{sec:geobacter}). Here the aim is to engineer strains with a larger ability to produce electricity than the wild type, and examine the modifications that allow this.
+This project investigates the use of genetic design algorithms on metabolic models of two species in the genus \textit{Geobacter}.
+These bacteria have a number of interesting properties (section~\ref{sec:geobacter}). 
+Here the aim is to engineer strains with a larger ability to produce electricity than the wild type, and examine the modifications that allow this.
 A secondary goal is to compare the genetic design algorithms themselves.
 
-This document is split into five chapters:
+This document consists of five chapters:
 
 \begin{description}
 \item[Introduction] this chapter is a brief overview of the document as a whole;
 \item[Background] introduces the subject matter itself in more depth;
 \item[Methods] covers the data and techniques that formed the basis of the investigation;
 \item[Results] presents the technical and biological findings; and
-\item[Conclusions] summarizes the results and possible further work.
+\item[Conclusions and Further Work] summarizes the results and possible extensions.
 \end{description}
 
 \section{Supplementary Materials}
 Supplementary materials are available at \url{goto.maxwellconway.com/diss-sup}.
-In particular, this includes reaction tables, since reactions cannot be fully documented here in the interests of space.
+In particular, this includes the metabolic models used, which is helpful to understand abbreviations used in some tables.
 
 \section{Colours}
 Colours have been used to highlight which species strains belong to:
 \begin{itemize}
-\item Geobacter sulfurreducens is represented by {\color{red} red}.
-\item Geobacter metallireducens is represented by {\color{blue} blue}.
-\item Escherichia coli is represented by {\color{green} green}.
+\item Geobacter sulfurreducens is {\color{red} red}.
+\item Geobacter metallireducens is {\color{blue} blue}.
+\item Escherichia coli is {\color{green} green}.
 \end{itemize}
 
 \section{Knitr Embedded Code}
 \label{sec:embeddedcode}
-The Knitr~\cite{Xie2011} package has been used to embed chunks of R code into the body text of this document.
+The Knitr~\cite{Xie2011} package has been used to embed R code into the body text of this document.
 This shows some of the analysis conducted, and generates the graphs and tables that are included.
 This will help readers who are familiar with R to follow the analysis, and guarantees reproducibility.
 An example follows.
@@ -42,5 +43,4 @@ helloWorld <- function(){
 helloWorld()
 # A version without these code chunks is available 
 # in the supplementary materials
-
 @

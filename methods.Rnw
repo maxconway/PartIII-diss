@@ -228,7 +228,7 @@ plot(prediction~cputime,
      col=colourize(GDMO.test$strain),
      xlab='actual cputime (s)',
      ylab='predicted cputime (s)')
-legend('topright',
+legend('bottomright',
        legend=unique(GDMO.test$strain),
        col=colourize(unique(GDMO.test$strain)),
        pch='O'
@@ -246,7 +246,7 @@ plot(prediction~cputime,
      col=colourize(GDMO.test$strain),
      xlab='actual cputime (s)',
      ylab='predicted cputime (s)')
-legend('topright',
+legend('bottomright',
        legend=unique(GDMO.test$strain),
        col=colourize(unique(GDMO.test$strain)),
        pch='O'
@@ -268,5 +268,5 @@ Here we can see that the metabolic model used will have a very large effect, sin
 Although G. Sulfurreducens was used for performing the comparison of algorithms, other testing showed that model size did indeed have by far the largest effect on the execution time of GDLS.
 
 \section{Instrumentation}
-To facilitate comparison, the genetic design strategies were instrumented in order to record every candidate solution that they produced. This allows the improvement of the candidates over time to be seen. 
-Tests were conducted to ensure that this instrumentation code did not influence the results by its own execution time; it was found to run fast enough that the slowdown was not detectable above noise.
+The genetic design strategies were instrumented in order to record every candidate solution that they produced. This allows the convergence of solutions to be tracked through time.
+This instrumentation code ran fast enough that it did not unduly influence results: the slowdown was not detectable above noise.
